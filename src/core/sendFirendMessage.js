@@ -1,6 +1,7 @@
 const errCode = require('./errCode');
 const axios = require('axios');
 const { URL } = require('url');
+const errorHandler = require('./util/errorHandler');
 
 /**
  * 
@@ -21,20 +22,13 @@ module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) =>
             sessionKey, target, quote, messageChain
         });
 
-        // 所有错误都要抛出
+        // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            // 统一抛出的异常的格式
             throw { code, message: msg };
         }
         return { msg, code, messageId };
     } catch (error) {
-        // 统一的异常格式
-        const { response: { data }, message } = error;
-        if (data) {
-            throw { message: data };
-        } else {
-            throw { message }
-        }
+        errorHandler(error);
     }
 
 }

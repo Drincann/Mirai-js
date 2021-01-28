@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "ws": "^7.4.2"
   },
   "devDependencies": {
     "eslint": "^7.18.0"
