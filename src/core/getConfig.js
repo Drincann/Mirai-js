@@ -4,28 +4,25 @@ const { URL } = require('url');
 const errorHandler = require('./util/errorHandler');
 
 /**
- *
- * @description 认证 authKey，创建回话，返回一个 sessionKey
+ * @description 获取指定 session 的 config
  * @param {string} baseUrl mirai-api-http server 的地址
- * @param {string} authKey mirai-api-http server 设置的 authKey
+ * @param {string} sessionKey 会话标识
  */
-module.exports = async ({ baseUrl, authKey }) => {
+module.exports = async ({ baseUrl, sessionKey }) => {
     try {
         // 拼接 url
-        const url = new URL('/auth', baseUrl).toString();
+        const url = new URL('/config', baseUrl).toString();
 
         // 请求
-        let {
-            data: { msg, code, session: sessionKey },
-        } = await axios.post(url, { authKey });
-
+        let { data: { msg, code, cacheSize, enableWebsocket } } = await axios.get(url, { params: { sessionKey } });
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw { code, message: msg };
         }
-        return sessionKey;
+        return { cacheSize, enableWebsocket };
     } catch (error) {
         errorHandler(error);
     }
-};
+
+}

@@ -1,4 +1,4 @@
-const errCode = require('./errCode');
+const errCode = require('./util/errCode');
 const axios = require('axios');
 const { URL } = require('url');
 const errorHandler = require('./util/errorHandler');
@@ -6,10 +6,10 @@ const errorHandler = require('./util/errorHandler');
 /**
  * 
  * @description 向 qq 群发送消息
- * @param {string} baseUrl                  mirai-api-http server 的地址
- * @param {string} sessionKey               会话标识
- * @param {number} target                   目标群号
- * @param {number} quote                    消息引用，使用发送时返回的 messageId
+ * @param {string}             baseUrl      mirai-api-http server 的地址
+ * @param {string}             sessionKey   会话标识
+ * @param {number}             target       目标群号
+ * @param {number}             quote        消息引用，使用发送时返回的 messageId
  * @param {array[messageType]} messageChain 消息链，MessageType 数组
  */
 module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) => {

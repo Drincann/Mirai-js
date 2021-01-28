@@ -1,4 +1,4 @@
-const errCode = require('./errCode');
+const errCode = require('./util/errCode');
 const axios = require('axios');
 const { URL } = require('url');
 const errorHandler = require('./util/errorHandler');
