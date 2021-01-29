@@ -68,7 +68,6 @@ class Voice extends MessageType {
 
 
 /**
- * 
  * @description 本框架抽象的消息类型，getMessageChainable
  */
 class Message {

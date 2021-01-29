@@ -8,6 +8,7 @@ const errorHandler = require('./util/errorHandler');
  * @description 认证 authKey，创建回话，返回一个 sessionKey
  * @param {string} baseUrl mirai-api-http server 的地址
  * @param {string} authKey mirai-api-http server 设置的 authKey
+ * @returns {string} 会话标识 sessionKey
  */
 module.exports = async ({ baseUrl, authKey }) => {
     try {
@@ -16,13 +17,13 @@ module.exports = async ({ baseUrl, authKey }) => {
 
         // 请求
         let {
-            data: { msg, code, session: sessionKey },
+            data: { msg: message, code, session: sessionKey },
         } = await axios.post(url, { authKey });
 
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message: msg };
+            throw { code, message };
         }
         return sessionKey;
     } catch (error) {

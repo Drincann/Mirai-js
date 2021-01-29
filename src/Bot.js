@@ -15,10 +15,30 @@ class Bot {
      * @param {string} baseUrl mirai-api-http server 的地址
      * @param {string} authKey mirai-api-http server 设置的 authKey
      * @param {number} qq      欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
+     * @returns {void}
      */
-    async open({ baseUrl, qq, authKey }) {
+    async open(option /* { baseUrl, qq, authKey } */) {
+        if (this.config) {
+            this.close({ keepProcessor: true, keepConfig: true });
+        }
+
+        // 设置对象状态
+        // 若开发者重复调用 open，仅更新已提供的值
+        this.config = {
+            baseUrl: (this.config && this.config.baseUrl) || option.baseUrl,
+            qq: (this.config && this.config.qq) || option.qq,
+            authKey: (this.config && this.config.authKey) || option.authKey,
+            sessionKey: (this.config && this.config.sessionKey) || '',
+        };
+
+        // 检查必选参数
+        if (!(this.config.baseUrl && this.config.qq && this.config.authKey)) {
+            throw new Error({ message: 'open 方法参数格式错误' });
+        }
+        const { baseUrl, qq, authKey } = this.config;
+
         // 创建会话
-        const sessionKey = await auth({ baseUrl, authKey });
+        const sessionKey = this.config.sessionKey = await auth({ baseUrl, authKey });
 
         // 绑定到一个 qq
         await verify({ baseUrl, sessionKey, qq });
@@ -26,16 +46,9 @@ class Bot {
         // 开启 websocket
         await setConfig({ baseUrl, sessionKey, enableWebsocket: true });
 
-        // 设置对象状态
-        this.config = {
-            baseUrl,
-            qq,
-            authKey,
-            sessionKey
-        };
-
         // 事件处理器 map
-        this.eventProcessorMap = {
+        // 如果重复调用 open 则保留事件处理器
+        this.eventProcessorMap = this.eventProcessorMap || {
             /*
              每个事件对应多个 processor 对象，这些对象和 h
              andle 分别作为 value 和 key 包含在一个大对象中
@@ -43,7 +56,7 @@ class Bot {
             eventType: string -> {
                                      handle: number -> callback: (data) => void ,
                                      ...
-                                 }
+                                 }              
             */
         };
 
@@ -51,12 +64,37 @@ class Bot {
         this.wsConnection = await startListening({
             baseUrl,
             sessionKey,
-            callback: message => {
+            message: data => {
                 // 如果当前到达的事件拥有处理器，则依次调用所有该事件的处理器
-                if (message.type in this.eventProcessorMap) {
-                    Object.values(this.eventProcessorMap[message.type])
-                        .forEach(processor => processor(message));
+                if (data.type in this.eventProcessorMap) {
+                    return Object.values(this.eventProcessorMap[data.type])
+                        .forEach(processor => processor(data));
                 }
+            },
+            error: err => {
+                // 如果当前到达的事件拥有处理器，则依次调用所有该事件的处理器
+                const type = 'error';
+                if (type in this.eventProcessorMap) {
+                    return Object.values(this.eventProcessorMap[type])
+                        .forEach(processor => processor(err));
+                }
+                console.log(`ws error\n${err}`);
+            },
+            close: (code, message) => {
+                const type = 'close';
+                if (type in this.eventProcessorMap) {
+                    return Object.values(this.eventProcessorMap[type])
+                        .forEach(processor => processor(code, message));
+                }
+                console.log(`ws closed\n${{ code, message }}`);
+            },
+            unexpectedResponse: (req, res) => {
+                const type = 'unexpected-response';
+                if (type in this.eventProcessorMap) {
+                    return Object.values(this.eventProcessorMap[type])
+                        .forEach(processor => processor(req, res));
+                }
+                console.log(`ws unexpectedResponse\n${{ req, res }}`);
             }
         });
     }
@@ -64,13 +102,15 @@ class Bot {
     /**
      * @description 关闭会话
      * @param {boolean} keepProcessor 是否保留事件处理器，默认值为 false，不保留
+     * @param {boolean} keepConfig    是否保留 session baseUrl qq authKey，默认值为 false，不保留
+     * @returns {void}
      */
-    async close(option) {
+    async close(option /* { keepProcessor, keepConfig }} */) {
         // option 中仅包含一个可选参数 keepProcessor，为什么不直
         // 接在参数列表中解构 {keepProcessor}？因为，在这种情况下，
         // 若用户未传入任何参数，则相当于从 undefined 中解构，会抛异常
         if (option) {
-            var { keepProcessor } = option;
+            var { keepProcessor, keepConfig } = option;
         }
         // 必要参数
         const { baseUrl, sessionKey, qq } = this.config;
@@ -93,7 +133,9 @@ class Bot {
                 if (!keepProcessor) {
                     this.eventProcessorMap = undefined;
                 }
-                this.config = undefined;
+                if (!keepConfig) {
+                    this.config = undefined;
+                }
                 this.wsConnection = undefined;
             });
         } else {
@@ -107,7 +149,9 @@ class Bot {
             if (!keepProcessor) {
                 this.eventProcessorMap = undefined;
             }
-            this.config = undefined;
+            if (!keepConfig) {
+                this.config = undefined;
+            }
             this.wsConnection = undefined;
         }
 
@@ -121,6 +165,7 @@ class Bot {
      * @param {number}             group        群号
      * @param {number}             quote        消息引用，使用发送时返回的 messageId
      * @param {array[MessageType]} messageChain 消息链，MessageType 数组
+     * @returns {void} 
      */
     async sendMessage({ temp, friend, group, quote, message, messageChain }) {
         // 必要参数
@@ -164,8 +209,14 @@ class Bot {
 
     /**
      * @description 添加一个事件处理器
-     * @param {string} eventType  事件类型
-     * @param {function} callback 回调函数
+     * 框架维护的 WebSocket 实例会在 ws 的事件 message 下分发 Mirai http server 的消息
+     * 回调函数 (data) => void，data 的结构取决于消息类型，详见 mirai-api-http 的文档
+     * 而对于 ws 的其他事件 error, close, unexpectedResponse，其回调函数分别为
+     * - 'error':               (err: Error) => void
+     * - 'close':               (code: number, message: string) => void
+     * - 'unexpected-response': (request: http.ClientRequest, response: http.IncomingMessage) => void
+     * @param   {string}   eventType 事件类型
+     * @param   {function} callback  回调函数
      * @returns {number} 事件处理器的标识，用于移除该处理器
      */
     on(eventType, callback) {
@@ -194,6 +245,7 @@ class Bot {
      * @description 移除一个事件处理器
      * @param {string} eventType 事件类型
      * @param {function} handle  事件处理器标识，由 on 方法返回
+     * @returns {void}
      */
     off(eventType, handle) {
         if (handle in this.eventProcessorMap[eventType]) {
@@ -202,7 +254,16 @@ class Bot {
     }
 
     /**
+     * @description 移除所有事件处理器
+     * @returns {void}
+     */
+    offAll() {
+        this.eventProcessorMap = {};
+    }
+
+    /**
      * @description 获取 config
+     * @returns {Object} 结构 { cacheSize, enableWebsocket }
      */
     async getConfig() {
         const { baseUrl, sessionKey } = this.config;
@@ -211,21 +272,24 @@ class Bot {
 
     /**
      * @description 设置 config
-     * @param {number} cacheSize        插件缓存大小
-     * @param {boolean} enableWebsocket websocket 状态
+     * @param   {number} cacheSize        插件缓存大小
+     * @param   {boolean} enableWebsocket websocket 状态
+     * @returns void
      */
     async setConfig({ cacheSize, enableWebsocket }) {
         const { baseUrl, sessionKey } = this.config;
-        return await setConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
+        await setConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
     }
 
     /**
-     *
      * @description 向 mirai-console 发送指令
-     * @param {string} baseUrl     mirai-api-http server 的地址
-     * @param {string} authKey     mirai-api-http server 设置的 authKey
-     * @param {string} commend     指令名
-     * @param {array[string]} args array[string] 指令的参数
+     * @param   {string}        baseUrl mirai-api-http server 的地址
+     * @param   {string}        authKey mirai-api-http server 设置的 authKey
+     * @param   {string}        commend 指令名
+     * @param   {array[string]} args    array[string] 指令的参数
+     * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
+     * 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 
+     * 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'
      */
     static async sendCommand({ baseUrl, authKey, command, args }) {
         return await sendCommand({ baseUrl, authKey, command, args });

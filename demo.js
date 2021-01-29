@@ -1,4 +1,4 @@
-const { Bot, Message } = require('./src/Mirai-js');
+const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
 
 (async () => {
     try {
@@ -69,6 +69,28 @@ const { Bot, Message } = require('./src/Mirai-js');
             });
         });
 
+
+        // 使用中间件
+        bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).filtText().done(({
+            // 第一个中间件，分类过的 messageChain
+            classified,
+            // 第二个中间件，文本部分
+            text,
+
+            messageChain,
+            sender: {
+                id: fromQQ,
+                nickname: fromQQNickName,
+                remark
+            }
+        }) => {
+            console.log({ fromQQ, fromQQNickName, remark, messageChain, classified, text });
+
+            bot.sendMessage({
+                friend: fromQQ,
+                message: new Message().addText(text),
+            });
+        }));
     } catch (err) {
         const { msg, code } = err;
         console.log({ msg, code })

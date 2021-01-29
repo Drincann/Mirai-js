@@ -10,6 +10,7 @@ const errorHandler = require('./util/errorHandler');
  * @param {string} sessionKey       会话标识
  * @param {number} cacheSize        插件缓存大小
  * @param {boolean} enableWebsocket websocket 状态
+ * @returns {void}
  */
 module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => {
     try {
@@ -17,14 +18,13 @@ module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => 
         const url = new URL('/config', baseUrl).toString();
 
         // 请求
-        let { data: { msg, code } } = await axios.post(url, { sessionKey, cacheSize, enableWebsocket });
+        let { data: { msg: message, code } } = await axios.post(url, { sessionKey, cacheSize, enableWebsocket });
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message: msg };
+            throw { code, message };
         }
     } catch (error) {
         errorHandler(error);
     }
-
 }

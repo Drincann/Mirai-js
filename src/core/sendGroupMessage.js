@@ -4,13 +4,13 @@ const { URL } = require('url');
 const errorHandler = require('./util/errorHandler');
 
 /**
- * 
  * @description 向 qq 群发送消息
  * @param {string}             baseUrl      mirai-api-http server 的地址
  * @param {string}             sessionKey   会话标识
  * @param {number}             target       目标群号
  * @param {number}             quote        消息引用，使用发送时返回的 messageId
  * @param {array[messageType]} messageChain 消息链，MessageType 数组
+ * @returns {Object} 结构 { message, code, messageId }
  */
 module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) => {
     try {
@@ -18,15 +18,15 @@ module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) =>
         const url = new URL('/sendGroupMessage', baseUrl).toString();
 
         // 请求
-        let { data: { msg, code, messageId } } = await axios.post(url, {
+        let { data: { msg: message, code, messageId } } = await axios.post(url, {
             sessionKey, target, quote, messageChain
         });
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message: msg };
+            throw { code, message };
         }
-        return { msg, code, messageId };
+        return { message, code, messageId };
     } catch (error) {
         errorHandler(error);
     }
