@@ -1,12 +1,35 @@
 /**
  * @description 为事件处理器提供中间件
- * 每个方法都是一个中间件，链式调用，最后调用 done 并传入
- * 回调函数将生成一个带有中间件的事件处理器
- * 你的回调函数将在所有链式调用过的中间件结束后被调用
+ * @use 在 MiddleWare 的实例上链式调用需要的中间件方法，最后
+ * 调用 done 并传入一个回调函数，该函数将在中间件结束后被调用
+ * 
+ * 每个方法将向 this.middleWares 中 push 一个中间件，最后对 done 的
+ * 调用将返回一个函数，该函数用于遍历所有中间件，然后调用开发者的回调函数
  */
 class MiddleWare {
     constructor() {
         this.middleWares = [];
+    }
+
+    /**
+     * @description 自动重新登陆
+     * @param {Bot}    bot      欲重新登陆的 Bot 实例
+     * @param {string} baseUrl  mirai-api-http server 的地址
+     * @param {string} authKey  mirai-api-http server 设置的 authKey
+     * @param {string} password 欲重新登陆的 qq 密码
+     */
+    autoReLogin({ bot, baseUrl, authKey, password }) {
+        const { Bot } = require('./Mirai-js');
+        this.middleWares.push(async (data) => {
+            await Bot.sendCommand({
+                baseUrl,
+                authKey,
+                command: '/login',
+                args: [data.qq, password],
+            });
+            await bot.open();
+        });
+        return this;
     }
 
     /**
@@ -35,7 +58,10 @@ class MiddleWare {
         this.middleWares.push(data => {
 
             return {
-                result: data.messageChain.filter((val) => val.type == 'Plain').map((val) => val.text).join(''),
+                result: data.messageChain
+                    .filter((val) => val.type == 'Plain')
+                    .map((val) => val.text)
+                    .join(''),
                 fieldName: 'text',
             }
         });
@@ -47,12 +73,21 @@ class MiddleWare {
      * @param {function} callback 事件处理器
      */
     done(callback) {
+        // 返回一个函数，该函数用于遍历所有中间件，然后调用开发者的回调函数
         return async data => {
-            this.middleWares.forEach((middleWare) => {
-                const { result, fieldName } = middleWare(data);
-                data[fieldName] = result;
-            });
-            callback(data);
+            // 这里本来使用的是 forEach，但是 forEach 内部实现并不是同步的
+            for (const middleWare of this.middleWares) {
+                // 不直接解构的原因是，有些中间件无返回值
+                const re = await middleWare(data);
+                if (re) {
+                    const { result, fieldName } = re;
+                    data[fieldName] = result;
+                }
+            }
+
+            if (callback instanceof Function) {
+                callback(data);
+            }
         }
     }
 }

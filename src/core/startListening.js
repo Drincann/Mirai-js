@@ -18,14 +18,23 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
     url.protocol = 'ws';
     url = url.toString();
 
-    // 监听
-    const ws = new WebSocket(url);
-    ws.on('open', () => {
 
-    });
+    const ws = new WebSocket(url);
+
+    // 60s 发个心跳
+    const interval = setInterval(() => {
+        ws.ping((err) => {
+            if (err) {
+                console.log(`ws ping error\n${err}`);
+            }
+        });
+    }, 60000);
+
+    // 监听
     ws.on('message', data => {
         message(JSON.parse(data));
     });
+
     ws.on('error', (err) => {
         /* 
         interface Error {
@@ -36,11 +45,16 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
         */
         error(err);
     })
+
     ws.on('close', (code, reason) => {
+        // 关闭心跳
+        clearInterval(interval);
         close(code, reason);
-    })
+    });
+
     ws.on('unexpectedResponse', (req, res) => {
         unexpectedResponse(req, res);
-    })
+    });
+
     return ws;
 };

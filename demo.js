@@ -2,26 +2,30 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
 
 (async () => {
     try {
-        const bot = new Bot()
+        const baseUrl = 'http://example:8080';
+        const authKey = 'authKey';
+        const qq = 1019933576;
+        const password = 'password';
+        const bot = new Bot();
 
         // 在 mirai - console 登录一个账号
         await Bot.sendCommand({
-            baseUrl: 'http://example:8080',
-            authKey: 'authKey',
+            baseUrl,
+            authKey,
             // 指令名
             command: '/login',
             // 指令参数列表，这条指令等价于 /login 1019933576 password
-            args: ['1019933576', 'password'],
+            args: [qq, password],
         });
 
         // 创建一个会话
         await bot.open({
             // mirai-api-http 的服务端地址，
-            baseUrl: 'http://example:8080',
+            baseUrl,
             // 要绑定的 qq，须确保该用户已在 mirai-console 登录
-            qq: 1019933576,
+            qq,
             // authKey 用于验证连接者的身份，在插件配置文件中设置
-            authKey: 'authKey',
+            authKey,
         });
 
 
@@ -71,6 +75,7 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
 
 
         // 使用中间件
+        // 过滤分类 message
         bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).filtText().done(({
             // 第一个中间件，分类过的 messageChain
             classified,
@@ -91,6 +96,13 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
                 message: new Message().addText(text),
             });
         }));
+
+        // 自动重新登陆
+        bot.on('BotOfflineEventForce',
+            new MiddleWare()
+                .autoReLogin({ bot, baseUrl, authKey, password })
+                .done()
+        );
     } catch (err) {
         const { msg, code } = err;
         console.log({ msg, code })

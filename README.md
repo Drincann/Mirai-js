@@ -220,7 +220,17 @@ bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).filtText().d
 
 重新登陆后再次调用`open`方法可以避免这个问题。
 
-例子如下：
+或者在需要重新登陆的时间下使用`autoReLogin`中间件，将会在掉线后自动登陆，例子：
+
+```js
+bot.on('BotOfflineEventForce',
+    new MiddleWare()
+       .autoReLogin({ bot, baseUrl, authKey, password })
+       .done()
+);
+```
+
+原理如下：
 
 ```js
 bot.on('BotOfflineEventForce', async data => {
