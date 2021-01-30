@@ -21,40 +21,42 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
 
     const ws = new WebSocket(url);
 
-    // 60s 发个心跳
-    const interval = setInterval(() => {
-        ws.ping((err) => {
-            if (err) {
-                console.log(`ws ping error\n${err}`);
-            }
+    // 监听 ws 事件，分发消息
+    ws.on('open', () => {
+        // 60s 发个心跳
+        const interval = setInterval(() => {
+            ws.ping((err) => {
+                if (err) {
+                    console.log(`ws ping error\n${err}`);
+                }
+            });
+        }, 60000);
+
+        ws.on('message', data => {
+            message(JSON.parse(data));
         });
-    }, 60000);
 
+        ws.on('error', (err) => {
+            /* 
+            interface Error {
+                name: string;
+                message: string;
+                stack?: string;
+            } 
+            */
+            error(err);
+        })
+
+        ws.on('close', (code, reason) => {
+            // 关闭心跳
+            clearInterval(interval);
+            close(code, reason);
+        });
+
+        ws.on('unexpectedResponse', (req, res) => {
+            unexpectedResponse(req, res);
+        });
+    });
     // 监听
-    ws.on('message', data => {
-        message(JSON.parse(data));
-    });
-
-    ws.on('error', (err) => {
-        /* 
-        interface Error {
-            name: string;
-            message: string;
-            stack?: string;
-        } 
-        */
-        error(err);
-    })
-
-    ws.on('close', (code, reason) => {
-        // 关闭心跳
-        clearInterval(interval);
-        close(code, reason);
-    });
-
-    ws.on('unexpectedResponse', (req, res) => {
-        unexpectedResponse(req, res);
-    });
-
     return ws;
 };
