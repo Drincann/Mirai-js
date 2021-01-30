@@ -4,10 +4,14 @@ const auth = require('./core/auth');
 const sendCommand = require('./core/sendCommand');
 const sendFriendMessage = require('./core/sendFirendMessage');
 const sendGroupMessage = require('./core/sendGroupMessage');
+const sendTempMessage = require('./core/sendTempMessage');
 const getConfig = require('./core/getConfig');
 const setConfig = require('./core/setConfig');
+const uploadImage = require('./core/uploadImage');
+const uploadVoice = require('./core/uploadVoice')
 const startListening = require('./core/startListening');
 const random = require('./core/util/random')(0, 2E16);
+const fs = require('fs');
 
 class Bot {
     /**
@@ -158,21 +162,17 @@ class Bot {
     }
 
     /**
-     * todo 实现临时对话
-     * @description 向 qq 好友、qq 群（若都提供则同时）发送消息
+     * @description 向 qq 好友 或 qq 群发送消息，若同时提供，则优先向好友发送消息
      * @param {boolean}            temp         是否是临时会话
      * @param {number}             friend       好友 qq 号
      * @param {number}             group        群号
      * @param {number}             quote        消息引用，使用发送时返回的 messageId
      * @param {array[MessageType]} messageChain 消息链，MessageType 数组
-     * @returns {void} 
+     * @returns {number} messageId
      */
-    async sendMessage({ temp, friend, group, quote, message, messageChain }) {
+    async sendMessage({ temp = false, friend, group, quote, message, messageChain }) {
         // 必要参数
         const { baseUrl, sessionKey } = this.config;
-
-        // 默认值
-        temp = temp || false;
 
         // 处理 message
         if (!messageChain) {
@@ -181,28 +181,22 @@ class Bot {
 
         // 根据 temp、friend、group 参数的情况依次调用
         if (temp) {
-            if (friend) {
-                return await sendFriendMessage({
-                    baseUrl, sessionKey, target: friend, quote, messageChain
-                });
-            }
-
-            if (group) {
-                return await sendGroupMessage({
-                    baseUrl, sessionKey, target: group, quote, messageChain
-                });
-            }
+            // 临时会话的接口，好友和群是在一起的，在内部做了参数判断并抛出异常
+            // 而正常的好友和群的发送消息接口是分开的，所以在外面做了参数判断并抛出异常，格式相同
+            return await sendTempMessage({
+                baseUrl, sessionKey, qq: friend, group, quote, messageChain
+            });
         } else {
             if (friend) {
                 return await sendFriendMessage({
                     baseUrl, sessionKey, target: friend, quote, messageChain
                 });
-            }
-
-            if (group) {
+            } else if (group) {
                 return await sendGroupMessage({
                     baseUrl, sessionKey, target: group, quote, messageChain
                 });
+            } else {
+                throw { message: 'sendTempMessage 未提供 qq 及 group 参数' };
             }
         }
     }
@@ -279,6 +273,64 @@ class Bot {
     async setConfig({ cacheSize, enableWebsocket }) {
         const { baseUrl, sessionKey } = this.config;
         await setConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
+    }
+
+    /**
+     * @description 撤回由 messageId 确定的消息
+     * @param {number} messageId 欲撤回消息的 messageId
+     * @returns {void}
+     */
+    async recall({ messageId }) {
+        // todo
+    }
+
+    /**
+     * FIXME: type 指定为 'friend' 或 'temp' 时发送的图片显示红色感叹号，无法加载，group 则正常
+     * @description 上传图片至服务器，返回指定 type 的 imageId，url，及 path
+     * @param {string} type     "friend" 或 "group" 或 "temp"，三种类型返回的 messageId 并不相同
+     * @param {Buffer} img      二选一，图片二进制数据
+     * @param {string} filename 二选一，图片文件路径
+     * @returns {Object} 结构 { imageId, url, path } 
+     */
+    async uploadImage({ type = 'group', img, filename }) {
+        // 检查参数
+        if (!img && !filename) {
+            throw new Error('uploadImage 缺少必要的 img 或 filename 参数');
+        }
+
+        // 若传入 filename 则统一转换为 Buffer
+        if (filename) {
+            // 优先使用 img 的原值
+            img = img || fs.readFileSync(filename);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        return await uploadImage({ baseUrl, sessionKey, type, img });
+    }
+
+    /**
+     * FIXME: 目前该功能返回的 voiceId 无法正常使用，无法
+     * 发送给好友，提示 message is empty，发到群里则是 1s 的无声语音
+     * @description 上传语音至服务器，返回 voiceId, url 及 path
+     * @param {string} type     TODO: 目前仅支持 "group"，请忽略该参数
+     * @param {Buffer} voice    二选一，语音二进制数据
+     * @param {string} filename 二选一，语音文件路径
+     * @returns {Object} 结构 { voiceId, url, path } 
+     */
+    async uploadVoice({ type = 'group', voice, filename }) {
+        // 检查参数
+        if (!voice && !filename) {
+            throw new Error('uploadVoice 缺少必要的 voice 或 filename 参数');
+        }
+
+        // 若传入 filename 则统一转换为 Buffer
+        if (filename) {
+            // 优先使用 img 的原值
+            voice = voice || fs.readFileSync(filename);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        return await uploadVoice({ baseUrl, sessionKey, type, voice });
     }
 
     /**

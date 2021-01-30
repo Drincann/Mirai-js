@@ -104,7 +104,6 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
                 .done()
         );
     } catch (err) {
-        const { msg, code } = err;
-        console.log({ msg, code })
+        console.log(err)
     }
 })();

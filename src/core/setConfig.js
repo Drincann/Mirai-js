@@ -6,9 +6,9 @@ const errorHandler = require('./util/errorHandler');
 
 /**
  * @description 设置指定 session 的 config
- * @param {string} baseUrl          mirai-api-http server 的地址
- * @param {string} sessionKey       会话标识
- * @param {number} cacheSize        插件缓存大小
+ * @param {string}  baseUrl         mirai-api-http server 的地址
+ * @param {string}  sessionKey      会话标识
+ * @param {number}  cacheSize       插件缓存大小
  * @param {boolean} enableWebsocket websocket 状态
  * @returns {void}
  */
@@ -22,7 +22,7 @@ module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => 
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message };
+            throw new Error(message);
         }
     } catch (error) {
         errorHandler(error);

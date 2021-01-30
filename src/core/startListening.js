@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const { URL } = require('url');
+const errorHandler = require('./util/errorHandler');
 
 /**
  * @description 开始侦听事件
@@ -12,51 +13,55 @@ const { URL } = require('url');
  * @returns {WebSocket} 建立连接的 WebSocket 实例
  */
 module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpectedResponse }) => {
-    // 拼接 url
-    let url = new URL(`/all?sessionKey=${sessionKey}`, baseUrl);
-    // 更改协议为 ws
-    url.protocol = 'ws';
-    url = url.toString();
+    try {
+        // 拼接 url
+        let url = new URL(`/all?sessionKey=${sessionKey}`, baseUrl);
+        // 更改协议为 ws
+        url.protocol = 'ws';
+        url = url.toString();
 
 
-    const ws = new WebSocket(url);
+        const ws = new WebSocket(url);
 
-    // 监听 ws 事件，分发消息
-    ws.on('open', () => {
-        // 60s 发个心跳
-        const interval = setInterval(() => {
-            ws.ping((err) => {
-                if (err) {
-                    console.log(`ws ping error\n${err}`);
-                }
+        // 监听 ws 事件，分发消息
+        ws.on('open', () => {
+            // 60s 发个心跳
+            const interval = setInterval(() => {
+                ws.ping((err) => {
+                    if (err) {
+                        console.log(`ws ping error\n${err}`);
+                    }
+                });
+            }, 60000);
+
+            ws.on('message', data => {
+                message(JSON.parse(data));
             });
-        }, 60000);
 
-        ws.on('message', data => {
-            message(JSON.parse(data));
+            ws.on('error', (err) => {
+                /* 
+                interface Error {
+                    name: string;
+                    message: string;
+                    stack?: string;
+                } 
+                */
+                error(err);
+            })
+
+            ws.on('close', (code, reason) => {
+                // 关闭心跳
+                clearInterval(interval);
+                close(code, reason);
+            });
+
+            ws.on('unexpectedResponse', (req, res) => {
+                unexpectedResponse(req, res);
+            });
         });
-
-        ws.on('error', (err) => {
-            /* 
-            interface Error {
-                name: string;
-                message: string;
-                stack?: string;
-            } 
-            */
-            error(err);
-        })
-
-        ws.on('close', (code, reason) => {
-            // 关闭心跳
-            clearInterval(interval);
-            close(code, reason);
-        });
-
-        ws.on('unexpectedResponse', (req, res) => {
-            unexpectedResponse(req, res);
-        });
-    });
-    // 监听
-    return ws;
+        // 监听
+        return ws;
+    } catch (error) {
+        errorHandler(error);
+    }
 };

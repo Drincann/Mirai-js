@@ -24,11 +24,10 @@ module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) =>
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message };
+            throw new Error(message);
         }
-        return { message, code, messageId };
+        return messageId;
     } catch (error) {
         errorHandler(error);
     }
-
 }

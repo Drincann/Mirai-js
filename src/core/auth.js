@@ -23,7 +23,7 @@ module.exports = async ({ baseUrl, authKey }) => {
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message };
+            throw new Error(message);
         }
         return sessionKey;
     } catch (error) {

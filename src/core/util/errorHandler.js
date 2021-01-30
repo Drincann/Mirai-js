@@ -4,14 +4,14 @@ module.exports = (error) => {
 
     // mirai 异常
     if (code) {
-        throw { code, message };
+        throw new Error(message);
     }
 
     // 有 res，服务端异常，即 status 非 200
     if (response && response.data) {
-        throw { message: response.data };
+        throw new Error(response.data);
     }
 
     // 未知异常
-    throw { message, source: error }
+    throw error;
 }

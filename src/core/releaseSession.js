@@ -1,5 +1,5 @@
 const errCode = require('./util/errCode');
-const axios = require('axios');
+const axios = require('axios').default;
 const { URL } = require('url');
 const errorHandler = require('./util/errorHandler');
 
@@ -22,7 +22,7 @@ module.exports = async ({ baseUrl, sessionKey, qq }) => {
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
-            throw { code, message };
+            throw new Error(message);
         }
         return { message, code };
     } catch (error) {
