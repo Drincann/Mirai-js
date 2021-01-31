@@ -64,6 +64,8 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
         }) => {
             console.log({ fromQQ, fromNickname, fromQQPermission });
             console.log({ fromGroup, groupName, botPermission });
+
+            // 复读机 ;)
             const { id: messageId } = messageChain[0];
 
             bot.sendMessage({
@@ -71,6 +73,19 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
                 quote: messageId,
                 messageChain
             });
+
+            // 你可以像这样来判断群成员的权限
+            switch (fromQQPermission) {
+                case Bot.GroupPermission.OWNER:
+                    // 群主
+                    break;
+                case Bot.GroupPermission.ADMINISTRATOR:
+                    // 管理员
+                    break;
+                case Bot.GroupPermission.MEMBER:
+                    // 普通群成员
+                    break;
+            }
         });
 
 

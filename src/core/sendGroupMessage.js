@@ -1,7 +1,7 @@
-const errCode = require('./util/errCode');
-const axios = require('axios');
+const errCode = require('../util/errCode');
+const axios = require('axios').default;
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 向 qq 群发送消息

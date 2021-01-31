@@ -1,7 +1,7 @@
-const errCode = require('./util/errCode');
-const axios = require('axios');
+const errCode = require('../util/errCode');
+const axios = require('axios').default;
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 向临时对象发送消息
@@ -28,8 +28,8 @@ module.exports = async ({ baseUrl, sessionKey, qq, group, quote, messageChain })
             re = await axios.post(url, {
                 sessionKey, qq, quote, messageChain
             });
-        } else {
-            throw new Error('sendTempMessage 未提供 qq 及 group 参数');
+        } else {// 上层已经做了参数检查，这里有些多余
+            throw new Error('sendTempMessage 缺少必要的 qq 或 group 参数');
         }
         let { data: { msg: message, code, messageId } } = re;
 

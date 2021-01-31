@@ -1,27 +1,40 @@
-const releaseSession = require('./core/releaseSession');
-const verify = require('./core/verify');
-const auth = require('./core/auth');
-const sendCommand = require('./core/sendCommand');
-const sendFriendMessage = require('./core/sendFirendMessage');
-const sendGroupMessage = require('./core/sendGroupMessage');
-const sendTempMessage = require('./core/sendTempMessage');
-const getConfig = require('./core/getConfig');
-const setConfig = require('./core/setConfig');
-const uploadImage = require('./core/uploadImage');
-const uploadVoice = require('./core/uploadVoice')
-const startListening = require('./core/startListening');
-const random = require('./core/util/random')(0, 2E16);
+// 引入核心功能，前缀下划线时为了与方法名区别 (视觉上的区别)
+const _releaseSession = require('./core/releaseSession');
+const _verify = require('./core/verify');
+const _auth = require('./core/auth');
+const _sendCommand = require('./core/sendCommand');
+const _sendFriendMessage = require('./core/sendFirendMessage');
+const _sendGroupMessage = require('./core/sendGroupMessage');
+const _sendTempMessage = require('./core/sendTempMessage');
+const _getConfig = require('./core/getConfig');
+const _setConfig = require('./core/setConfig');
+const _uploadImage = require('./core/uploadImage');
+const _uploadVoice = require('./core/uploadVoice');
+const _getFriendList = require('./core/getFriendList');
+const _getGroupList = require('./core/getGroupList');
+const _recall = require('./core/recall');
+const _startListening = require('./core/startListening');
+const random = require('./util/random')(0, 2E16);
+const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
 
+/**
+ * @field config            包含 baseUrl authKey qq
+ * @field eventProcessorMap 事件处理器 map
+ * @field wsConnection      建立连接的 WebSocket 实例
+ */
 class Bot {
     /**
-     * @description 连接到 mirai-api-http，并开启一个会话
-     * @param {string} baseUrl mirai-api-http server 的地址
-     * @param {string} authKey mirai-api-http server 设置的 authKey
-     * @param {number} qq      欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
+     * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
+     * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接
+     * @param {string} baseUrl 必选，mirai-api-http server 的地址
+     * @param {string} authKey 必选，mirai-api-http server 设置的 authKey
+     * @param {number} qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
      * @returns {void}
      */
     async open(option /* { baseUrl, qq, authKey } */) {
+        // 若 config 存在，则认为该对象已经 open 过
+        // ，此处应该先令对象回到初始状态，然后重建会话
         if (this.config) {
             this.close({ keepProcessor: true, keepConfig: true });
         }
@@ -34,22 +47,6 @@ class Bot {
             authKey: (this.config && this.config.authKey) || option.authKey,
             sessionKey: (this.config && this.config.sessionKey) || '',
         };
-
-        // 检查必选参数
-        if (!(this.config.baseUrl && this.config.qq && this.config.authKey)) {
-            throw new Error({ message: 'open 方法参数格式错误' });
-        }
-        const { baseUrl, qq, authKey } = this.config;
-
-        // 创建会话
-        const sessionKey = this.config.sessionKey = await auth({ baseUrl, authKey });
-
-        // 绑定到一个 qq
-        await verify({ baseUrl, sessionKey, qq });
-
-        // 开启 websocket
-        await setConfig({ baseUrl, sessionKey, enableWebsocket: true });
-
         // 事件处理器 map
         // 如果重复调用 open 则保留事件处理器
         this.eventProcessorMap = this.eventProcessorMap || {
@@ -64,8 +61,27 @@ class Bot {
             */
         };
 
+        // 需要使用的参数
+        const { baseUrl, qq, authKey } = this.config;
+
+        // 检查参数
+        if (!this.config.baseUrl || !this.config.qq || !this.config.authKey) {
+            throw new Error(`open 缺少必要的 ${getInvalidParamsString({
+                baseUrl, qq, authKey,
+            })} 参数`);
+        }
+
+        // 创建会话
+        const sessionKey = this.config.sessionKey = await _auth({ baseUrl, authKey });
+
+        // 绑定到一个 qq
+        await _verify({ baseUrl, sessionKey, qq });
+
+        // 开启 websocket
+        await _setConfig({ baseUrl, sessionKey, enableWebsocket: true });
+
         // 开始监听事件
-        this.wsConnection = await startListening({
+        this.wsConnection = await _startListening({
             baseUrl,
             sessionKey,
             message: data => {
@@ -105,18 +121,25 @@ class Bot {
 
     /**
      * @description 关闭会话
-     * @param {boolean} keepProcessor 是否保留事件处理器，默认值为 false，不保留
-     * @param {boolean} keepConfig    是否保留 session baseUrl qq authKey，默认值为 false，不保留
+     * @param {boolean} keepProcessor 可选，是否保留事件处理器，默认值为 false，不保留
+     * @param {boolean} keepConfig    可选，是否保留 session baseUrl qq authKey，默认值为 false，不保留
      * @returns {void}
      */
     async close(option /* { keepProcessor, keepConfig }} */) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('close 请先调用 open，建立一个会话');
+        }
+
+        // 拿出可选参数
         // option 中仅包含一个可选参数 keepProcessor，为什么不直
         // 接在参数列表中解构 {keepProcessor}？因为，在这种情况下，
-        // 若用户未传入任何参数，则相当于从 undefined 中解构，会抛异常
+        // 若用户未传入任何参数，则相当于从 undefined 中解构
         if (option) {
             var { keepProcessor, keepConfig } = option;
         }
-        // 必要参数
+
+        // 需要使用的参数
         const { baseUrl, sessionKey, qq } = this.config;
 
 
@@ -131,7 +154,7 @@ class Bot {
                 this.wsConnection.close(1000);
 
                 // 释放会话
-                await releaseSession({ baseUrl, sessionKey, qq });
+                await _releaseSession({ baseUrl, sessionKey, qq });
 
                 // 初始化对象状态
                 if (!keepProcessor) {
@@ -147,7 +170,7 @@ class Bot {
             this.wsConnection.close(1000);
 
             // 释放会话
-            await releaseSession({ baseUrl, sessionKey, qq });
+            await _releaseSession({ baseUrl, sessionKey, qq });
 
             // 初始化对象状态
             if (!keepProcessor) {
@@ -163,15 +186,29 @@ class Bot {
 
     /**
      * @description 向 qq 好友 或 qq 群发送消息，若同时提供，则优先向好友发送消息
-     * @param {boolean}            temp         是否是临时会话
-     * @param {number}             friend       好友 qq 号
-     * @param {number}             group        群号
-     * @param {number}             quote        消息引用，使用发送时返回的 messageId
-     * @param {array[MessageType]} messageChain 消息链，MessageType 数组
+     * @param {boolean}            temp         可选，是否是临时会话，默认为 false
+     * @param {number}             friend       二选一，好友 qq 号
+     * @param {number}             group        二选一，群号
+     * @param {number}             quote        可选，消息引用，使用发送时返回的 messageId
+     * @param {Message}            message      二选一，Message 实例
+     * @param {array[MessageType]} messageChain 二选一，消息链，MessageType 数组
      * @returns {number} messageId
      */
     async sendMessage({ temp = false, friend, group, quote, message, messageChain }) {
-        // 必要参数
+        // 检查对象状态
+        if (!this.config) {
+            new Error('sendMessage 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!friend && !group || !message && !messageChain) {
+            throw new Error(`缺少必要的 ${getInvalidParamsString({
+                'friend 或 group': friend || group,
+                'message 或 messageChain': message || messageChain,
+            })} 参数`)
+        }
+
+        // 需要使用的参数
         const { baseUrl, sessionKey } = this.config;
 
         // 处理 message
@@ -183,20 +220,20 @@ class Bot {
         if (temp) {
             // 临时会话的接口，好友和群是在一起的，在内部做了参数判断并抛出异常
             // 而正常的好友和群的发送消息接口是分开的，所以在外面做了参数判断并抛出异常，格式相同
-            return await sendTempMessage({
+            return await _sendTempMessage({
                 baseUrl, sessionKey, qq: friend, group, quote, messageChain
             });
         } else {
             if (friend) {
-                return await sendFriendMessage({
+                return await _sendFriendMessage({
                     baseUrl, sessionKey, target: friend, quote, messageChain
                 });
             } else if (group) {
-                return await sendGroupMessage({
+                return await _sendGroupMessage({
                     baseUrl, sessionKey, target: group, quote, messageChain
                 });
             } else {
-                throw { message: 'sendTempMessage 未提供 qq 及 group 参数' };
+                throw { message: 'sendGroupMessage 缺少必要的 qq 或 group 参数' };
             }
         }
     }
@@ -209,11 +246,22 @@ class Bot {
      * - 'error':               (err: Error) => void
      * - 'close':               (code: number, message: string) => void
      * - 'unexpected-response': (request: http.ClientRequest, response: http.IncomingMessage) => void
-     * @param   {string}   eventType 事件类型
-     * @param   {function} callback  回调函数
+     * @param   {string}   eventType 必选，事件类型
+     * @param   {function} callback  必选，回调函数
      * @returns {number} 事件处理器的标识，用于移除该处理器
      */
     on(eventType, callback) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('on 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!eventType || !callback) {
+            throw new Error(`on 缺少必要的 ${getInvalidParamsString({ eventType, callback })} 参数`);
+
+        }
+
         // 为没有任何事件处理器的事件生成一个空对象 (空对象 {}，而不是 null)
         if (!(eventType in this.eventProcessorMap)) {
             this.eventProcessorMap[eventType] = {};
@@ -237,11 +285,22 @@ class Bot {
 
     /**
      * @description 移除一个事件处理器
-     * @param {string} eventType 事件类型
-     * @param {function} handle  事件处理器标识，由 on 方法返回
+     * @param {string} eventType 必选，事件类型
+     * @param {function} handle  必选，事件处理器标识，由 on 方法返回
      * @returns {void}
      */
     off(eventType, handle) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('off 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!eventType || !handle) {
+            throw new Error(`off 缺少必要的 ${getInvalidParamsString({ eventType, handle })} 参数`);
+        }
+
+        // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
         if (handle in this.eventProcessorMap[eventType]) {
             delete this.eventProcessorMap[eventType][handle];
         }
@@ -252,6 +311,11 @@ class Bot {
      * @returns {void}
      */
     offAll() {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('offAll 请先调用 open，建立一个会话');
+        }
+
         this.eventProcessorMap = {};
     }
 
@@ -260,19 +324,29 @@ class Bot {
      * @returns {Object} 结构 { cacheSize, enableWebsocket }
      */
     async getConfig() {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('getConfig 请先调用 open，建立一个会话');
+        }
+
         const { baseUrl, sessionKey } = this.config;
-        return await getConfig({ baseUrl, sessionKey });
+        return await _getConfig({ baseUrl, sessionKey });
     }
 
     /**
      * @description 设置 config
-     * @param   {number} cacheSize        插件缓存大小
-     * @param   {boolean} enableWebsocket websocket 状态
-     * @returns void
+     * @param   {number} cacheSize        可选，插件缓存大小
+     * @param   {boolean} enableWebsocket 可选，websocket 状态
+     * @returns {void}
      */
     async setConfig({ cacheSize, enableWebsocket }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('setConfig 请先调用 open，建立一个会话');
+        }
+
         const { baseUrl, sessionKey } = this.config;
-        await setConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
+        await _setConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
     }
 
     /**
@@ -281,18 +355,35 @@ class Bot {
      * @returns {void}
      */
     async recall({ messageId }) {
-        // todo
+        // 检查对象状态
+        if (!this.config) {
+            new Error('recall 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!messageId) {
+            throw new Error('recall 缺少必要的 messageId 参数');
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 撤回消息
+        await _recall({ baseUrl, sessionKey, target: messageId });
     }
 
     /**
      * FIXME: type 指定为 'friend' 或 'temp' 时发送的图片显示红色感叹号，无法加载，group 则正常
      * @description 上传图片至服务器，返回指定 type 的 imageId，url，及 path
-     * @param {string} type     "friend" 或 "group" 或 "temp"，三种类型返回的 messageId 并不相同
+     * @param {string} type     可选，"friend" 或 "group" 或 "temp"，默认为 "group"
      * @param {Buffer} img      二选一，图片二进制数据
      * @param {string} filename 二选一，图片文件路径
      * @returns {Object} 结构 { imageId, url, path } 
      */
     async uploadImage({ type = 'group', img, filename }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('uploadImage 请先调用 open，建立一个会话');
+        }
+
         // 检查参数
         if (!img && !filename) {
             throw new Error('uploadImage 缺少必要的 img 或 filename 参数');
@@ -305,7 +396,7 @@ class Bot {
         }
 
         const { baseUrl, sessionKey } = this.config;
-        return await uploadImage({ baseUrl, sessionKey, type, img });
+        return await _uploadImage({ baseUrl, sessionKey, type, img });
     }
 
     /**
@@ -318,6 +409,11 @@ class Bot {
      * @returns {Object} 结构 { voiceId, url, path } 
      */
     async uploadVoice({ type = 'group', voice, filename }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('uploadVoice 请先调用 open，建立一个会话');
+        }
+
         // 检查参数
         if (!voice && !filename) {
             throw new Error('uploadVoice 缺少必要的 voice 或 filename 参数');
@@ -330,24 +426,75 @@ class Bot {
         }
 
         const { baseUrl, sessionKey } = this.config;
-        return await uploadVoice({ baseUrl, sessionKey, type, voice });
+        return await _uploadVoice({ baseUrl, sessionKey, type, voice });
+    }
+
+    /**
+     * @description 获取好友列表
+     * @returns {array[Object]} 结构 array[...{ id, name, remark }]
+     */
+    async getFriendList() {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('getFriendList 请先调用 open，建立一个会话');
+        }
+
+        // 必要参数
+        const { baseUrl, sessionKey } = this.config;
+
+        // 获取列表
+        const friendList = await _getFriendList({ baseUrl, sessionKey });
+
+        // 这里希望群列表和好友列表应该具有相同的属性名
+        friendList.map((value) => {
+            value.name = value.nickname;
+            delete value.nickname;
+        });
+        return friendList;
+    }
+
+    /**
+     * @description 获取群列表
+     * @returns {array[Object]} 结构 array[...{ id, name, permission }]
+     */
+    async getGroupList() {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('getGroupList 请先调用 open，建立一个会话');
+        }
+
+        // 必要参数
+        const { baseUrl, sessionKey } = this.config;
+        return await _getGroupList({ baseUrl, sessionKey });
     }
 
     /**
      * @description 向 mirai-console 发送指令
-     * @param   {string}        baseUrl mirai-api-http server 的地址
-     * @param   {string}        authKey mirai-api-http server 设置的 authKey
-     * @param   {string}        commend 指令名
-     * @param   {array[string]} args    array[string] 指令的参数
+     * @param {string}        baseUrl 必选，mirai-api-http server 的地址
+     * @param {string}        authKey 必选，mirai-api-http server 设置的 authKey
+     * @param {string}        command 必选，指令名
+     * @param {array[string]} args    可选，array[string] 指令的参数
      * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
      * 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 
      * 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'
      */
     static async sendCommand({ baseUrl, authKey, command, args }) {
-        return await sendCommand({ baseUrl, authKey, command, args });
+        // 检查参数
+        if (!baseUrl || !authKey || !command) {
+            throw new Error(`sendCommand 缺少必要的 ${getInvalidParamsString({ baseUrl, authKey, command })} 参数`);
+        }
+
+        return await _sendCommand({ baseUrl, authKey, command, args });
     }
 
 
 }
+
+// 静态属性: Bot 在群里的权限
+Bot.GroupPermission = {
+    OWNER: 'OWNER',
+    ADMINISTRATOR: 'ADMINISTRATOR',
+    MEMBER: 'MEMBER',
+};
 
 module.exports = Bot;

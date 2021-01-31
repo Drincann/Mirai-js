@@ -155,6 +155,19 @@ bot.on('GroupMessage', async ({
         quote: messageId,
         messageChain
     });
+
+    // 你可以像这样来判断群成员的权限
+    switch (fromQQPermission) {
+        case Bot.GroupPermission.OWNER:
+            // 群主
+            break;
+        case Bot.GroupPermission.ADMINISTRATOR:
+            // 管理员
+            break;
+        case Bot.GroupPermission.MEMBER:
+            // 普通群成员
+            break;
+    }
 });
 ```
 

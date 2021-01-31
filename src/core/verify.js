@@ -1,7 +1,7 @@
-const errCode = require('./util/errCode');
+const errCode = require('../util/errCode');
 const axios = require('axios');
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 校验 sessionKey，将一个 session 绑定到指定的 qq 上

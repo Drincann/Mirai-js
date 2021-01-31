@@ -1,7 +1,7 @@
-const errCode = require('./util/errCode');
+const errCode = require('../util/errCode');
 const axios = require('axios');
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 获取指定 session 的 config

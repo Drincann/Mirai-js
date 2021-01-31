@@ -1,6 +1,6 @@
-const axios = require('axios');
+const axios = require('axios').default;
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 向 mirai-console 发送指令

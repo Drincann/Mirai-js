@@ -1,7 +1,7 @@
-const errCode = require('./util/errCode');
+const errCode = require('../util/errCode');
 const axios = require('axios').default;
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 撤回由 messageId 确定的消息

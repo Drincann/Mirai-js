@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const { URL } = require('url');
-const errorHandler = require('./util/errorHandler');
+const errorHandler = require('../util/errorHandler');
 
 /**
  * @description 开始侦听事件
@@ -19,7 +19,6 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
         // 更改协议为 ws
         url.protocol = 'ws';
         url = url.toString();
-
 
         const ws = new WebSocket(url);
 
