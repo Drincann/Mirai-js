@@ -245,13 +245,6 @@ bot.on('BotOfflineEventForce', async data => {
         
         // 重建会话
         await bot.open();
-        
-        // 正常操作
-        await bot.sendMessage({
-            friend: 1019933576,
-            // quote: messageId,
-            message: new Message().addText('hello world!'),
-        });
     } catch (error) {
         console.log(error);
     }
