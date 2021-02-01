@@ -17,6 +17,7 @@ const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _muteAll = require('./core/muteAll');
 const _unmute = require('./core/unmute');
+const _unmuteAll = require('./core/unmuteAll');
 const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
 const _startListening = require('./core/startListening');
@@ -565,6 +566,27 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
         // 禁言
         await _unmute({ baseUrl, sessionKey, target: group, memberId: qq });
+    }
+
+    /**
+     * @description 解除全员禁言
+     * @param {number} group 必选，欲解除全员禁言的群号
+     * @returns {void}
+     */
+    async unmuteAll({ group }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('unmute 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error(`unmute 缺少必要的 group 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 禁言
+        await _unmuteAll({ baseUrl, sessionKey, target: group });
     }
 
     /**
