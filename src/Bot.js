@@ -16,6 +16,7 @@ const _getMemberList = require('./core/getMemberList');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _unmute = require('./core/unmute');
+const _removeMember = require('./core/removeMember');
 const _startListening = require('./core/startListening');
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
@@ -544,6 +545,29 @@ class Bot {
     }
 
     /**
+     * @description 移除群成员
+     * @param {number} group   必选，欲移除的成员所在群号
+     * @param {number} qq      必选，欲移除的成员 qq 号
+     * @param {number} message 可选，默认为空串 ""，信息
+     * @returns {void}
+     */
+    async removeMember({ group, qq, message = "" }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('removeMember 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !qq) {
+            throw new Error(`removeMember 缺少必要的 ${getInvalidParamsString({ group, qq })} 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 禁言
+        await _removeMember({ baseUrl, sessionKey, target: group, memberId: qq, msg: message });
+    }
+
+    /**
      * @description 向 mirai-console 发送指令
      * @param {string}        baseUrl 必选，mirai-api-http server 的地址
      * @param {string}        authKey 必选，mirai-api-http server 设置的 authKey
@@ -565,7 +589,7 @@ class Bot {
 
 }
 
-// 静态属性: Bot 在群里的权限
+// 静态属性: 群成员的权限
 Bot.GroupPermission = {
     OWNER: 'OWNER',
     ADMINISTRATOR: 'ADMINISTRATOR',
