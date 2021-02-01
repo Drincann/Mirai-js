@@ -508,7 +508,7 @@ class Bot {
      * @description 获取群成员信息
      * @param {number} group 必选，群成员所在群号
      * @param {number} qq    必选，群成员的 qq 号
-     * @returns {array[Object]} 结构 { name, specialTitle } 群名片和群头衔
+     * @returns {array[Object]} 结构 { name, title } 群名片和群头衔
      */
     async getMemberInfo({ group, qq }) {
         // 检查对象状态
@@ -525,9 +525,15 @@ class Bot {
 
         // 获取列表
         const { baseUrl, sessionKey } = this.config;
-        return await _getMemberInfo({
+        const memberInfo = await _getMemberInfo({
             baseUrl, sessionKey, target: group, memberId: qq
         });
+
+        // 将 specialTitle 改为 title，在 setMemberInfo 也保持一致
+        memberInfo.title = memberInfo.specialTitle;
+        delete memberInfo.specialTitle;
+
+        return memberInfo;
     }
 
     /**
