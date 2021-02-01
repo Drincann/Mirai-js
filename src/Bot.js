@@ -14,6 +14,7 @@ const _getFriendList = require('./core/getFriendList');
 const _getGroupList = require('./core/getGroupList');
 const _getMemberList = require('./core/getMemberList');
 const _getMemberInfo = require('./core/getMemberInfo');
+const _setMemberInfo = require('./core/setMemberInfo');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _muteAll = require('./core/muteAll');
@@ -526,6 +527,35 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
         return await _getMemberInfo({
             baseUrl, sessionKey, target: group, memberId: qq
+        });
+    }
+
+    /**
+     * @description 设置群成员信息
+     * @param {number} group 必选，群成员所在群号
+     * @param {number} qq    必选，群成员的 qq 号
+     * @param {string} name  可选，要设置的群名片
+     * @param {string} title 可选，要设置的群头衔
+     * @returns {array[Object]} 结构 { name, title } 群名片和群头衔
+     */
+    async setMemberInfo({ group, qq, name, title }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('setMemberInfo 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !qq) {
+            throw new Error(`setMemberInfo 缺少必要的 ${getInvalidParamsString({
+                group, qq
+            })} 参数`);
+        }
+
+        // 获取列表
+        const { baseUrl, sessionKey } = this.config;
+        return await _setMemberInfo({
+            baseUrl, sessionKey, target: group, memberId: qq,
+            name, specialTitle: title,
         });
     }
 
