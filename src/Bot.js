@@ -294,7 +294,7 @@ class Bot {
     /**
      * @description 移除一个事件处理器
      * @param {string} eventType 必选，事件类型
-     * @param {function} handle  必选，事件处理器标识，由 on 方法返回
+     * @param {number} handle    必选，事件处理器标识，由 on 方法返回
      * @returns {void}
      */
     off(eventType, handle) {
@@ -343,7 +343,7 @@ class Bot {
 
     /**
      * @description 设置 config
-     * @param   {number} cacheSize        可选，插件缓存大小
+     * @param   {number}  cacheSize       可选，插件缓存大小
      * @param   {boolean} enableWebsocket 可选，websocket 状态
      * @returns {void}
      */
@@ -476,7 +476,7 @@ class Bot {
 
     /**
      * @description 获取指定群的成员列表
-     * @param {string} group 欲获取成员列表的群号
+     * @param {number} group 必选，欲获取成员列表的群号
      * @returns {array[Object]} 结构 array[...{ id, name, permission }]
      */
     async getMemberList({ group }) {
@@ -505,8 +505,8 @@ class Bot {
 
     /**
      * @description 获取群成员信息
-     * @param {string} group 群成员所在群号
-     * @param {string} qq    群成员的 qq 号
+     * @param {number} group 必选，群成员所在群号
+     * @param {number} qq    必选，群成员的 qq 号
      * @returns {array[Object]} 结构 { name, specialTitle } 群名片和群头衔
      */
     async getMemberInfo({ group, qq }) {
@@ -533,7 +533,7 @@ class Bot {
      * @description 禁言群成员
      * @param {number} group 必选，欲禁言成员所在群号
      * @param {number} qq    必选，欲禁言成员 qq 号
-     * @param {number} time  禁言时长，单位: s (秒)
+     * @param {number} time  必选，禁言时长，单位: s (秒)
      * @returns {void}
      */
     async mute({ group, qq, time }) {
@@ -620,7 +620,7 @@ class Bot {
      * @description 移除群成员
      * @param {number} group   必选，欲移除的成员所在群号
      * @param {number} qq      必选，欲移除的成员 qq 号
-     * @param {number} message 可选，默认为空串 ""，信息
+     * @param {string} message 可选，默认为空串 ""，信息
      * @returns {void}
      */
     async removeMember({ group, qq, message = "" }) {

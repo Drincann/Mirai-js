@@ -7,7 +7,7 @@ const errorHandler = require('../util/errorHandler');
  * @description 退出群聊
  * @param {string} baseUrl    mirai-api-http server 的地址
  * @param {string} sessionKey 会话标识
- * @param {number} target     欲推出的群号
+ * @param {number} target     欲退出的群号
  * @returns {Object} 结构 { message, code }
  */
 module.exports = async ({ baseUrl, sessionKey, target }) => {

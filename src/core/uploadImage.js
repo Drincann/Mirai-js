@@ -10,7 +10,7 @@ const FormData = require('form-data');
  * @param {string}  baseUrl          mirai-api-http server 的地址
  * @param {string}  sessionKey       会话标识
  * @param {string}  type             "friend" 或 "group" 或 "temp"
- * @param {boolean} img              图片二进制数据
+ * @param {Buffer}  img              图片二进制数据
  * @returns {Object} 结构 { imageId, url, path } 
  */
 module.exports = async ({ baseUrl, sessionKey, type, img }) => {

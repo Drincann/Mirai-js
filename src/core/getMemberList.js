@@ -7,7 +7,7 @@ const errorHandler = require('../util/errorHandler');
  * @description 获取指定群的成员列表
  * @param {string} baseUrl    mirai-api-http server 的地址
  * @param {string} sessionKey 会话标识
- * @param {string} target     欲获取成员列表的群号
+ * @param {number} target     欲获取成员列表的群号
  * @returns {array[Object]} 
  * 结构 array[{
  * 
