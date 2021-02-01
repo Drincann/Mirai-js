@@ -13,6 +13,7 @@ const _uploadVoice = require('./core/uploadVoice');
 const _getFriendList = require('./core/getFriendList');
 const _getGroupList = require('./core/getGroupList');
 const _getMemberList = require('./core/getMemberList');
+const _getMemberInfo = require('./core/getMemberInfo');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _muteAll = require('./core/muteAll');
@@ -500,6 +501,32 @@ class Bot {
             delete value.memberName;
         });
         return memberList;
+    }
+
+    /**
+     * @description 获取群成员信息
+     * @param {string} group 群成员所在群号
+     * @param {string} qq    群成员的 qq 号
+     * @returns {array[Object]} 结构 { name, specialTitle } 群名片和群头衔
+     */
+    async getMemberInfo({ group, qq }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('getMemberInfo 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !qq) {
+            throw new Error(`getMemberInfo 缺少必要的 ${getInvalidParamsString({
+                group, qq
+            })} 参数`);
+        }
+
+        // 获取列表
+        const { baseUrl, sessionKey } = this.config;
+        return await _getMemberInfo({
+            baseUrl, sessionKey, target: group, memberId: qq
+        });
     }
 
     /**
