@@ -17,6 +17,7 @@ const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _unmute = require('./core/unmute');
 const _removeMember = require('./core/removeMember');
+const _quitGroup = require('./core/quitGroup');
 const _startListening = require('./core/startListening');
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
@@ -565,6 +566,27 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
         // 禁言
         await _removeMember({ baseUrl, sessionKey, target: group, memberId: qq, msg: message });
+    }
+
+    /**
+     * @description 移除群成员
+     * @param {number} group   必选，欲移除的成员所在群号
+     * @returns {void}
+     */
+    async quitGroup({ group }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('quitGroup 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error(`quitGroup 缺少必要的 group 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 禁言
+        await _quitGroup({ baseUrl, sessionKey, target: group });
     }
 
     /**
