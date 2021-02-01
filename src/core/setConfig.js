@@ -10,7 +10,7 @@ const errorHandler = require('../util/errorHandler');
  * @param {string}  sessionKey      会话标识
  * @param {number}  cacheSize       插件缓存大小
  * @param {boolean} enableWebsocket websocket 状态
- * @returns {void}
+ * @returns {Object} 结构 { message, code }
  */
 module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => {
     try {
@@ -24,6 +24,7 @@ module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => 
         if (code in errCode) {
             throw new Error(message);
         }
+        return { message, code };
     } catch (error) {
         errorHandler(error);
     }
