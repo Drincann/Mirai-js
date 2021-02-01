@@ -12,6 +12,7 @@ const _uploadImage = require('./core/uploadImage');
 const _uploadVoice = require('./core/uploadVoice');
 const _getFriendList = require('./core/getFriendList');
 const _getGroupList = require('./core/getGroupList');
+const _getMemberList = require('./core/getMemberList');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _startListening = require('./core/startListening');
@@ -441,13 +442,12 @@ class Bot {
             new Error('getFriendList 请先调用 open，建立一个会话');
         }
 
-        // 必要参数
         const { baseUrl, sessionKey } = this.config;
 
         // 获取列表
         const friendList = await _getFriendList({ baseUrl, sessionKey });
 
-        // 这里希望群列表和好友列表应该具有相同的属性名
+        // 这里希望所有列表应该具有相同的属性名
         friendList.map((value) => {
             value.name = value.nickname;
             delete value.nickname;
@@ -465,9 +465,37 @@ class Bot {
             new Error('getGroupList 请先调用 open，建立一个会话');
         }
 
-        // 必要参数
         const { baseUrl, sessionKey } = this.config;
         return await _getGroupList({ baseUrl, sessionKey });
+    }
+
+    /**
+     * @description 获取指定群的成员列表
+     * @param {string} group 欲获取成员列表的群号
+     * @returns {array[Object]} 结构 array[...{ id, name, permission }]
+     */
+    async getMemberList({ group }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('getMemberList 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error('getMemberList 缺少必要的 group 参数');
+        }
+
+        // 获取列表
+        const { baseUrl, sessionKey } = this.config;
+        const memberList = await _getMemberList({ baseUrl, sessionKey, target: group });
+
+        // 这里希望所有列表应该具有相同的属性名
+        memberList.map((value) => {
+            value.name = value.memberName;
+            delete value.group;
+            delete value.memberName;
+        });
+        return memberList;
     }
 
     /**
@@ -480,7 +508,7 @@ class Bot {
     async mute({ group, qq, time }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('recall 请先调用 open，建立一个会话');
+            new Error('mute 请先调用 open，建立一个会话');
         }
 
         // 检查参数
