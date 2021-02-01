@@ -10,7 +10,7 @@ const errorHandler = require('../util/errorHandler');
  * @param {number} target     欲全员禁言的群号
  * @returns {Object} 结构 { message, code }
  */
-module.exports = async ({ baseUrl, sessionKey, target, memberId, time }) => {
+module.exports = async ({ baseUrl, sessionKey, target }) => {
     try {
         // 拼接 URL
         const url = new URL('/muteAll', baseUrl).toString();
