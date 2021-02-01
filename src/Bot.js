@@ -15,6 +15,7 @@ const _getGroupList = require('./core/getGroupList');
 const _getMemberList = require('./core/getMemberList');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
+const _muteAll = require('./core/muteAll');
 const _unmute = require('./core/unmute');
 const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
@@ -521,6 +522,27 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
         // 禁言
         await _mute({ baseUrl, sessionKey, target: group, memberId: qq, time });
+    }
+
+    /**
+     * @description 全员禁言
+     * @param {number} group 必选，欲全员禁言的群号
+     * @returns {void}
+     */
+    async muteAll({ group }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('muteAll 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error(`muteAll 缺少必要的 group 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 禁言
+        await _muteAll({ baseUrl, sessionKey, target: group });
     }
 
     /**
