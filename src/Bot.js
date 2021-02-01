@@ -13,10 +13,12 @@ const _uploadVoice = require('./core/uploadVoice');
 const _getFriendList = require('./core/getFriendList');
 const _getGroupList = require('./core/getGroupList');
 const _recall = require('./core/recall');
+const _mute = require('./core/mute');
 const _startListening = require('./core/startListening');
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
+const { throws } = require('assert');
 
 /**
  * @field config            包含 baseUrl authKey qq
@@ -466,6 +468,29 @@ class Bot {
         // 必要参数
         const { baseUrl, sessionKey } = this.config;
         return await _getGroupList({ baseUrl, sessionKey });
+    }
+
+    /**
+     * @description 禁言群成员
+     * @param {number} group 必选，欲禁言成员所在群号
+     * @param {number} qq    必选欲禁言成员 qq 号
+     * @param {number} time  禁言时长，单位: s (秒)
+     * @returns {void}
+     */
+    async mute({ group, qq, time }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('recall 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !qq || !time) {
+            throw new Error(`mute 缺少必要的 ${getInvalidParamsString({ group, qq, time })} 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 禁言
+        await _mute({ baseUrl, sessionKey, target: group, memberId: qq, time });
     }
 
     /**
