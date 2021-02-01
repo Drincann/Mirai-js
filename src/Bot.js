@@ -15,11 +15,11 @@ const _getGroupList = require('./core/getGroupList');
 const _getMemberList = require('./core/getMemberList');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
+const _unmute = require('./core/unmute');
 const _startListening = require('./core/startListening');
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
-const { throws } = require('assert');
 
 /**
  * @field config            包含 baseUrl authKey qq
@@ -501,7 +501,7 @@ class Bot {
     /**
      * @description 禁言群成员
      * @param {number} group 必选，欲禁言成员所在群号
-     * @param {number} qq    必选欲禁言成员 qq 号
+     * @param {number} qq    必选，欲禁言成员 qq 号
      * @param {number} time  禁言时长，单位: s (秒)
      * @returns {void}
      */
@@ -519,6 +519,28 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
         // 禁言
         await _mute({ baseUrl, sessionKey, target: group, memberId: qq, time });
+    }
+
+    /**
+     * @description 解除禁言
+     * @param {number} group 必选，欲解除禁言的成员所在群号
+     * @param {number} qq    必选，欲解除禁言的成员 qq 号
+     * @returns {void}
+     */
+    async unmute({ group, qq }) {
+        // 检查对象状态
+        if (!this.config) {
+            new Error('unmute 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !qq) {
+            throw new Error(`unmute 缺少必要的 ${getInvalidParamsString({ group, qq })} 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        // 禁言
+        await _unmute({ baseUrl, sessionKey, target: group, memberId: qq });
     }
 
     /**
