@@ -135,7 +135,7 @@ class Bot {
     async close(option /* { keepProcessor, keepConfig }} */) {
         // 检查对象状态
         if (!this.config) {
-            new Error('close 请先调用 open，建立一个会话');
+            throw new Error('close 请先调用 open，建立一个会话');
         }
 
         // 拿出可选参数
@@ -204,7 +204,7 @@ class Bot {
     async sendMessage({ temp = false, friend, group, quote, message, messageChain }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('sendMessage 请先调用 open，建立一个会话');
+            throw new Error('sendMessage 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -260,7 +260,7 @@ class Bot {
     on(eventType, callback) {
         // 检查对象状态
         if (!this.config) {
-            new Error('on 请先调用 open，建立一个会话');
+            throw new Error('on 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -299,7 +299,7 @@ class Bot {
     off(eventType, handle) {
         // 检查对象状态
         if (!this.config) {
-            new Error('off 请先调用 open，建立一个会话');
+            throw new Error('off 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -320,7 +320,7 @@ class Bot {
     offAll() {
         // 检查对象状态
         if (!this.config) {
-            new Error('offAll 请先调用 open，建立一个会话');
+            throw new Error('offAll 请先调用 open，建立一个会话');
         }
 
         this.eventProcessorMap = {};
@@ -333,7 +333,7 @@ class Bot {
     async getConfig() {
         // 检查对象状态
         if (!this.config) {
-            new Error('getConfig 请先调用 open，建立一个会话');
+            throw new Error('getConfig 请先调用 open，建立一个会话');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -349,7 +349,7 @@ class Bot {
     async setConfig({ cacheSize, enableWebsocket }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('setConfig 请先调用 open，建立一个会话');
+            throw new Error('setConfig 请先调用 open，建立一个会话');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -364,7 +364,7 @@ class Bot {
     async recall({ messageId }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('recall 请先调用 open，建立一个会话');
+            throw new Error('recall 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -388,7 +388,7 @@ class Bot {
     async uploadImage({ type = 'group', img, filename }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('uploadImage 请先调用 open，建立一个会话');
+            throw new Error('uploadImage 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -418,7 +418,7 @@ class Bot {
     async uploadVoice({ type = 'group', voice, filename }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('uploadVoice 请先调用 open，建立一个会话');
+            throw new Error('uploadVoice 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -443,7 +443,7 @@ class Bot {
     async getFriendList() {
         // 检查对象状态
         if (!this.config) {
-            new Error('getFriendList 请先调用 open，建立一个会话');
+            throw new Error('getFriendList 请先调用 open，建立一个会话');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -466,7 +466,7 @@ class Bot {
     async getGroupList() {
         // 检查对象状态
         if (!this.config) {
-            new Error('getGroupList 请先调用 open，建立一个会话');
+            throw new Error('getGroupList 请先调用 open，建立一个会话');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -481,7 +481,7 @@ class Bot {
     async getMemberList({ group }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('getMemberList 请先调用 open，建立一个会话');
+            throw new Error('getMemberList 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -512,7 +512,7 @@ class Bot {
     async mute({ group, qq, time }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('mute 请先调用 open，建立一个会话');
+            throw new Error('mute 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -533,7 +533,7 @@ class Bot {
     async muteAll({ group }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('muteAll 请先调用 open，建立一个会话');
+            throw new Error('muteAll 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -555,7 +555,7 @@ class Bot {
     async unmute({ group, qq }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('unmute 请先调用 open，建立一个会话');
+            throw new Error('unmute 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -576,7 +576,7 @@ class Bot {
     async unmuteAll({ group }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('unmute 请先调用 open，建立一个会话');
+            throw new Error('unmute 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -599,7 +599,7 @@ class Bot {
     async removeMember({ group, qq, message = "" }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('removeMember 请先调用 open，建立一个会话');
+            throw new Error('removeMember 请先调用 open，建立一个会话');
         }
 
         // 检查参数
@@ -620,7 +620,7 @@ class Bot {
     async quitGroup({ group }) {
         // 检查对象状态
         if (!this.config) {
-            new Error('quitGroup 请先调用 open，建立一个会话');
+            throw new Error('quitGroup 请先调用 open，建立一个会话');
         }
 
         // 检查参数
