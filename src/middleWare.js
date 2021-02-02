@@ -54,7 +54,7 @@ class MiddleWare {
     /**
      * @description 过滤出字符串类型的 message，并拼接在一起，置于 data.text
      */
-    filtText() {
+    textFilter() {
         this.middleWares.push(data => {
 
             return {

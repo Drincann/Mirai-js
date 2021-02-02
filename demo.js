@@ -91,7 +91,7 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
 
         // 使用中间件
         // 过滤分类 message
-        bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).filtText().done(({
+        bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).textFilter().done(({
             // 第一个中间件，分类过的 messageChain
             classified,
             // 第二个中间件，文本部分
