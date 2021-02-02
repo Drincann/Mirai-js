@@ -180,14 +180,14 @@ bot.on('GroupMessage', async ({
 框架还提供了一系列用于处理消息的中间件：
 
 ```js
-const { MiddleWare } = require('./src/Mirai-js');
+const { Middleware } = require('./src/Mirai-js');
 ```
 
-注册事件监听器时，在回调函数处，通过`MiddleWare`的实例链式调用需要的中间件，最后调用`done`并传入你的回调函数来生成带有中间件的事件处理器。
+注册事件监听器时，在回调函数处，通过`Middleware`的实例链式调用需要的中间件，最后调用`done`并传入你的回调函数来生成带有中间件的事件处理器。
 
 ```js
 // 使用中间件
-bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).textFilter().done(({
+bot.on('FriendMessage', new Middleware().filter(['Plain', 'Image']).textFilter().done(({
     // 第一个中间件，分类过的 messageChain
     classified,
     // 第二个中间件，文本部分
@@ -269,7 +269,7 @@ bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).textFilter()
 
 ```js
 bot.on('BotOfflineEventForce',
-    new MiddleWare()
+    new Middleware()
        .autoReLogin({ bot, baseUrl, authKey, password })
        .done()
 );
