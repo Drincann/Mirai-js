@@ -28,7 +28,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
             const interval = setInterval(() => {
                 ws.ping((err) => {
                     if (err) {
-                        console.log(`ws ping error\n${err}`);
+                        throw err;
                     }
                 });
             }, 60000);
@@ -58,7 +58,6 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
                 unexpectedResponse(req, res);
             });
         });
-        // 监听
         return ws;
     } catch (error) {
         errorHandler(error);
