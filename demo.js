@@ -1,4 +1,4 @@
-const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
+const { Bot, Message, Middleware } = require('./src/Mirai-js');
 
 (async () => {
     try {
@@ -91,7 +91,7 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
 
         // 使用中间件
         // 过滤分类 message
-        bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).textFilter().done(({
+        bot.on('FriendMessage', new Middleware().filter(['Plain', 'Image']).textFilter().done(({
             // 第一个中间件，分类过的 messageChain
             classified,
             // 第二个中间件，文本部分
@@ -114,7 +114,7 @@ const { Bot, Message, MiddleWare } = require('./src/Mirai-js');
 
         // 自动重新登陆
         bot.on('BotOfflineEventForce',
-            new MiddleWare()
+            new Middleware()
                 .autoReLogin({ bot, baseUrl, authKey, password })
                 .done()
         );
