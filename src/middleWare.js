@@ -2,13 +2,10 @@
  * @description 为事件处理器提供中间件
  * @use 在 MiddleWare 的实例上链式调用需要的中间件方法，最后
  * 调用 done 并传入一个回调函数，该函数将在中间件结束后被调用
- * 
- * 每个方法将向 this.middleWares 中 push 一个中间件，最后对 done 的
- * 调用将返回一个函数，该函数用于遍历所有中间件，然后调用开发者的回调函数
  */
-class MiddleWare {
+class Middleware {
     constructor() {
-        this.middleWares = [];
+        this.middleware = [];
     }
 
     /**
@@ -20,7 +17,7 @@ class MiddleWare {
      */
     autoReLogin({ bot, baseUrl, authKey, password }) {
         const { Bot } = require('./Mirai-js');
-        this.middleWares.push(async (data) => {
+        this.middleware.push(async (data, next) => {
             await Bot.sendCommand({
                 baseUrl,
                 authKey,
@@ -28,6 +25,7 @@ class MiddleWare {
                 args: [data.qq, password],
             });
             await bot.open();
+            next();
         });
         return this;
     }
@@ -38,15 +36,13 @@ class MiddleWare {
      * @param {array[string]} typeArr message 的类型，例如 Plain Image Voice
      */
     filter(typeArr) {
-        this.middleWares.push(data => {
+        this.middleware.push((data, next) => {
             const result = {};
             typeArr.forEach((type) => {
                 result[type] = data.messageChain.filter((message) => message.type == type);
             });
-            return {
-                result,
-                fieldName: 'classified',
-            };
+            data.classified = result;
+            next();
         });
         return this;
     }
@@ -55,15 +51,12 @@ class MiddleWare {
      * @description 过滤出字符串类型的 message，并拼接在一起，置于 data.text
      */
     textFilter() {
-        this.middleWares.push(data => {
-
-            return {
-                result: data.messageChain
-                    .filter((val) => val.type == 'Plain')
-                    .map((val) => val.text)
-                    .join(''),
-                fieldName: 'text',
-            }
+        this.middleware.push((data, next) => {
+            data.text = data.messageChain
+                .filter((val) => val.type == 'Plain')
+                .map((val) => val.text)
+                .join('');
+            next();
         });
         return this;
     }
@@ -73,23 +66,14 @@ class MiddleWare {
      * @param {function} callback 事件处理器
      */
     done(callback) {
-        // 返回一个函数，该函数用于遍历所有中间件，然后调用开发者的回调函数
-        return async data => {
-            // 这里本来使用的是 forEach，但是 forEach 内部实现并不是同步的
-            for (const middleWare of this.middleWares) {
-                // 不直接解构的原因是，有些中间件无返回值
-                const re = await middleWare(data);
-                if (re) {
-                    const { result, fieldName } = re;
-                    data[fieldName] = result;
-                }
-            }
-
-            if (callback instanceof Function) {
-                callback(data);
-            }
+        // 中间件模式
+        return (data) => {
+            data.time = Date.now();
+            this.middleware.reduceRight((next, middleware) => {
+                return () => middleware(data, next);
+            }, () => callback && callback(data))();
         }
     }
 }
 
-module.exports = MiddleWare;
+module.exports = Middleware;

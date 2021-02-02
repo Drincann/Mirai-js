@@ -1,9 +1,9 @@
 const Bot = require('./Bot');
 const Message = require('./Message');
-const MiddleWare = require('./MiddleWare');
+const Middleware = require('./Middleware');
 
 module.exports = {
     Bot,
     Message,
-    MiddleWare,
+    Middleware,
 };
