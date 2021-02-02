@@ -213,6 +213,37 @@ bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).filtText().d
 
 
 
+## 参与开发
+
+三个模块，`Bot`、`Message`、`Middleware`。
+
+`Bot`是机器人的核心逻辑，
+
+`Message`包含一些 mirai-api-http 约定的`MessageType`，用于`Bot`发送信息时方便地生成`MessageChain`，
+
+`Middleware`是`Bot`消息处理的中间件，可以添加到任何一个通过`Bot`的方法`on`注册的事件处理器处，作为消息的前置处理器。
+
+- [ ] 文档
+
+  代码注释完整清晰。
+
+- [ ] 功能
+
+  - [ ] 更好地、简洁地生成`MessageChain`的方法
+  - [ ] 实现更多的`MessageType`
+  - [ ] 实现更多的`Middleware`
+  - [ ] 实现`Middleware`的可扩展，例如可自定义中间件的接口，或者其他
+
+- [ ] 其他一切好的想法
+
+欢迎提`issue`或在`discussions`中讨论。
+
+欢迎提交`pr`。
+
+
+
+
+
 ## 如何启动mirai-console
 
 [mirai-api-http](https://github.com/project-mirai/mirai-api-http) 是 [mirai-console](https://github.com/mamoe/mirai-console) 的一个插件，[mirai-console](https://github.com/mamoe/mirai-console) 负责与 Mirai 内核交互。
