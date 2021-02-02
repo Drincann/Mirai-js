@@ -233,6 +233,7 @@ bot.on('FriendMessage', new MiddleWare().filter(['Plain', 'Image']).filtText().d
   - [ ] 实现更多的`MessageType`
   - [ ] 实现更多的`Middleware`
   - [ ] 实现`Middleware`的可扩展，例如可自定义中间件的接口，或者其他
+  - [ ] 中断功能，参考 issue#2
 
 - [ ] 其他一切好的想法
 
