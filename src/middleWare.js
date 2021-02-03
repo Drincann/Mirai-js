@@ -74,7 +74,34 @@ class Middleware {
                 throw new Error('Middleware.groupFilter 消息格式出错');
             }
 
+            // 如果 id 在 set 里，交给下一个中间件处理
             if (groupSet.has(data.sender.group.id)) {
+                next();
+            }
+        });
+        return this;
+    }
+
+    /**
+     * @description 过滤指定的好友消息
+     * @param {array[number]} friendArr 
+     */
+    friendFilter(friendArr) {
+        const groupSet = new Set(friendArr);
+
+        this.middleware.push((data, next) => {
+            // 检查参数
+            if (!(data && data.sender && data.sender.id)) {
+                throw new Error('Middleware.friendFilter 消息格式出错');
+            }
+
+            // 检查是否是群消息
+            if (data.sender.group) {
+                return;
+            }
+
+            // 如果 id 在 set 里，交给下一个中间件处理
+            if (groupSet.has(data.sender.id)) {
                 next();
             }
         });
