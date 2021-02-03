@@ -6,6 +6,7 @@
 class Middleware {
     constructor() {
         this.middleware = [];
+        this.catcher = undefined;
     }
 
     /**
@@ -110,10 +111,19 @@ class Middleware {
 
     /**
      * @description 添加一个自定义中间件
-     * @param {function} callback
+     * @param {function} callback (data, next) => void
      */
     use(callback) {
         this.middleware.push(callback);
+        return this;
+    }
+
+    /**
+     * @description 使用错误处理器
+     * @param {function} catcher 错误处理器 (err) => void
+     */
+    catch(catcher) {
+        this.catcher = catcher;
         return this;
     }
 
@@ -122,12 +132,23 @@ class Middleware {
      * @param {function} callback 事件处理器
      */
     done(callback) {
+
         // 中间件模式
         return (data) => {
-            this.middleware.reduceRight((next, middleware) => {
-                return () => middleware(data, next);
-            }, () => callback && callback(data))();
+            try {
+                this.middleware.reduceRight((next, middleware) => {
+                    return () => middleware(data, next);
+                }, () => callback && callback(data))();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
         }
+
+
     }
 }
 
