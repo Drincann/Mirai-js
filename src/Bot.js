@@ -255,8 +255,8 @@ class Bot {
      * - 'error':               (err: Error) => void
      * - 'close':               (code: number, message: string) => void
      * - 'unexpected-response': (request: http.ClientRequest, response: http.IncomingMessage) => void
-     * @param   {string}   eventType 必选，事件类型
-     * @param   {function} callback  必选，回调函数
+     * @param {string}   eventType 必选，事件类型
+     * @param {function} callback  必选，回调函数
      * @returns {number} 事件处理器的标识，用于移除该处理器
      */
     on(eventType, callback) {
@@ -288,8 +288,56 @@ class Bot {
         // andle 分别作为 value 和 key 包含在一个大对象中
         const processor = callback;
 
+        // 添加事件处理器
         this.eventProcessorMap[eventType][handle] = processor;
         return handle;
+    }
+
+    /**
+     * @description 添加一个一次性事件处理器，回调一次后自动移除
+     * @param {string}   eventType 必选，事件类型
+     * @param {function} callback  必选，回调函数
+     * @returns {void}
+     */
+    one(eventType, callback) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('one 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!eventType || !callback) {
+            throw new Error(`one 缺少必要的 ${getInvalidParamsString({ eventType, callback })} 参数`);
+
+        }
+
+        // 为没有任何事件处理器的事件生成一个空对象 (空对象 {}，而不是 null)
+        if (!(eventType in this.eventProcessorMap)) {
+            this.eventProcessorMap[eventType] = {};
+        }
+
+        // 生成一个唯一的 handle，作为当前 
+        // processor 的标识，用于移除该处理器
+        let handle = random()
+        while (handle in this.eventProcessorMap[eventType]) {
+            handle = random()
+        }
+
+        // processor
+        // 每个事件对应多个 processor，这些 processor 和 h
+        // andle 分别作为 value 和 key 包含在一个大对象中
+        const processor = (data) => {
+            // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
+            if (handle in this.eventProcessorMap[eventType]) {
+                delete this.eventProcessorMap[eventType][handle];
+            }
+
+            // 调用开发者提供的回调
+            callback(data);
+        };
+
+        // 添加事件处理器
+        this.eventProcessorMap[eventType][handle] = processor;
     }
 
     /**
