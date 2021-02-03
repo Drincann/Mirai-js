@@ -62,13 +62,32 @@ class Middleware {
     }
 
     /**
+     * @description 过滤指定的群消息
+     * @param {array[number]} groupArr 
+     */
+    groupFilter(groupArr) {
+        const groupSet = new Set(groupArr);
+
+        this.middleware.push((data, next) => {
+            // 检查参数
+            if (!(data && data.sender && data.sender.group && data.sender.group.id)) {
+                throw new Error('Middleware.groupFilter 消息格式出错');
+            }
+
+            if (groupSet.has(data.sender.group.id)) {
+                next();
+            }
+        });
+        return this;
+    }
+
+    /**
      * @description 生成一个带有中间件的事件处理器
      * @param {function} callback 事件处理器
      */
     done(callback) {
         // 中间件模式
         return (data) => {
-            data.time = Date.now();
             this.middleware.reduceRight((next, middleware) => {
                 return () => middleware(data, next);
             }, () => callback && callback(data))();
