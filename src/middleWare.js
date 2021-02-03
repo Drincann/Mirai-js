@@ -64,7 +64,7 @@ class Middleware {
 
     /**
      * @description 过滤指定的群消息
-     * @param {array[number]} groupArr 
+     * @param {array[number]} groupArr 允许通过的群号数组
      */
     groupFilter(groupArr) {
         const groupSet = new Set(groupArr);
@@ -85,7 +85,7 @@ class Middleware {
 
     /**
      * @description 过滤指定的好友消息
-     * @param {array[number]} friendArr 
+     * @param {array[number]} friendArr 允许通过的好友 qq 号数组
      */
     friendFilter(friendArr) {
         const groupSet = new Set(friendArr);
@@ -103,6 +103,32 @@ class Middleware {
 
             // 如果 id 在 set 里，交给下一个中间件处理
             if (groupSet.has(data.sender.id)) {
+                next();
+            }
+        });
+        return this;
+    }
+
+    /**
+     * @description 过滤指定群的群成员的消息
+     * @param {array[number]} groupMemberMap 允许通过的 Map
+     * 结构 { number => array[number], } key 为允许通过的群号，value 为该群允许通过的成员 qq
+     */
+    groupMemberFilter(groupMemberMap) {
+        this.middleware.push((data, next) => {
+            // 检查参数
+            if (!(data && data.sender && data.sender.id)) {
+                throw new Error('Middleware.friendFilter 消息格式出错');
+            }
+
+            // 检查是否是群消息
+            if (data.sender.group) {
+                return;
+            }
+
+            // 检查是否是允许通过的群成员，是则交给下一个中间件处理
+            if (data.sender.group in groupMemberMap &&
+                data.sender.id in groupMemberMap[data.sender.group.id]) {
                 next();
             }
         });
