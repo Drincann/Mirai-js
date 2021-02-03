@@ -109,6 +109,15 @@ class Middleware {
     }
 
     /**
+     * @description 添加一个自定义中间件
+     * @param {function} callback
+     */
+    use(callback) {
+        this.middleware.push(callback);
+        return this;
+    }
+
+    /**
      * @description 生成一个带有中间件的事件处理器
      * @param {function} callback 事件处理器
      */
