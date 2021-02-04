@@ -766,11 +766,18 @@ class Bot {
 
 }
 
+
 // 静态属性: 群成员的权限
 Bot.GroupPermission = {
-    OWNER: 'OWNER',
-    ADMINISTRATOR: 'ADMINISTRATOR',
-    MEMBER: 'MEMBER',
+    get OWNER() {
+        return 'OWNER';
+    },
+    get ADMINISTRATOR() {
+        return 'ADMINISTRATOR';
+    },
+    get MEMBER() {
+        return 'MEMBER';
+    },
 };
 
 module.exports = Bot;
