@@ -44,12 +44,10 @@ const bot = new Bot();
 
 // 连接到一个 mirai-api-http 服务
 await bot.open({
-    // mirai-api-http 的服务端地址，
-    baseUrl: 'http://example:8080',
+    baseUrl: 'http://example.com:8080',
+    authKey: 'authKey',
     // 要绑定的 qq，须确保该用户已在 mirai-console 登录
     qq: 1019933576,
-    // authKey 用于验证连接者的身份，在插件配置文件中设置
-    authKey: 'authKey',
 });
 ```
 
@@ -69,7 +67,7 @@ await bot.sendMessage({
     friend: '1019933576',
     // Message 实例，表示一条消息
     message: new Message().addText('hello world!').addImageUrl('http://exapmle/image.jpg')，
-})
+});
 ```
 
 > 注意！这些方法都是异步的
@@ -168,7 +166,7 @@ GroupMessage 事件的消息结构：
 }
 ```
 
-具体的事件类型及消息结构见 **[EventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)**。
+具体的事件类型及消息结构见 [EventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
 
 
@@ -188,8 +186,10 @@ const middleware = new Middleware();
 
 在实例上（链式）调用你需要的中间件：
 
+`textProcessor`用于拼接`messageChain`所有的文本信息，并置于`data.text`，`groupFilter`则是过滤出指定群号的群消息事件。
+
 ```js
-middleware.textFilter().groupFilter([123456789, 987654321]);
+middleware.textProcessor().groupFilter([123456789, 987654321]);
 ```
 
 通过调用 `done` 方法， 传入你的事件处理器，获得一个带有中间件的事件处理器：
@@ -213,7 +213,7 @@ bot.on('FriendMessage', processor);
 
 ```js
 bot.on('FriendMessage', new Middleware()
-    .textFilter()
+    .textProcessor()
     .groupFilter([123456789, 987654321])
     .done(async data => {
         bot.sendMessage({
@@ -235,7 +235,7 @@ const processor = middleware.use((data, next) => {
         .map((val) => val.text)
         .join('');
     next();
-});
+}).on(/* callback */);
 ```
 
 
