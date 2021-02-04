@@ -2,7 +2,7 @@ const { Bot, Message, Middleware } = require('./src/Mirai-js');
 
 (async () => {
     try {
-        const baseUrl = 'http://example:8080';
+        const baseUrl = 'http://example.com:8080';
         const authKey = 'authKey';
         const qq = 1019933576;
         const password = 'password';
@@ -91,26 +91,28 @@ const { Bot, Message, Middleware } = require('./src/Mirai-js');
 
         // 使用中间件
         // 过滤分类 message
-        bot.on('FriendMessage', new Middleware().filter(['Plain', 'Image']).textFilter().done(({
-            // 第一个中间件，分类过的 messageChain
-            classified,
-            // 第二个中间件，文本部分
-            text,
+        bot.on('FriendMessage', new Middleware()
+            .messageProcessor(['Plain', 'Image'])
+            .textProcessor().done(({
+                // 第一个中间件，分类过的 messageChain
+                classified,
+                // 第二个中间件，文本部分
+                text,
 
-            messageChain,
-            sender: {
-                id: fromQQ,
-                nickname: fromQQNickName,
-                remark
-            }
-        }) => {
-            console.log({ fromQQ, fromQQNickName, remark, messageChain, classified, text });
+                messageChain,
+                sender: {
+                    id: fromQQ,
+                    nickname: fromQQNickName,
+                    remark
+                }
+            }) => {
+                console.log({ fromQQ, fromQQNickName, remark, messageChain, classified, text });
 
-            bot.sendMessage({
-                friend: fromQQ,
-                message: new Message().addText(text),
-            });
-        }));
+                bot.sendMessage({
+                    friend: fromQQ,
+                    message: new Message().addText(text),
+                });
+            }));
 
         // 自动重新登陆
         bot.on('BotOfflineEventForce',
