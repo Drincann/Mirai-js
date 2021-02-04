@@ -36,7 +36,7 @@ class Middleware {
      *              message 数组为 value，置于 data.classified
      * @param {array[string]} typeArr message 的类型，例如 Plain Image Voice
      */
-    filter(typeArr) {
+    messageProcessor(typeArr) {
         this.middleware.push((data, next) => {
             const result = {};
             typeArr.forEach((type) => {
@@ -51,7 +51,7 @@ class Middleware {
     /**
      * @description 过滤出字符串类型的 message，并拼接在一起，置于 data.text
      */
-    textFilter() {
+    textProcessor() {
         this.middleware.push((data, next) => {
             data.text = data.messageChain
                 .filter((val) => val.type == 'Plain')
