@@ -9,5 +9,4 @@ bot.on('FriendMessage', data => {
 });
 ```
 
-<p style="font-size:30px; text-align:right;">--> <a href="#/Preparation.md">开发你的机器人应用</a></p>
-
+<p style="font-size:20px; text-align:right;">--> <a href="#/Preparation.md">开发你的机器人应用</a></p>
