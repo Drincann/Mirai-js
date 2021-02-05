@@ -111,7 +111,7 @@ class Middleware {
 
     /**
      * @description 过滤指定群的群成员的消息
-     * @param {array[number]} groupMemberMap 允许通过的 Map
+     * @param {Map} groupMemberMap 允许通过的 Map
      * 结构 { number => array[number], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
     groupMemberFilter(groupMemberMap) {
