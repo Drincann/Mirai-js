@@ -1,10 +1,10 @@
 # 机器人 Bot
 
-## 静态属性
+# 静态属性
 
-### GroupPermission
+## GroupPermission
 
-`GroupPermission` 可作为判断群成员权限的途径
+`GroupPermission` 可作为判断群成员权限的途径。
 
 #### 属性
 
@@ -49,29 +49,29 @@ Bot.GroupPermission = {
 
 
 
-## 静态方法
+# 静态方法
 
 !> 注意，若没有特别指出，则为异步方法
 
-### sendCommand
+## sendCommand
 
 `sendCommand` 向 mirai-console 发送指令，可用于登录。
 
 #### 参数
 
-- `baseUrl` 必选
+- `baseUrl: string` 必选
 
   mirai-api-http 的网络位置。
 
-- `authKey` 必选
+- `authKey: string` 必选
 
   mirai-api-http 的认证秘钥。
 
-- `command` 必选
+- `command: string` 必选
 
   指令名。
 
-- `args` 可选
+- `args: string[]` 可选
 
   一个 string 数组，表示指令的参数。
 
@@ -82,7 +82,7 @@ Bot.GroupPermission = {
 #### 示例
 
 ```js
-await Bot.sendCommand({
+const { message } = await Bot.sendCommand({
     baseUrl: 'http://example.com:8080',
     authKey: 'authKey',
     command: '/login',
@@ -92,25 +92,29 @@ await Bot.sendCommand({
 
 
 
-## 普通方法
+# 普通方法
 
-### open
+## open
 
 `open` 方法用于连接到一个 **mirai-api-http** 服务，并绑定一个已在 **mirai-console** 登录的机器人，重复调用将会重置与服务端的 session。
 
 #### 参数
 
-- `baseUrl` 必选
+- `baseUrl: string` 必选
 
   mirai-api-http 的网络位置。
 
-- `authKey` 必选
+- `authKey: string` 必选
 
   mirai-api-http 的认证秘钥。
 
-- `qq` 必选
+- `qq: number` 必选
 
   欲绑定到的 qq 号。
+
+#### 返回值
+
+无
 
 #### 示例
 
@@ -130,19 +134,23 @@ await bot.open();
 
 
 
-### close
+## close
 
 `close` 方法用于关闭一个到 `mirai-api-http` 的连接。
 
 #### 参数
 
-- `keepProcessor` 可选
+- `keepProcessor: boolean` 可选
 
   是否保留注册在该实例上的事件处理器，默认值 `false`。
 
-- `keepConfig` 可选
+- `keepConfig: boolean` 可选
 
   是否保留在调用 `open` 时提供的 session、baseUrl、qq、authKey 等配置，默认值 `false`。
+
+#### 返回值
+
+无
 
 #### 示例
 
@@ -152,37 +160,37 @@ bot.close({ keepProcessor: true });
 
 
 
-### sendMessage
+## sendMessage
 
 `sendMessage`方法向好友或群组发送一条消息。
 
 #### 参数
 
-- `temp` 可选
+- `temp: boolean` 可选
 
   是否是临时会话，默认值 `false`。
 
-- `friend` 二选一
+- `friend: number` 二选一
 
   好友 qq 号。
 
-- `group` 二选一
+- `group: number` 二选一
 
   群号。
 
-- `quote` 可选
+- `quote: number` 可选
 
   通过 `messageId` 来引用一条消息。
 
   `messageId` 可通过本方法返回，或在事件处理器中的 `messageChain` 中获取。
 
-- `message` 二选一
+- `message: Message` 二选一
 
   用来指示发送的消息内容，需要提供一个 `Message` 的实例。
 
   `Message` 的相关 API 见 [Message](/Message)。
 
-- `messageChain` 二选一
+- `messageChain: MessageType[]` 二选一
 
   用来指示发送的消息内容，是一个 `MessageType` 数组。
 
@@ -190,7 +198,7 @@ bot.close({ keepProcessor: true });
 
 #### 返回值
 
-`messageId`，标识刚刚发送的消息。
+`messageId: number`，标识刚刚发送的消息。
 
 #### 示例
 
@@ -207,7 +215,7 @@ bot.on('FriendMessage', async data => {
 
 
 
-### on
+## on
 
 ?> 这是一个同步方法
 
@@ -215,17 +223,17 @@ bot.on('FriendMessage', async data => {
 
 #### 参数
 
-- `eventType` 必选
+- `eventType: string` 必选
 
   事件类型，事件类型及消息结构见 [eventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
-- `callback` 必选
+- `callback: function` 必选
 
   用于处理该事件的回调函数。
 
 #### 返回值
 
-一个 `handle`，标识一个唯一的事件处理器，用于移除该处理器。
+ `handle: number`，标识一个唯一的事件处理器，用于移除该处理器。
 
 #### 示例
 
@@ -293,7 +301,7 @@ bot.on('FriendMessage', async data => {
 }
 ```
 
-此外，还有 `WebSocket` 事件：
+此外，框架使用 `WebSocket` 接收 **mirai-api-http** 推送的消息， `WebSocket` 事件也可以通过该方法处理：
 
 ```js
 'error'              : (err: Error) => void
@@ -301,11 +309,11 @@ bot.on('FriendMessage', async data => {
 'unexpected-response': (request: http.ClientRequest, response: http.IncomingMessage) => void
 ```
 
-框架采用 `WebSocket` 接收 **mirai-api-http** 推送的消息。
 
 
 
-### one
+
+## one
 
 ?> 这是一个同步方法
 
@@ -313,13 +321,17 @@ bot.on('FriendMessage', async data => {
 
 #### 参数
 
-- `eventType` 必选
+- `eventType: string` 必选
 
   事件类型，事件类型及消息结构见 [eventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
-- `callback` 必选
+- `callback: function` 必选
 
   用于处理该事件的回调函数。
+
+#### 返回值
+
+无
 
 #### 示例
 
@@ -332,21 +344,25 @@ bot.one('FriendMessage', async data => {
 
 #### 
 
-### off
+## off
 
 ?> 这是一个同步方法
 
-`off` 方法用于移除一个事件处理器
+`off` 方法用于移除一个事件处理器。
 
 #### 参数
 
-- `eventType` 必选
+- `eventType: string` 必选
 
   欲移除的事件处理器的事件类型，事件类型及消息结构见 [eventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
-- `handle` 必选
+- `handle: number` 必选
 
   欲移除的事件处理器的唯一标识。
+
+#### 返回值
+
+无
 
 #### 示例
 
@@ -362,13 +378,17 @@ bot.off('FriendMessage', handle);
 
 
 
-### offAll
+## offAll
 
 ?> 这是一个同步方法
 
 `offAll` 方法用于移除所有事件下的事件处理器。
 
 #### 参数
+
+无
+
+#### 返回值
 
 无
 
@@ -380,13 +400,13 @@ bot.offAll();
 
 
 
-### recall
+## recall
 
 `recall` 方法用于撤回一条消息。
 
 #### 参数
 
-- `messageId` 必选
+- `messageId: number` 必选
 
   欲撤回消息的标识
 
@@ -408,35 +428,434 @@ await bot.recall({ messageId });
 
 
 
-### uploadImage
+## uploadImage
 
 `uploadImage` 方法用于向服务器上传一张图片，返回的信息可用于发送图片消息。
 
 #### 参数
 
-- `type` 可选
+- `type: string` 可选
 
   图片类型，必须为下列值之一 `["friend", "group", "temp"]`，默认值 `"group"`。
 
-  不同类型返回的图片 id 形式不同。
+  不同类型返回的 `imageId` 形式不同。
 
   !> type 指定为 'friend' 或 'temp' 时发送的图片显示红色感叹号，无法加载，group 则正常
 
-- `img` 二选一
+- `img: Buffer` 二选一
 
-  图片二进制数据
+  图片二进制数据。
 
-- `filename` 二选一
+- `filename: string` 二选一
 
-  图片的本地文件路径
+  本地文件的路径。
 
 #### 返回值
 
-`{ imageId, url, path }`
+`{ imageId: string, url: string, path: string }`
+
+返回一个包含 "图片 id"、"图片在腾讯服务器的 url" 和 "图片在 mirai-api-http 服务端的位置" 的 Map，用法见示例。
 
 #### 示例
 
+```js
+const { imageId, url, path } = await uploadImage({ filename });
+
+await bot.sendMessage({
+    friend: 1019933576,
+    message: new Message().addImageUrl(url).addImagePath(path).addImageId(imageId),
+});
+```
 
 
 
+## uploadVoice
 
+`uploadVoice` 方法用于向服务器上传一段语音，返回的信息可用于发送语音消息。
+
+?> FIXME: 目前该方法存在很大问题，返回的 voiceId 无法发送给好友，不过可以发到群里，但无法在短时间内正常播放。
+
+#### 参数
+
+- `type: string` 请忽略该参数
+
+  语音类型，必须为下列值之一 `["friend", "group", "temp"]`，目前仅 `"group"` 可用。
+
+- `voice: Buffer` 二选一
+
+  语音二进制数据。
+
+- `filename: string` 二选一
+
+  本地文件的路径。
+
+#### 返回值
+
+`{ voiceId: string, url: string, path: string } `
+
+返回一个包含 "语音 id"、"语音在腾讯服务器的 url" 和 "语音在 mirai-api-http 服务端的位置" 的 Map，用法见示例。
+
+#### 示例
+
+```js
+const { voiceId, url, path } = await uploadVoice({ filename });
+
+await bot.sendMessage({
+    friend: 1019933576,
+    message: new Message().addVoiceUrl(url).addVoicePath(path).addVoiceId(voiceId),
+});
+```
+
+
+
+## getFriendList
+
+`getFriendList` 方法用于获取好友列表。
+
+#### 参数
+
+无
+
+#### 返回值
+
+`[ { id: number, name: string, remark: string }, ...]`
+
+一个 Map 数组，每个 Map 给出一个好友信息，`id`代表 qq 号，`name` 代表昵称，`remark` 代表备注。
+
+#### 示例
+
+```js
+const friendList = await bot.getFriendList();
+```
+
+
+
+## getGroupList
+
+`getGroupList` 方法用于获取群列表。
+
+#### 参数
+
+无
+
+#### 返回值
+
+`[ { id: number, name: string, permission: string }, ...]`
+
+一个 Map 数组，每个 Map 给出一个群信息，`id`代表群号，`name` 代表群名称，`permission` 代表机器人在该群的权限。
+
+#### 示例
+
+```js
+const groupList = await bot.getGroupList();
+```
+
+```js
+// 你可以像这样来判断群成员的权限
+switch (permission) {
+    case Bot.GroupPermission.OWNER:
+        // 群主
+        break;
+    case Bot.GroupPermission.ADMINISTRATOR:
+        // 管理员
+        break;
+    case Bot.GroupPermission.MEMBER:
+        // 普通群成员
+        break;
+}
+```
+
+
+
+## getMemberList
+
+`getMemberList` 方法用于获得指定群的成员列表。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+#### 返回值
+
+`[ { id: number, name: string, permission: string }, ...]`
+
+一个 Map 数组，每个 Map 给出一个群成员信息，`id`代表成员 qq 号，`name` 代表成员群名片，`permission` 代表群成员权限。
+
+#### 示例
+
+```js
+const memberList = await bot.getMemberList();
+```
+
+
+
+## getMemberInfo
+
+`getMemberInfo` 方法用于获取指定群成员的名片和头衔信息。
+
+#### 参数
+
+- `group: number` 必选
+
+  群成员所在群号
+
+- `qq: number` 必选
+
+  群成员 qq 号
+
+#### 返回值
+
+`{ name: string, title: string }`
+
+分别代表群名片和群头衔
+
+#### 示例
+
+```js
+const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 });
+```
+
+
+
+## setMemberInfo
+
+`setMemberInfo` 方法用于设置指定群成员的名片和头衔信息。
+
+#### 参数
+
+- `group: number` 必选
+
+  群成员所在群号
+
+- `qq: number` 必选
+
+  群成员 qq 号
+
+- `name: string` 可选
+
+  要设置的群名片
+
+- `title: string` 可选
+
+  要设置的群头衔
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await setMemberInfo({ group: 123456789, qq: 1019933576, title: 'title' });
+```
+
+
+
+## mute
+
+`mute` 方法用于禁言群成员。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+- `qq: number` 必选
+
+  群成员 qq 号
+
+- `time: number` 必选
+
+  禁言时长，单位：s（秒）
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await mute({ group: 123456789, qq: 1019933576, time: 3600 });
+```
+
+
+
+## muteAll
+
+`muteAll` 方法用于全员禁言。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await muteAll({ group: 123456789 });
+```
+
+
+
+## unmute
+
+`mute` 方法用于j解除群成员禁言。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+- `qq: number` 必选
+
+  群成员 qq 号
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await unmute({ group: 123456789, qq: 1019933576 });
+```
+
+
+
+## muteAll
+
+`muteAll` 方法用于解除全员禁言。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await unmuteAll({ group: 123456789 });
+```
+
+
+
+## removeMember
+
+`removeMember` 方法用于移除群成员。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号。
+
+- `qq: number` 必选
+
+  群成员 qq 号。
+
+- `message: string` 可选
+
+  移除群成员时的附加信息，默认为空串 `""`。
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await removeMember({ group: 123456789, qq: 1019933576, message: "message" });
+```
+
+
+
+## quitGroup
+
+`quitGroup` 方法用于令机器人退出指定群。
+
+#### 参数
+
+- `group: number` 必选
+
+  群号。
+
+#### 返回值
+
+无
+
+#### 实例
+
+```js
+await quitGroup({ group: 123456789 })
+```
+
+
+
+### getConfig
+
+`getConfig` 方法用于获取 **mirai-api-http** 的 session 配置。
+
+#### 参数
+
+无
+
+#### 返回值
+
+`{ cacheSize, enableWebsocket }`
+
+
+
+### setConfig
+
+`setConfig` 方法用于设置 **mirai-api-http** 的 session 配置。
+
+?> 该配置由框架控制
+
+#### 参数
+
+- `cacheSize` 可选
+- `enableWebSocket` 可选
+
+#### 返回值
+
+无
+
+
+
+# 错误处理
+
+## Bot 实例的方法
+
+`Bot` 实例的方法将在出错后抛出异常，message 将给出具体原因。
+
+
+
+## WebSocket 连接
+
+若未添加对 `WebSocket` 的事件 `error`、`close`、`unexpected-response` 的处理器，当事件触发时将向控制台分别打印：
+
+>ws error
+>
+>{ ... }
+
+> ws close
+>
+> { code, message }
+
+> ws unexpectedResponse
+>
+> { req, res }
