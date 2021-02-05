@@ -590,7 +590,7 @@ class Bot {
      * @param {number} qq    必选，群成员的 qq 号
      * @param {string} name  可选，要设置的群名片
      * @param {string} title 可选，要设置的群头衔
-     * @returns {array[Object]} 结构 { name, title } 群名片和群头衔
+     * @returns {void}
      */
     async setMemberInfo({ group, qq, name, title }) {
         // 检查对象状态
@@ -607,7 +607,7 @@ class Bot {
 
         // 获取列表
         const { baseUrl, sessionKey } = this.config;
-        return await _setMemberInfo({
+        await _setMemberInfo({
             baseUrl, sessionKey, target: group, memberId: qq,
             name, specialTitle: title,
         });
