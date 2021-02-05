@@ -107,7 +107,7 @@ class Bot {
                     return Object.values(this.eventProcessorMap[type])
                         .forEach(processor => processor(err));
                 }
-                console.log(`ws error\n${err}`);
+                console.log(`ws error\n${JSON.stringify(err)}`);
             },
             close: (code, message) => {
                 const type = 'close';
@@ -115,7 +115,7 @@ class Bot {
                     return Object.values(this.eventProcessorMap[type])
                         .forEach(processor => processor(code, message));
                 }
-                console.log(`ws closed\n${{ code, message }}`);
+                console.log(`ws close\n${JSON.stringify({ code, message })}`);
             },
             unexpectedResponse: (req, res) => {
                 const type = 'unexpected-response';
@@ -123,7 +123,7 @@ class Bot {
                     return Object.values(this.eventProcessorMap[type])
                         .forEach(processor => processor(req, res));
                 }
-                console.log(`ws unexpectedResponse\n${{ req, res }}`);
+                console.log(`ws unexpectedResponse\n${JSON.stringify({ req, res })}`);
             }
         });
     }
