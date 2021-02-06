@@ -233,7 +233,9 @@ bot.on('FriendMessage', async data => {
 
 #### 返回值
 
- `handle: number`，标识一个唯一的事件处理器，用于移除该处理器。
+ `handle: number`，标识在给定的 `eventType` 下的一个唯一的事件处理器，用于移除该处理器。
+
+?> 对于 `handle` 来说，每个 `eventType` 都是一个独立的命名空间，在移除事件处理器时，需要给出对应 `handle` 的 `eventType` 
 
 #### 示例
 
@@ -342,7 +344,7 @@ bot.one('FriendMessage', async data => {
 });
 ```
 
-#### 
+
 
 ## off
 
@@ -356,9 +358,17 @@ bot.one('FriendMessage', async data => {
 
   欲移除的事件处理器的事件类型，事件类型及消息结构见 [eventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
-- `handle: number` 必选
+  ?> 每个 `eventType` 都是一个独立的命名空间，不同 `eventType` 下的 `handle` 可能重复，在移除时必须给出对应的 `eventType`
+
+- `handle: number | number[]` 可选
 
   欲移除的事件处理器的唯一标识。
+  
+  或一个可通过 `forEach` 迭代的数组，该方法将会遍历所有在数组中给出的 `handle`，并移除对应的事件处理器。
+  
+  当不提供该参数时，将移除指定 `eventType` 下的所有事件处理器。
+  
+  要一次调用移除指定多个事件下的事件处理器，可以使用 `offAll`。
 
 #### 返回值
 
@@ -370,8 +380,6 @@ bot.one('FriendMessage', async data => {
 const handle = bot.on('FriendMessage', async data => {
 	// ...
 });
-
-// ...
 
 bot.off('FriendMessage', handle);
 ```
@@ -386,7 +394,11 @@ bot.off('FriendMessage', handle);
 
 #### 参数
 
-无
+- `eventType: string | string[]` 可选
+
+  给出该参数，表示要移除特定事件的所有处理器，可以是一个 `string`，也可以是一个 `string` 数组。
+
+  当给出一个 `string` 时，与 `off` 方法等价。
 
 #### 返回值
 
@@ -396,6 +408,10 @@ bot.off('FriendMessage', handle);
 
 ```js
 bot.offAll();
+```
+
+```js
+bot.offAll(['FriendMessage', 'GroupMessage']);
 ```
 
 
