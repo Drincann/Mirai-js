@@ -41,7 +41,7 @@ class Bot {
      * @param {number} qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
      * @returns {void}
      */
-    async open(option /* { baseUrl, qq, authKey } */) {
+    async open({ baseUrl, qq, authKey } = {}) {
         // 若 config 存在，则认为该对象已经 open 过
         // ，此处应该先令对象回到初始状态，然后重建会话
         if (this.config) {
@@ -51,14 +51,15 @@ class Bot {
         // 设置对象状态
         // 若开发者重复调用 open，仅更新已提供的值
         this.config = {
-            baseUrl: (this.config && this.config.baseUrl) || option.baseUrl,
-            qq: (this.config && this.config.qq) || option.qq,
-            authKey: (this.config && this.config.authKey) || option.authKey,
-            sessionKey: (this.config && this.config.sessionKey) || '',
+            baseUrl: this.config?.baseUrl ?? baseUrl,
+            qq: this.config?.qq ?? qq,
+            authKey: this.config?.authKey ?? authKey,
+            sessionKey: this.config?.sessionKey ?? '',
         };
+
         // 事件处理器 map
         // 如果重复调用 open 则保留事件处理器
-        this.eventProcessorMap = this.eventProcessorMap || {
+        this.eventProcessorMap = this.eventProcessorMap ?? {
             /*
              每个事件对应多个 processor 对象，这些对象和 h
              andle 分别作为 value 和 key 包含在一个大对象中
@@ -71,7 +72,7 @@ class Bot {
         };
 
         // 需要使用的参数
-        const { baseUrl, qq, authKey } = this.config;
+        ({ baseUrl, qq, authKey } = this.config);
 
         // 检查参数
         if (!this.config.baseUrl || !this.config.qq || !this.config.authKey) {
@@ -134,26 +135,14 @@ class Bot {
      * @param {boolean} keepConfig    可选，是否保留 session baseUrl qq authKey，默认值为 false，不保留
      * @returns {void}
      */
-    async close(option /* { keepProcessor, keepConfig }} */) {
+    async close({ keepProcessor = false, keepConfig = false } = {}) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('close 请先调用 open，建立一个会话');
         }
 
-        // 拿出可选参数
-        // option 中仅包含一个可选参数 keepProcessor，为什么不直
-        // 接在参数列表中解构 {keepProcessor}？因为，在这种情况下，
-        // 若用户未传入任何参数，则相当于从 undefined 中解构
-        if (option) {
-            var { keepProcessor, keepConfig } = option;
-        }
-
         // 需要使用的参数
         const { baseUrl, sessionKey, qq } = this.config;
-
-
-        // 默认值
-        keepProcessor = keepProcessor || false;
 
         // 由于在 ws open 之前关闭连接会抛异常，故应先判断此时是否正在连接中
         if (this.wsConnection.readyState == this.wsConnection.CONNECTING) {
@@ -284,8 +273,8 @@ class Bot {
         }
 
         // processor
-        // 每个事件对应多个 processor，这些 processor 和 h
-        // andle 分别作为 value 和 key 包含在一个大对象中
+        // 每个事件对应多个 processor，这些 processor 和 
+        // handle 分别作为 value 和 key 包含在一个大对象中
         const processor = callback;
 
         // 添加事件处理器
