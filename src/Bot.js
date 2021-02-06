@@ -343,7 +343,7 @@ class Bot {
     /**
      * @description 移除一个事件处理器
      * @param {string} eventType 必选，事件类型
-     * @param {number} handle    必选，事件处理器标识，由 on 方法返回
+     * @param {number} handle    必选，事件处理器标识(或数组)，由 on 方法返回
      * @returns {void}
      */
     off(eventType, handle) {
@@ -358,8 +358,18 @@ class Bot {
         }
 
         // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
-        if (handle in this.eventProcessorMap[eventType]) {
-            delete this.eventProcessorMap[eventType][handle];
+        if (handle.forEach) {
+            // 可迭代
+            handle.forEach(hd => {
+                if (hd in this.eventProcessorMap[eventType]) {
+                    delete this.eventProcessorMap[eventType][hd];
+                }
+            })
+        } else {
+            // 不可迭代，认为是单个标识
+            if (handle in this.eventProcessorMap[eventType]) {
+                delete this.eventProcessorMap[eventType][handle];
+            }
         }
     }
 
