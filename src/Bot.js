@@ -343,7 +343,8 @@ class Bot {
     /**
      * @description 移除一个事件处理器
      * @param {string}                 eventType 必选，事件类型
-     * @param {number | array[number]} handle    必选，事件处理器标识(或数组)，由 on 方法返回
+     * @param {number | array[number]} handle    
+     * 可选，事件处理器标识(或数组)，由 on 方法返回，未提供时将移除该事件下的所有处理器
      * @returns {void}
      */
     off(eventType, handle) {
@@ -353,24 +354,33 @@ class Bot {
         }
 
         // 检查参数
-        if (!eventType || !handle) {
-            throw new Error(`off 缺少必要的 ${getInvalidParamsString({ eventType, handle })} 参数`);
+        if (!eventType) {
+            throw new Error(`off 缺少必要的 eventType 参数`);
         }
 
-        // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
-        if (handle.forEach) {
-            // 可迭代
-            handle.forEach(hd => {
-                if (hd in this.eventProcessorMap[eventType]) {
-                    delete this.eventProcessorMap[eventType][hd];
+
+        if (handle) {
+            // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
+            if (handle.forEach) {
+                // 可迭代
+                handle.forEach(hd => {
+                    if (hd in this.eventProcessorMap[eventType]) {
+                        delete this.eventProcessorMap[eventType][hd];
+                    }
+                })
+            } else {
+                // 不可迭代，认为是单个标识
+                if (handle in this.eventProcessorMap[eventType]) {
+                    delete this.eventProcessorMap[eventType][handle];
                 }
-            })
+            }
         } else {
-            // 不可迭代，认为是单个标识
-            if (handle in this.eventProcessorMap[eventType]) {
-                delete this.eventProcessorMap[eventType][handle];
+            // 未提供 handle，移除所有
+            if (eventType in this.eventProcessorMap) {
+                delete this.eventProcessorMap[eventType];
             }
         }
+
     }
 
     /**
