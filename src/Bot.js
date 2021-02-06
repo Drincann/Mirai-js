@@ -342,8 +342,8 @@ class Bot {
 
     /**
      * @description 移除一个事件处理器
-     * @param {string} eventType 必选，事件类型
-     * @param {number} handle    必选，事件处理器标识(或数组)，由 on 方法返回
+     * @param {string}                 eventType 必选，事件类型
+     * @param {number | array[number]} handle    必选，事件处理器标识(或数组)，由 on 方法返回
      * @returns {void}
      */
     off(eventType, handle) {
@@ -375,15 +375,34 @@ class Bot {
 
     /**
      * @description 移除所有事件处理器
+     * @param {string | array[string]} eventType 可选，事件类型(或数组)
      * @returns {void}
      */
-    offAll() {
+    offAll(eventType) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('offAll 请先调用 open，建立一个会话');
         }
 
-        this.eventProcessorMap = {};
+        if (eventType) {
+            // 提供了特定的 eventType 参数
+            if (eventType.forEach) {
+                // 可迭代
+                eventType.forEach(evtType => {
+                    if (evtType in this.eventProcessorMap) {
+                        delete this.eventProcessorMap[evtType];
+                    }
+                });
+            } else {
+                // 不可迭代
+                if (eventType in this.eventProcessorMap) {
+                    delete this.eventProcessorMap[eventType];
+                }
+            }
+        } else {
+            // 未提供参数，全部移除
+            this.eventProcessorMap = {};
+        }
     }
 
     /**
