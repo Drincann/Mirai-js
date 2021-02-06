@@ -821,7 +821,7 @@ await quitGroup({ group: 123456789 })
 
 
 
-### getConfig
+## getConfig
 
 `getConfig` 方法用于获取 **mirai-api-http** 的 session 配置。
 
@@ -835,7 +835,7 @@ await quitGroup({ group: 123456789 })
 
 
 
-### setConfig
+## setConfig
 
 `setConfig` 方法用于设置 **mirai-api-http** 的 session 配置。
 
