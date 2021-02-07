@@ -23,9 +23,13 @@ const _unmuteAll = require('./core/unmuteAll');
 const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
 const _startListening = require('./core/startListening');
+
+// 其他
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
+const { Middleware } = require('./Middleware');
+const { Waiter } = require('./Waiter');
 
 /**
  * @field config            包含 baseUrl authKey qq
@@ -33,6 +37,10 @@ const fs = require('fs');
  * @field wsConnection      建立连接的 WebSocket 实例
  */
 class Bot {
+    constructor() {
+        // 实例化一个内部类 Waiter
+        this.waiter = new Waiter(this);
+    }
     /**
      * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
      * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接
@@ -275,7 +283,12 @@ class Bot {
         // processor
         // 每个事件对应多个 processor，这些 processor 和 
         // handle 分别作为 value 和 key 包含在一个大对象中
-        const processor = callback;
+        let processor = callback;
+
+        // 如果 callback 是 Middleware 的实例，拿到入口
+        if (callback instanceof Middleware) {
+            processor = callback.entry;
+        }
 
         // 添加事件处理器
         this.eventProcessorMap[eventType][handle] = processor;
@@ -313,6 +326,11 @@ class Bot {
         let handle = random()
         while (handle in this.eventProcessorMap[eventType]) {
             handle = random()
+        }
+
+        // 如果 callback 是 Middleware 的实例，拿到入口
+        if (callback instanceof Middleware) {
+            callback = callback.entry;
         }
 
         // processor
@@ -820,4 +838,4 @@ Bot.GroupPermission = {
     },
 };
 
-module.exports = Bot;
+module.exports = { Bot };

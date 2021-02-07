@@ -7,6 +7,7 @@ class Middleware {
     constructor() {
         this.middleware = [];
         this.catcher = undefined;
+        this.entry = undefined;
     }
 
     /**
@@ -216,7 +217,7 @@ class Middleware {
      */
     done(callback) {
         // 中间件模式，第二个参数用来进行外部的 promise 包装，可以忽略
-        return (data, resolve) => {
+        this.entry = (data, resolve) => {
             try {
                 this.middleware.reduceRight((next, middleware) => {
                     return () => middleware(data, next);
@@ -236,8 +237,8 @@ class Middleware {
             }
         }
 
-
+        return this;
     }
 }
 
-module.exports = Middleware;
+module.exports = { Middleware };
