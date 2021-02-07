@@ -286,9 +286,12 @@ class Bot {
      * @description 添加一个一次性事件处理器，回调一次后自动移除
      * @param {string}   eventType 必选，事件类型
      * @param {function} callback  必选，回调函数
+     * @param {boolean}  strict    可选，是否严格检测调用，由于消息可能会被中间件拦截
+     *                             当为 true 时，只有开发者的处理器结束后才会移除该处理器
+     *                             当为 false 时，即使消息被拦截，也会移除该处理器
      * @returns {void}
      */
-    one(eventType, callback) {
+    one(eventType, callback, strict = false) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('one 请先调用 open，建立一个会话');
@@ -316,13 +319,24 @@ class Bot {
         // 每个事件对应多个 processor，这些 processor 和 h
         // andle 分别作为 value 和 key 包含在一个大对象中
         const processor = (data) => {
-            // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
-            if (handle in this.eventProcessorMap[eventType]) {
-                delete this.eventProcessorMap[eventType][handle];
-            }
+            if (strict) {
+                // 严格检测回调
+                // 当开发者的处理器结束后才移除该处理器
+                callback(data, () => {
+                    if (handle in this.eventProcessorMap[eventType]) {
+                        delete this.eventProcessorMap[eventType][handle];
+                    }
+                });
+            } else {
+                // 不严格检测，直接移除处理器
+                // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
+                if (handle in this.eventProcessorMap[eventType]) {
+                    delete this.eventProcessorMap[eventType][handle];
+                }
 
-            // 调用开发者提供的回调
-            callback(data);
+                // 调用开发者提供的回调
+                callback(data);
+            }
         };
 
         // 添加事件处理器
@@ -790,8 +804,6 @@ class Bot {
 
         return await _sendCommand({ baseUrl, authKey, command, args });
     }
-
-
 }
 
 
