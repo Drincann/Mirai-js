@@ -136,6 +136,63 @@ class Middleware {
     }
 
     /**
+     * @description 这是一个对话锁，保证群中同一成员不能在中途触发处理器
+     * @use 在你需要保护的过程结束后调用 data.unlock 即可
+     */
+    memberLock() {
+        const memberMap = {/* group -> memberSet */ };
+        this.middleware.push((data, next) => {
+            // 检查参数
+            if (!data.sender?.group?.id) {
+                throw new Error('Middleware.memberLock 消息格式出错');
+            }
+
+            // 若该 group 不存在对应的 Set，则添加
+            if (!(memberMap[data.sender?.group?.id] instanceof Set)) {
+                memberMap[data.sender?.group?.id] = new Set();
+            }
+
+            // 是否正在对话
+            if (memberMap[data.sender?.group?.id].has(data.sender?.id)) {
+                // 正在对话则返回
+                return;
+            } else {
+                // 未在对话，则加入对应的 Set，然后继续
+                memberMap[data.sender?.group?.id].add(data.sender?.id);
+                data.unlock = () => friendSet.delete(data.sender?.id);
+                next();
+            }
+        });
+        return this;
+    }
+
+    /**
+     * @description 这是一个对话锁，保证同一好友不能在中途触发处理器
+     * @use 在你需要保护的过程结束后调用 data.unlock 即可
+     */
+    friendLock() {
+        const friendSet = new Set();
+        this.middleware.push((data, next) => {
+            // 检查参数
+            if (!data.sender?.id) {
+                throw new Error('Middleware.memberLock 消息格式出错');
+            }
+
+            // 是否正在对话
+            if (friendSet.has(data.sender?.id)) {
+                // 正在对话则返回
+                return;
+            } else {
+                // 未在对话，则加入 Set，然后继续
+                friendSet.add(data.sender?.id);
+                data.unlock = () => friendSet.delete(data.sender?.id);
+                next();
+            }
+        });
+        return this;
+    }
+
+    /**
      * @description 添加一个自定义中间件
      * @param {function} callback (data, next) => void
      */
