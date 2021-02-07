@@ -14,6 +14,8 @@ bot.on('FriendMessage', new Middleware
 
 `Middleware` 实例的 `done` 方法用于返回一个带有中间件的事件处理器。
 
+?> `done` 可以多次调用，你可以在一个实例上定义一个默认的中间件流程，然后每次都使用该实例的 `done` 方法生成事件处理器
+
 其他方法都是预定义的中间件。
 
 如 `textProcessor`，经过该中间件处理后，传入事件处理器的 `data` 将拥有一个 `text` 属性，该属性由文本消息拼接而成。
