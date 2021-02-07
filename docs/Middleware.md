@@ -172,6 +172,52 @@ bot.on('FriendMessage', new Middleware()
 
 
 
+## memberLock
+
+`memberLock`是一个用于 `GroupMessage` 事件的对话锁，保证群中同一成员不能在中途触发处理器。
+
+经过该中间件时默认进入锁保护的区域，同时在 `data` 放置一个 `unlock` 方法，开发者必须在处理器中调用该方法才能释放锁。
+
+#### 参数
+
+无
+
+#### 示例
+
+```js
+bot.on('GroupMessage', new Middleware()
+       .memberLock()
+       .done( data => {
+    // do sth.
+    data.unlock();
+}));
+```
+
+
+
+## friendLock
+
+`friendLock`是一个用于 `FriendMessage` 事件的对话锁，保证同一好友不能在中途触发处理器。
+
+经过该中间件时默认进入锁保护的区域，同时在 `data` 放置一个 `unlock` 方法，开发者必须在处理器中调用该方法才能释放锁。
+
+#### 参数
+
+无
+
+#### 示例
+
+```js
+bot.on('FriendMessage', new Middleware()
+       .friendLock()
+       .done( data => {
+    // do sth.
+    data.unlock();
+}));
+```
+
+
+
 # 自定义中间件
 
 ## use
@@ -196,6 +242,23 @@ bot.on('FriendMessage', new Middleware()
 }).done( data => {
     /* do sth. */ 
 }));
+```
+
+
+
+# 异步
+
+?> 这个特性主要用于框架功能的开发
+
+如果你想在中间件链结束时回调，请使用 `Promise` 包装 `done` 返回的中间件链入口。
+
+该入口的第一个参数是送入的数据 `data`，第二个参数是结束时的回调 `resolve`，回调时会传入处理器的返回值。
+
+这是一个包装例子：
+
+```js
+const callback = new Middleware().done(data => { /* do sth. and return */ });
+const result = await new Promise(resolve => callback(data, resolve));
 ```
 
 
