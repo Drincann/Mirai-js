@@ -235,7 +235,7 @@ const processor = middleware.use((data, next) => {
         .map((val) => val.text)
         .join('');
     next();
-}).on(/* callback */);
+}).done(/* callback */);
 ```
 
 

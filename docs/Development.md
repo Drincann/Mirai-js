@@ -14,7 +14,7 @@
 
 - `Message` 包含一些 **mirai-api-http** 约定的 `MessageType` ，用于 `Bot` 发送信息时方便地生成 `MessageChain`。
 
-- `Middleware `是 `Bot` 消息处理的中间件。
+- `Middleware` 是 `Bot` 消息处理的中间件。
 
 此外：
 
