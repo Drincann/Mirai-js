@@ -12,13 +12,13 @@ bot.on('FriendMessage', new Middleware
 });
 ```
 
-`Middleware` 实例的 `done` 方法用于返回一个带有中间件的事件处理器。
+`Middleware` 实例的 `done` 方法用于向实例确定一个带有中间件的事件处理器，并返回实例本身。
+
+?> 确定的处理器可以从实例的 `entry` 属性中获取，不过我们不需要关注这个属性
 
 ?> `done` 可以多次调用，你可以在一个实例上定义一个默认的中间件流程，然后每次都使用该实例的 `done` 方法生成事件处理器
 
-其他方法都是预定义的中间件。
-
-如 `textProcessor`，经过该中间件处理后，传入事件处理器的 `data` 将拥有一个 `text` 属性，该属性由文本消息拼接而成。
+其他方法都是预定义的中间件，如 `textProcessor`，经过该中间件处理后，传入事件处理器的 `data` 将拥有一个 `text` 属性，该属性由文本消息拼接而成。
 
 
 
@@ -246,23 +246,6 @@ bot.on('FriendMessage', new Middleware()
 
 
 
-# 异步
-
-?> 这个特性主要用于框架功能的开发
-
-如果你想在中间件链结束时回调，请使用 `Promise` 包装 `done` 返回的中间件链入口。
-
-该入口的第一个参数是送入的数据 `data`，第二个参数是结束时的回调 `resolve`，回调时会传入处理器的返回值。
-
-这是一个包装例子：
-
-```js
-const callback = new Middleware().done(data => { /* do sth. and return */ });
-const result = await new Promise(resolve => callback(data, resolve));
-```
-
-
-
 # 错误处理
 
 ## catch
@@ -291,3 +274,19 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
+
+
+# 异步
+
+?> 这个特性主要用于框架功能的开发
+
+如果你想在中间件链结束时回调，请使用 `Promise` 包装中间件链入口 `middleware.entry` 。
+
+该入口的第一个参数是送入的数据 `data`，第二个参数是结束时的回调 `resolve`，回调时会传入处理器的返回值。
+
+这是一个包装例子：
+
+```js
+const callback = new Middleware().done(data => { /* do sth. and return */ });
+const result = await new Promise(resolve => callback(data, resolve));
+```

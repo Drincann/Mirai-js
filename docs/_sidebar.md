@@ -5,6 +5,7 @@
   * [机器人 Bot](Bot.md)
   * [消息类型 Message](Message.md)
   * [中间件 Middleware](Middleware.md)
+  * [等待器 Waiter](Waiter.md)
 * **其他**
   * [参与开发](Development.md)
   * [开源协议](License.md)

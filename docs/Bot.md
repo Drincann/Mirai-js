@@ -49,6 +49,18 @@ Bot.GroupPermission = {
 
 
 
+# 普通属性
+
+## waiter
+
+每个 `Bot` 实例都将维护一个独特的 `Waiter` 实例。
+
+它有一些方法，用于在异步代码中对消息进行同步等待，例如连续对话。
+
+API 见 [Waiter](/Waiter)。
+
+
+
 # 静态方法
 
 !> 注意，若没有特别指出，则为异步方法
@@ -229,7 +241,7 @@ bot.on('FriendMessage', async data => {
 
 - `callback: function` 必选
 
-  用于处理该事件的回调函数。
+  用于处理该事件的回调函数，或一个已经调用过 `done` 的 `Middleware` 实例。
 
 #### 返回值
 
@@ -329,7 +341,7 @@ bot.on('FriendMessage', async data => {
 
 - `callback: function` 必选
 
-  用于处理该事件的回调函数。
+  用于处理该事件的回调函数，或一个已经调用过 `done` 的 `Middleware` 实例。
   
 - `strict: boolean` 可选
 
