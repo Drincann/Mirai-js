@@ -158,13 +158,18 @@ class Middleware {
      * @param {function} callback 事件处理器
      */
     done(callback) {
-
-        // 中间件模式
-        return (data) => {
+        // 中间件模式，第二个参数用来进行外部的 promise 包装，可以忽略
+        return (data, resolve) => {
             try {
                 this.middleware.reduceRight((next, middleware) => {
                     return () => middleware(data, next);
-                }, () => callback && callback(data))();
+                }, () => {
+                    let returnVal = callback instanceof Function ? callback(data) : undefined;
+                    // resolve 可能存在的 promise 包装
+                    if (resolve) {
+                        resolve(returnVal);
+                    }
+                })();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
