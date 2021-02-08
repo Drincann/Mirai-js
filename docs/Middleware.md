@@ -107,9 +107,13 @@ bot.on('FriendMessage', new Middleware()
 
 #### 参数
 
-- `groupArr: number[]` 必选
+- `groupArr: Map` 必选
 
-  允许通过的群号数组
+  key 为允许通过的群号，value 为该群允许通过的成员 qq
+  
+- `allow: boolean` 可选
+
+  该参数描述了第一个参数给出的名单是否允许通过。true 时为允许通过，false 时为禁止通过。
 
 #### 示例
 
@@ -125,15 +129,19 @@ bot.on('FriendMessage', new Middleware()
 
 ## friendFilter
 
-`groupFilter` 用于 `FriendMessage`。
+`groupFilter` 用于 `FriendMessage` 或 `GroupMessage`。
 
-该中间件将允许指定的好友通过。
+该中间件将允许指定的好友通过，如果作为 `GroupMessage` 的中间件，则是忽略群，直接过滤群成员。
 
 #### 参数
 
 - `friendArr: number[]` 必选
 
-  允许通过的 qq 号数组。
+  qq 号数组。
+  
+- `allow: boolean` 可选
+
+  该参数描述了第一个参数给出的名单是否允许通过。true 时为允许通过，false 时为禁止通过。
 
 #### 示例
 
