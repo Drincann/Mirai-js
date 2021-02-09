@@ -1,5 +1,6 @@
 const responseFirendRequest = require('./core/responseFirendRequest');
 const responseMemberJoinRequest = require('./core/responseMemberJoinRequest');
+const responseBotInvitedJoinGroupRequest = require('./core/responseBotInvitedJoinGroupRequest');
 
 /**
  * @description 为事件处理器提供中间件
@@ -314,6 +315,54 @@ class Middleware {
         });
         return this;
     }
+
+
+    /**
+     * FIXME: 目前被邀请入群不会触发 BotInvitedJoinGroupRequestEvent 事件
+     * 该功能未经测试
+     * @description 用于 BotInvitedJoinGroupRequestEvent 的中间件，经过该中间件后，将在 data 下放置两个方法
+     * agree                 同意
+     * refuse                拒绝
+     * @param {Bot} bot 必选，Bot 实例
+     */
+    invitedJoinGroupRequestProcessor(bot) {
+        // 检查参数
+        if (!bot) {
+            throw new Error('Middleware.invitedJoinGroupRequestProcessor 缺少必要的 bot 参数');
+        }
+        this.middleware.push((data, next) => {
+            // 事件类型
+            if (data.type != 'BotInvitedJoinGroupRequestEvent') {
+                throw new Error('Middleware.invitedJoinGroupRequestProcessor 消息格式出错');
+            }
+
+            // ! 这个地方与 Bot 耦合
+            // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+            const { baseUrl, sessionKey } = bot.config;
+            const { eventId, fromId, groupId } = data;
+
+            // 同意
+            data.agree = async (message) => {
+                await responseBotInvitedJoinGroupRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 0,
+                });
+            }
+
+            // 拒绝
+            data.refuse = async (message) => {
+                await responseBotInvitedJoinGroupRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 1,
+                });
+            }
+
+            next();
+        });
+        return this;
+    }
+
+
 
     /**
      * @description 添加一个自定义中间件
