@@ -199,6 +199,7 @@ class Middleware {
      * @param {Bot} bot 必选，Bot 实例
      */
     friendRequestProcessor(bot) {
+        // 检查参数
         if (!bot) {
             throw new Error('Middleware.NewFriendRequestEvent 缺少必要的 bot 参数');
         }
@@ -245,7 +246,7 @@ class Middleware {
     /**
      * FIXME: mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
      * 该功能未经测试
-     * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置五个方法
+     * @description 用于 MemberJoinRequestEvent 的中间件，经过该中间件后，将在 data 下放置五个方法
      * agree                 同意
      * refuse                拒绝
      * ignore                忽略
@@ -254,6 +255,7 @@ class Middleware {
      * @param {Bot} bot 必选，Bot 实例
      */
     memberJoinRequestProcessor(bot) {
+        // 检查参数
         if (!bot) {
             throw new Error('Middleware.memberJoinRequestProcessor 缺少必要的 bot 参数');
         }
@@ -270,7 +272,7 @@ class Middleware {
 
             // 同意
             data.agree = async (message) => {
-                await responseFirendRequest({
+                await responseMemberJoinRequest({
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
@@ -278,15 +280,15 @@ class Middleware {
 
             // 拒绝
             data.refuse = async (message) => {
-                await responseFirendRequest({
+                await responseMemberJoinRequest({
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
             }
 
-            // 拒绝
+            // 忽略
             data.ignore = async (message) => {
-                await responseFirendRequest({
+                await responseMemberJoinRequest({
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 2,
                 });
@@ -294,7 +296,7 @@ class Middleware {
 
             // 拒绝并加入黑名单
             data.refuseAndAddBlacklist = async (message) => {
-                await responseFirendRequest({
+                await responseMemberJoinRequest({
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 3,
                 });
@@ -302,7 +304,7 @@ class Middleware {
 
             // 忽略并加入黑名单
             data.ignoreAndAddBlacklist = async (message) => {
-                await responseFirendRequest({
+                await responseMemberJoinRequest({
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 4,
                 });
