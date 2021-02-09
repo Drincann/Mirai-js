@@ -226,6 +226,90 @@ bot.on('FriendMessage', new Middleware()
 
 
 
+## friendRequestProcessor
+
+`friendRequestProcessor` 中间件用于方便地处理 `NewFriendRequestEvent` 事件，*经过该中间件后，将在 data 下放置三个方法
+
+- `agree` 同意好友请求
+- `refuse` 拒绝好友请求
+- `refuseAndAddBlacklist` 拒绝好友请求并加入黑名单
+
+#### 参数
+
+- `bot` 必选
+
+  `Bot` 的实例
+
+#### 示例
+
+```js
+bot.on('NewFriendRequestEvent', new Middleware()
+       .friendRequestProcessor(bot)
+       .done( data => {
+    data.agree();
+}))
+```
+
+
+
+## memberJoinRequestProcessor
+
+`friendRequestProcessor` 中间件用于方便地处理 `NewFriendRequestEvent` 事件，*经过该中间件后，将在 data 下放置三个方法
+
+* `agree` 同意
+
+* `refuse` 拒绝
+
+* `ignore` 忽略
+
+* `refuseAndAddBlacklist` 拒绝并移入黑名单
+
+* `ignoreAndAddBlacklist` 忽略并移入黑名单
+
+#### 参数
+
+- `bot` 必选
+
+  `Bot` 的实例
+
+#### 示例
+
+```js
+bot.on('NewFriendRequestEvent', new Middleware()
+       .memberJoinRequestProcessor(bot)
+       .done( data => {
+    data.agree();
+}))
+```
+
+
+
+## invitedJoinGroupRequestProcessor
+
+`friendRequestProcessor` 中间件用于方便地处理 `NewFriendRequestEvent` 事件，*经过该中间件后，将在 data 下放置三个方法
+
+* `agree` 同意
+
+* `refuse` 拒绝
+
+#### 参数
+
+- `bot` 必选
+
+  `Bot` 的实例
+
+#### 示例
+
+```js
+bot.on('NewFriendRequestEvent', new Middleware()
+       .invitedJoinGroupRequestProcessor(bot)
+       .done( data => {
+    data.agree();
+}))
+```
+
+
+
 # 自定义中间件
 
 ## use
