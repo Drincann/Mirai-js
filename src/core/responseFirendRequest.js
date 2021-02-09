@@ -19,12 +19,11 @@ module.exports = async ({ baseUrl, sessionKey, eventId, fromId, groupId, operate
         // 拼接 url
         const url = new URL('/resp/newFriendRequestEvent', baseUrl).toString();
 
-        const debug = {
+        // 请求
+        let { data: { code, msg: serverMessage } } = await axios.post(url, {
             sessionKey, eventId, fromId, groupId,
             operate, message
-        };
-        // 请求
-        let { data: { code, msg: serverMessage } } = await axios.post(url, debug);
+        });
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
