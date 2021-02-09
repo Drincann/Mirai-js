@@ -198,7 +198,7 @@ class Middleware {
      * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
      * @param {Bot} bot 必选，Bot 实例
      */
-    friendRequestProcessor({ bot }) {
+    friendRequestProcessor(bot) {
         if (!bot) {
             throw new Error('Middleware.NewFriendRequestEvent 缺少必要的 bot 参数');
         }
@@ -253,7 +253,7 @@ class Middleware {
      * ignoreAndAddBlacklist 忽略并移入黑名单
      * @param {Bot} bot 必选，Bot 实例
      */
-    memberJoinRequestProcessor({ bot }) {
+    memberJoinRequestProcessor(bot) {
         if (!bot) {
             throw new Error('Middleware.memberJoinRequestProcessor 缺少必要的 bot 参数');
         }
