@@ -1,3 +1,5 @@
+const responseFirendRequest = require('./core/responseFirendRequest');
+
 /**
  * @description 为事件处理器提供中间件
  * @use 在 MiddleWare 的实例上链式调用需要的中间件方法，最后
@@ -186,6 +188,55 @@ class Middleware {
                 data.unlock = () => friendSet.delete(data.sender?.id);
                 next();
             }
+        });
+        return this;
+    }
+
+    /**
+     * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
+     * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
+     * @param {Bot} bot 必选，Bot 实例
+     */
+    friendRequestProcessor({ bot }) {
+        if (!bot) {
+            throw new Error('Middleware.NewFriendRequestEvent 缺少必要的 bot 参数');
+        }
+        this.middleware.push((data, next) => {
+            // 事件类型
+            if (data.type != 'NewFriendRequestEvent') {
+                throw new Error('Middleware.NewFriendRequestEvent 消息格式出错');
+            }
+
+            // ! 这个地方与 Bot 耦合
+            // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+            const { baseUrl, sessionKey } = bot.config;
+            const { eventId, fromId, groupId } = data;
+
+            // 同意
+            data.agree = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 0,
+                });
+            }
+
+            // 拒绝
+            data.refuse = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 1,
+                });
+            }
+
+            // 拒绝并加入黑名单
+            data.refuseAndAddBlacklist = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 2,
+                });
+            }
+
+            next();
         });
         return this;
     }
