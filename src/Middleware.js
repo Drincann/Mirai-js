@@ -1,4 +1,5 @@
 const responseFirendRequest = require('./core/responseFirendRequest');
+const responseMemberJoinRequest = require('./core/responseMemberJoinRequest');
 
 /**
  * @description 为事件处理器提供中间件
@@ -233,6 +234,77 @@ class Middleware {
                 await responseFirendRequest({
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 2,
+                });
+            }
+
+            next();
+        });
+        return this;
+    }
+
+    /**
+     * FIXME: mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
+     * 该功能未经测试
+     * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置五个方法
+     * agree                 同意
+     * refuse                拒绝
+     * ignore                忽略
+     * refuseAndAddBlacklist 拒绝并移入黑名单
+     * ignoreAndAddBlacklist 忽略并移入黑名单
+     * @param {Bot} bot 必选，Bot 实例
+     */
+    memberJoinRequestProcessor({ bot }) {
+        if (!bot) {
+            throw new Error('Middleware.memberJoinRequestProcessor 缺少必要的 bot 参数');
+        }
+        this.middleware.push((data, next) => {
+            // 事件类型
+            if (data.type != 'NewFriendRequestEvent') {
+                throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
+            }
+
+            // ! 这个地方与 Bot 耦合
+            // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+            const { baseUrl, sessionKey } = bot.config;
+            const { eventId, fromId, groupId } = data;
+
+            // 同意
+            data.agree = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 0,
+                });
+            }
+
+            // 拒绝
+            data.refuse = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 1,
+                });
+            }
+
+            // 拒绝
+            data.ignore = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 2,
+                });
+            }
+
+            // 拒绝并加入黑名单
+            data.refuseAndAddBlacklist = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 3,
+                });
+            }
+
+            // 忽略并加入黑名单
+            data.ignoreAndAddBlacklist = async (message) => {
+                await responseFirendRequest({
+                    baseUrl, sessionKey, eventId, fromId, groupId,
+                    message, operate: 4,
                 });
             }
 
