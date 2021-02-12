@@ -1,6 +1,6 @@
 # 参与开发
 
-主要维护者：[drinkal](https://github.com/drinkal?tab=repositories)
+主要维护者：[drincann](https://github.com/drincann?tab=repositories)
 
 一个好的项目需要社区的力量。
 
