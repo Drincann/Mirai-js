@@ -23,6 +23,7 @@ const _unmuteAll = require('./core/unmuteAll');
 const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
 const _getGroupConfig = require('./core/getGroupConfig');
+const _setGroupConfig = require('./core/setGroupConfig');
 const _startListening = require('./core/startListening');
 
 // 其他
@@ -823,6 +824,43 @@ class Bot {
 
         const { baseUrl, sessionKey } = this.config;
         return await _getGroupConfig({ baseUrl, sessionKey, target: group });
+    }
+
+    /**
+     * @description 设置群配置
+     * @param {number}  target            必选，群号
+     * @param {string}  name	          可选，群名
+     * @param {string}  announcement	  可选，群公告
+     * @param {boolean} confessTalk	      可选，是否开启坦白说
+     * @param {boolean} allowMemberInvite 可选，是否允许群员邀请
+     * @param {boolean} autoApprove	      可选，是否开启自动审批入群
+     * @param {boolean} anonymousChat     可选，是否允许匿名聊天
+     * @returns {void}
+     */
+    async setGroupConfig({
+        group,
+        name, announcement, confessTalk, allowMemberInvite, autoApprove, anonymousChat,
+    }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('setGroupConfig 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error(`setGroupConfig 缺少必要的 group 参数`);
+        }
+
+
+        const { baseUrl, sessionKey } = this.config;
+        await _setGroupConfig({
+            baseUrl, sessionKey, target: group,
+            name, announcement,
+            confessTalk,
+            allowMemberInvite,
+            autoApprove,
+            anonymousChat,
+        });
     }
 
     /**
