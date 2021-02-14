@@ -6,8 +6,8 @@ const _sendCommand = require('./core/sendCommand');
 const _sendFriendMessage = require('./core/sendFirendMessage');
 const _sendGroupMessage = require('./core/sendGroupMessage');
 const _sendTempMessage = require('./core/sendTempMessage');
-const _getConfig = require('./core/getConfig');
-const _setConfig = require('./core/setConfig');
+const _getSessionConfig = require('./core/getSessionConfig');
+const _setSessionConfig = require('./core/setSessionConfig');
 const _uploadImage = require('./core/uploadImage');
 const _uploadVoice = require('./core/uploadVoice');
 const _getFriendList = require('./core/getFriendList');
@@ -98,7 +98,7 @@ class Bot {
         await _verify({ baseUrl, sessionKey, qq });
 
         // 开启 websocket
-        await _setConfig({ baseUrl, sessionKey, enableWebsocket: true });
+        await _setSessionConfig({ baseUrl, sessionKey, enableWebsocket: true });
 
         // 开始监听事件
         this.wsConnection = await _startListening({
@@ -442,14 +442,14 @@ class Bot {
      * @description 获取 config
      * @returns {Object} 结构 { cacheSize, enableWebsocket }
      */
-    async getConfig() {
+    async getSessionConfig() {
         // 检查对象状态
         if (!this.config) {
             throw new Error('getConfig 请先调用 open，建立一个会话');
         }
 
         const { baseUrl, sessionKey } = this.config;
-        return await _getConfig({ baseUrl, sessionKey });
+        return await _getSessionConfig({ baseUrl, sessionKey });
     }
 
     /**
@@ -458,14 +458,14 @@ class Bot {
      * @param   {boolean} enableWebsocket 可选，websocket 状态
      * @returns {void}
      */
-    async setConfig({ cacheSize, enableWebsocket }) {
+    async setSessionConfig({ cacheSize, enableWebsocket }) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('setConfig 请先调用 open，建立一个会话');
         }
 
         const { baseUrl, sessionKey } = this.config;
-        await _setConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
+        await _setSessionConfig({ baseUrl, sessionKey, cacheSize, enableWebsocket });
     }
 
     /**
