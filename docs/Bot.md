@@ -841,9 +841,74 @@ await quitGroup({ group: 123456789 })
 
 
 
-## getConfig
+## getGroupConfig
 
-`getConfig` 方法用于获取 **mirai-api-http** 的 session 配置。
+`getGroupConfig` 方法用于获取群配置
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+#### 返回值
+
+```json
+{
+    "name": "群名称",
+    "announcement": "群公告",
+    "confessTalk": true,       // 是否开启坦白说
+    "allowMemberInvite": true, // 是否允许群员邀请
+    "autoApprove": true,       // 是否开启自动审批入群
+    "anonymousChat": true      // 是否允许匿名聊天
+}
+```
+
+
+
+## setGroupConfig
+
+`setGroupConfig` 方法用于设置群配置
+
+#### 参数
+
+* `target:number` 必选
+
+  群号
+
+* `name:string` 可选
+
+  群名
+
+* `announcement:string` 可选
+
+  群公告
+
+* `confessTalk:boolean` 可选
+
+  是否开启坦白说
+
+* `allowMemberInvite:boolean` 可选
+
+  是否允许群员邀请
+
+* `autoApprove:boolean` 可选
+
+  是否开启自动审批入群
+
+* `anonymousChat:boolean` 可选
+
+  是否允许匿名聊天
+
+#### 返回值
+
+无
+
+
+
+## getSessionConfig
+
+`getSessionConfig` 方法用于获取 **mirai-api-http** 的 session 配置。
 
 #### 参数
 
@@ -855,9 +920,9 @@ await quitGroup({ group: 123456789 })
 
 
 
-## setConfig
+## setSessionConfig
 
-`setConfig` 方法用于设置 **mirai-api-http** 的 session 配置。
+`setSessionConfig` 方法用于设置 **mirai-api-http** 的 session 配置。
 
 ?> 该配置由框架控制
 
@@ -897,18 +962,3 @@ await quitGroup({ group: 123456789 })
 > { req, res }
 
 
-
-# 异步
-
-?> 这个特性主要用于框架功能的开发
-
-如果你想在中间件链结束时回调，请使用 `Promise` 包装中间件链入口 `middleware.entry` 。
-
-该入口的第一个参数是送入的数据 `data`，第二个参数是结束时的回调 `resolve`，回调时会传入处理器的返回值。
-
-这是一个包装例子：
-
-```
- const callback = new Middleware().done(data => { /* do sth. and return */ });
- const result = await new Promise(resolve => callback(data, resolve));
-```
