@@ -22,6 +22,7 @@ const _unmute = require('./core/unmute');
 const _unmuteAll = require('./core/unmuteAll');
 const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
+const _getGroupConfig = require('./core/getGroupConfig');
 const _startListening = require('./core/startListening');
 
 // 其他
@@ -802,6 +803,26 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
         // 禁言
         await _quitGroup({ baseUrl, sessionKey, target: group });
+    }
+
+    /**
+     * @description 获取群配置
+     * @param {number} group 必选，群号
+     * @returns {Object}
+     */
+    async getGroupConfig({ group }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('getGroupConfig 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error(`getGroupConfig 缺少必要的 group 参数`);
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        return await _getGroupConfig({ baseUrl, sessionKey, target: group });
     }
 
     /**
