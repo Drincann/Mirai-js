@@ -3,7 +3,13 @@
 把项目 clone 到本地：
 
 ```bash
-$ git clone https://github.com/GAOSILIHAI/Mirai-js.git
+$ git clone https://github.com/Drincann/Mirai-js.git
+```
+
+接口入口位于 `./src/Mirai-js.js` 从该文件解构：
+
+```js
+const { Bot, Message } = require('./src/Mirai-js');
 ```
 
 

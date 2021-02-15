@@ -1,6 +1,6 @@
 # 准备工作
 
-**Mirai-js** 运行在 Node.js 平台下，首先确保拥有可使用的 Node.js 环境。
+**Mirai-js** 运行在 Node.js 平台下，首先确保拥有可使用的 **Node.js v14+** 环境。
 
 **Mirai-js** 还依赖 **mirai-api-http** 服务端，基于该框架开发的 Mirai QQ 机器人应用将作为 **mirai-api-http** 的客户端。
 
@@ -60,4 +60,4 @@
 - [mirai-console](https://github.com/mamoe/mirai-console)
 - [mirai-console-loader](https://github.com/iTXTech/mirai-console-loader)
 - [mirai-api-http](https://github.com/project-mirai/mirai-api-http)
-- [Mirai-js](https://github.com/drinkal/Mirai-js)
+- [Mirai-js](https://github.com/Drincann/Mirai-js)
