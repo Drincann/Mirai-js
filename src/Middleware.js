@@ -195,6 +195,31 @@ class Middleware {
     }
 
     /**
+     * @description 过滤包含指定 @ 信息的消息
+     * @param {array[number]} atArr 必选，qq 号数组
+     * @param {boolean}       allow 可选，允许通过还是禁止通过
+     */
+    atFilter(friendArr, allow = true) {
+        const friendSet = new Set(friendArr);
+
+        this.middleware.push((data, next) => {
+            // 检查参数
+            if (!(data?.messageChain)) {
+                throw new Error('Middleware.atFilter 消息格式出错');
+            }
+
+            // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
+            for (const message of data.messageChain) {
+                if (message?.type == 'At' && friendSet.has(message?.target)) {
+                    return allow && next();
+                }
+            }
+            !allow && next();
+        });
+        return this;
+    }
+
+    /**
      * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
      * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
      * @param {Bot} bot 必选，Bot 实例
