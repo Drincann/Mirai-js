@@ -83,8 +83,9 @@ class Middleware {
 
             // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
             if (groupSet.has(data.sender.group.id)) {
-                allow && next();
+                return allow && next();
             }
+            !allow && next();
         });
         return this;
     }
@@ -105,8 +106,9 @@ class Middleware {
 
             // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
             if (groupSet.has(data.sender.id)) {
-                allow && next();
+                return allow && next();
             }
+            !allow && next();
         });
         return this;
     }
