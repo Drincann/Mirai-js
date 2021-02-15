@@ -161,9 +161,13 @@ bot.on('FriendMessage', new Middleware()
 
 #### 参数
 
-- `groupMemberMap: Map`:  必选
+- `groupMemberMap: Map` 必选
 
   群号作为 Map 的 key，允许通过的群成员数组作为 Map 的 value。
+  
+- `allow: boolean` 可选
+
+  该参数描述了第一个参数给出的名单是否允许通过。true 时为允许通过，false 时为禁止通过。
 
 #### 示例
 
@@ -173,6 +177,32 @@ bot.on('FriendMessage', new Middleware()
     123456789: [1019933576],
     789456123: [3070539027, 1019933576],
 })
+       .done( data => {
+    // do sth.
+}));
+```
+
+
+
+## atFilter
+
+`atFilter` 中间件将识别消息中的 @ 信息，仅允许 @ 了指定 qq 的消息通过。
+
+#### 参数
+
+- `atArr: number[]` 必选
+
+  qq 号数组
+
+- `allow: boolean` 可选
+
+  该参数描述了第一个参数给出的名单是否允许通过。true 时为允许通过，false 时为禁止通过。
+
+#### 示例
+
+```js
+bot.on('GroupMessage', new Middleware()
+       .atFilter([1019933576])
        .done( data => {
     // do sth.
 }));
