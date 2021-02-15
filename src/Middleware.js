@@ -77,7 +77,7 @@ class Middleware {
 
         this.middleware.push((data, next) => {
             // 检查参数
-            if (!(data && data.sender && data.sender.group && data.sender.group.id)) {
+            if (!(data?.sender?.group?.id)) {
                 throw new Error('Middleware.groupFilter 消息格式出错');
             }
 
@@ -99,7 +99,7 @@ class Middleware {
 
         this.middleware.push((data, next) => {
             // 检查参数
-            if (!(data && data.sender && data.sender.id)) {
+            if (!(data?.sender?.id)) {
                 throw new Error('Middleware.friendFilter 消息格式出错');
             }
 
@@ -119,7 +119,7 @@ class Middleware {
     groupMemberFilter(groupMemberMap) {
         this.middleware.push((data, next) => {
             // 检查参数
-            if (!(data && data.sender && data.sender.id)) {
+            if (!(data?.sender?.id)) {
                 throw new Error('Middleware.friendFilter 消息格式出错');
             }
 
