@@ -115,10 +115,11 @@ class Middleware {
 
     /**
      * @description 过滤指定群的群成员的消息
-     * @param {Map} groupMemberMap 群和成员的 Map
+     * @param {Map}     groupMemberMap 群和成员的 Map
+     * @param {boolean} allow          允许通过还是禁止通过
      * 结构 { number => array[number], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
-    groupMemberFilter(groupMemberMap) {
+    groupMemberFilter(groupMemberMap, allow) {
         this.middleware.push((data, next) => {
             // 检查参数
             if (!(data?.sender?.id)) {
@@ -133,8 +134,9 @@ class Middleware {
             // 检查是否是允许通过的群成员，是则交给下一个中间件处理
             if (data.sender.group in groupMemberMap &&
                 data.sender.id in groupMemberMap[data.sender.group.id]) {
-                next();
+                return allow && next();
             }
+            !allow && next();
         });
         return this;
     }
