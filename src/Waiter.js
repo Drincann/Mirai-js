@@ -14,7 +14,7 @@ class Waiter {
      * @param {function} callback  处理器，其返回值将被 resolve，传递到外部
      */
     wait(eventType, callback) {
-        return new Promise(async resolve => {
+        return new Promise(resolve => {
             if (callback instanceof Middleware) {
                 // 中间件需要在内部 resolve
                 this.bot.one(eventType, async data => callback.entry(data, resolve), true);
