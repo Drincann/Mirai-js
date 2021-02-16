@@ -165,7 +165,7 @@ class Middleware {
             } else {
                 // 未在对话，则加入对应的 Set，然后继续
                 memberMap[data.sender?.group?.id].add(data.sender?.id);
-                data.unlock = () => friendSet.delete(data.sender?.id);
+                data.unlock = () => memberMap[data.sender?.group?.id].delete(data.sender?.id);
                 next();
             }
         });
