@@ -1,3 +1,14 @@
+/**
+ * ! Middleware 的 done 方法不会直接返回一个函数入口，而是将函数入口放在实例的 this.entry 下
+ * ! 在 Bot 中将会判断传入的消息处理器的类型，如果是 function，则直接使用，如果是 Middleware，则使用实例的 entry 属性
+ * ! 这么做的原因是：
+ * ! 中断机制，即 Bot 实例的 waiter.wait 方法，实际上是一个一次性事件的注册器，其内部会等待开发者回调函数的返回值
+ * ! 在 Middleware 实例的 done 方法之间返回一个函数入口的情况下，
+ * ! 若开发者的回调函数是一个简单回调函数，那么我们可以直接获得返回值，若是一个中间件的函数入口，则需要使用 Promise 进行包装
+ * ! 等待 Middleware 提供的异步回调。但这两种情况我们无法提前通过参数得知。
+ * ! 所以干脆将 Middleware 看做是一种与 Bot 耦合的事件处理器类型，对事件处理器进行类型检查。
+ */
+
 const responseFirendRequest = require('./core/responseFirendRequest');
 const responseMemberJoinRequest = require('./core/responseMemberJoinRequest');
 const responseBotInvitedJoinGroupRequest = require('./core/responseBotInvitedJoinGroupRequest');
