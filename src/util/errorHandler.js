@@ -1,17 +1,24 @@
 module.exports = (error) => {
-    // 统一向外抛出的异常格式
-    const { code, response, message } = error;
+    // 拿到所有的 message
+    let message, miraiMessage, resMessage;
 
-    // mirai 异常
-    if (code) {
-        throw new Error(message);
+    ({ message } = error);
+
+    const { response } = error;
+    if (response?.data) {
+        ({ msg: miraiMessage, resMessage } = response.data);
     }
 
-    // 有 res，服务端异常，即 status 非 200
-    if (response && response.data) {
-        throw new Error(response.data);
+    // 抛出
+    if ((message ?? miraiMessage ?? resMessage ?? response.data)) {
+        // 拼接
+        throw new Error(
+            [message, miraiMessage, resMessage, response.data]
+                .filter(msg => typeof msg == 'string')
+                .join('\n')
+        );
+    } else {
+        // 未知异常
+        throw error;
     }
-
-    // 未知异常
-    throw error;
 }
