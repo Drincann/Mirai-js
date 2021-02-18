@@ -1,20 +1,19 @@
 {
-  "name": "Mirai-js",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^0.21.1",
-    "form-data": "^3.0.0",
-    "ws": "^7.4.2"
-  },
-  "devDependencies": {
-    "eslint": "^7.19.0"
-  }
+    "name": "Mirai-js",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/Mirai-js.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "license": "AGPL",
+    "dependencies": {
+        "axios": "^0.21.1",
+        "form-data": "^3.0.0",
+        "ws": "^7.4.2"
+    },
+    "devDependencies": {
+        "eslint": "^7.19.0"
+    }
 }
