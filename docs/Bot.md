@@ -2,30 +2,30 @@
 
 # 静态属性
 
-## GroupPermission
+## groupPermission
 
-`GroupPermission` 可作为判断群成员权限的途径。
+`groupPermission` 可作为判断群成员权限的途径。
 
 #### 属性
 
-- `GroupPermission.OWNER`：`"OWNER"`
+- `groupPermission.OWNER`：`"OWNER"`
 
-- `GroupPermission.ADMINISTRATOR`：`"ADMINISTRATOR"`
+- `groupPermission.ADMINISTRATOR`：`"ADMINISTRATOR"`
 
-- `GroupPermission.MEMBER`：`"MEMBER"`
+- `groupPermission.MEMBER`：`"MEMBER"`
 
 #### 示例
 
 ```js
 // 你可以像这样来判断群成员的权限
 switch (data.sender.permission) {
-    case Bot.GroupPermission.OWNER:
+    case Bot.groupPermission.OWNER:
         // 群主
         break;
-    case Bot.GroupPermission.ADMINISTRATOR:
+    case Bot.groupPermission.ADMINISTRATOR:
         // 管理员
         break;
-    case Bot.GroupPermission.MEMBER:
+    case Bot.groupPermission.MEMBER:
         // 普通群成员
         break;
 }
@@ -34,7 +34,7 @@ switch (data.sender.permission) {
 #### 实现
 
 ```js
-Bot.GroupPermission = {
+Bot.groupPermission = {
     get OWNER() {
         return 'OWNER';
     },
@@ -593,13 +593,13 @@ const groupList = await bot.getGroupList();
 ```js
 // 你可以像这样来判断群成员的权限
 switch (permission) {
-    case Bot.GroupPermission.OWNER:
+    case Bot.groupPermission.OWNER:
         // 群主
         break;
-    case Bot.GroupPermission.ADMINISTRATOR:
+    case Bot.groupPermission.ADMINISTRATOR:
         // 管理员
         break;
-    case Bot.GroupPermission.MEMBER:
+    case Bot.groupPermission.MEMBER:
         // 普通群成员
         break;
 }

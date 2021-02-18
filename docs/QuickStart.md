@@ -141,13 +141,13 @@ bot.on('GroupMessage', async data => {
 
     // 你可以像这样来判断群成员的权限
     switch (data.sender.permission) {
-        case Bot.GroupPermission.OWNER:
+        case Bot.groupPermission.OWNER:
             // 群主
             break;
-        case Bot.GroupPermission.ADMINISTRATOR:
+        case Bot.groupPermission.ADMINISTRATOR:
             // 管理员
             break;
-        case Bot.GroupPermission.MEMBER:
+        case Bot.groupPermission.MEMBER:
             // 普通群成员
             break;
     }
