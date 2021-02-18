@@ -196,17 +196,21 @@ bot.close({ keepProcessor: true });
 
   `messageId` 可通过本方法返回，或在事件处理器中的 `messageChain` 中获取。
 
-- `message: Message` 二选一
+- `message: Message | MessageType[]` 必选
 
   用来指示发送的消息内容，需要提供一个 `Message` 的实例。
 
   `Message` 的相关 API 见 [Message](/Message)。
-
-- `messageChain: MessageType[]` 二选一
-
-  用来指示发送的消息内容，是一个 `MessageType` 数组。
+  
+  或提供一个 `MessageChain`，是一个 `MessageType` 数组。
 
   `MessageType` 是 **mirai-api-http** 接口需要的原始类型，见 [MessageType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/MessageType.md)。
+
+- `messageChain: MessageType[]` 不建议使用
+
+  已经被废弃，其功能由 `message` 参数承担，该参数将在未来被移除。
+
+  
 
 #### 返回值
 
