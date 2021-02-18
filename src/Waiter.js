@@ -1,4 +1,4 @@
-const { Middleware } = require('./Middleware');
+const { EntryGetable } = require('./interface.js');
 /**
  * @description 每个 Bot 实例将维护一个 Waiter 实例，它用来同步等待一次用户输入
  * @use 使用 bot.waiter
@@ -15,7 +15,7 @@ class Waiter {
      */
     wait(eventType, callback) {
         return new Promise(resolve => {
-            if (callback instanceof Middleware) {
+            if (callback instanceof EntryGetable) {
                 // 中间件需要在内部 resolve
                 this.bot.one(eventType, async data => callback.entry(data, resolve), true);
             } else {
