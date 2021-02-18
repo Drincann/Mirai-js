@@ -495,7 +495,7 @@ await bot.recall({ messageId });
 #### 示例
 
 ```js
-const { imageId, url, path } = await uploadImage({ filename });
+const { imageId, url, path } = await bot.uploadImage({ filename });
 
 await bot.sendMessage({
     friend: 1019933576,
@@ -534,7 +534,7 @@ await bot.sendMessage({
 #### 示例
 
 ```js
-const { voiceId, url, path } = await uploadVoice({ filename });
+const { voiceId, url, path } = await bot.uploadVoice({ filename });
 
 await bot.sendMessage({
     friend: 1019933576,
