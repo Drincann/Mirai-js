@@ -897,7 +897,7 @@ class Bot {
 
 
 // 静态属性: 群成员的权限
-Bot.GroupPermission = {
+Bot.groupPermission = {
     get OWNER() {
         return 'OWNER';
     },
