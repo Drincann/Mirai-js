@@ -33,6 +33,9 @@ const fs = require('fs');
 const { Middleware } = require('./Middleware');
 const { Waiter } = require('./Waiter');
 
+// 扩展接口
+const { EntryGetable, MessageChainGetable } = require('./interface');
+
 /**
  * @field config            包含 baseUrl authKey qq
  * @field eventProcessorMap 事件处理器 map
@@ -212,11 +215,21 @@ class Bot {
         }
 
         // 检查参数
-        if (!friend && !group || !message && !messageChain) {
-            throw new Error(`缺少必要的 ${getInvalidParamsString({
+        if (
+            // 参数是否提供
+            !friend && !group
+            || !message && !messageChain
+
+            // 类型检查：未提供 messageChain 且 message 不是 MessageChainGetable 的实例
+            || (!messageChain && !(message instanceof MessageChainGetable))
+        ) {
+            throw new Error(`sendMessage 缺少必要的 ${getInvalidParamsString({
                 'friend 或 group': friend || group,
                 'message 或 messageChain': message || messageChain,
-            })} 参数`)
+            })} 参数${getInvalidParamsString({
+                '，使用了无效的 message 参数且未提供 messageChain':
+                    (!messageChain && !(message instanceof MessageChainGetable)) ? undefined : true,
+            })}`)
         }
 
         // 需要使用的参数
@@ -290,9 +303,9 @@ class Bot {
         // handle 分别作为 value 和 key 包含在一个大对象中
         let processor = callback;
 
-        // 如果 callback 是 Middleware 的实例，拿到入口
-        if (callback instanceof Middleware) {
-            processor = callback.entry;
+        // 如果 callback 是 EntryGetable(Middleware) 的实例，拿到入口
+        if (callback instanceof EntryGetable) {
+            processor = callback.getEntry();
         }
 
         // 添加事件处理器
@@ -334,8 +347,8 @@ class Bot {
         }
 
         // 如果 callback 是 Middleware 的实例，拿到入口
-        if (callback instanceof Middleware) {
-            callback = callback.entry;
+        if (callback instanceof EntryGetable) {
+            callback = callback.getEntry();
         }
 
         // processor

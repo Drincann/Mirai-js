@@ -1,3 +1,6 @@
+// 用于与 Bot.sendMessage 耦合的接口
+const { MessageChainGetable } = require('./interface');
+
 /**
  * @description http 接口需要的消息类型
  */
@@ -70,8 +73,9 @@ class Voice extends MessageType {
 /**
  * @description 本框架抽象的消息类型，getMessageChainable
  */
-class Message {
+class Message extends MessageChainGetable {
     constructor() {
+        super();
         this.messageChain = [];
     }
 
