@@ -30,7 +30,6 @@ const _startListening = require('./core/startListening');
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
-const { Middleware } = require('./Middleware');
 const { Waiter } = require('./Waiter');
 
 // 扩展接口
@@ -199,13 +198,13 @@ class Bot {
     }
 
     /**
+     * ! messageChain 将在未来被移除
      * @description 向 qq 好友 或 qq 群发送消息，若同时提供，则优先向好友发送消息
-     * @param {boolean}            temp         可选，是否是临时会话，默认为 false
-     * @param {number}             friend       二选一，好友 qq 号
-     * @param {number}             group        二选一，群号
-     * @param {number}             quote        可选，消息引用，使用发送时返回的 messageId
-     * @param {Message}            message      二选一，Message 实例
-     * @param {array[MessageType]} messageChain 二选一，消息链，MessageType 数组
+     * @param {boolean} temp    可选，是否是临时会话，默认为 false
+     * @param {number}  friend  二选一，好友 qq 号
+     * @param {number}  group   二选一，群号
+     * @param {number}  quote   可选，消息引用，使用发送时返回的 messageId
+     * @param {Message} message 必选，Message 实例或 MessageType 数组
      * @returns {number} messageId
      */
     async sendMessage({ temp = false, friend, group, quote, message, messageChain }) {
@@ -215,28 +214,25 @@ class Bot {
         }
 
         // 检查参数
-        if (
-            // 参数是否提供
-            !friend && !group
-            || !message && !messageChain
-
-            // 类型检查：未提供 messageChain 且 message 不是 MessageChainGetable 的实例
-            || (!messageChain && !(message instanceof MessageChainGetable))
-        ) {
+        if (!friend && !group | !message && !messageChain) {
             throw new Error(`sendMessage 缺少必要的 ${getInvalidParamsString({
                 'friend 或 group': friend || group,
                 'message 或 messageChain': message || messageChain,
-            })} 参数${getInvalidParamsString({
-                '，使用了无效的 message 参数且未提供 messageChain':
-                    (!messageChain && !(message instanceof MessageChainGetable)) ? undefined : true,
-            })}`)
+            })} 参数`)
+        }
+
+        if (messageChain) {
+            console.log('warning: 现在 sendMessage 方法的 message 参数可以同时接收 Message 实例或 messageChain，messageChain 参数将在未来被移除');
         }
 
         // 需要使用的参数
         const { baseUrl, sessionKey } = this.config;
 
-        // 处理 message
-        if (!messageChain) {
+        // 处理 message，兼容存在 messageChain 参数的版本
+        if (messageChain) {
+            message = messageChain;
+        }
+        if (message instanceof MessageChainGetable) {
             messageChain = message.getMessageChain();
         }
 
