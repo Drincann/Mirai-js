@@ -33,7 +33,7 @@ const fs = require('fs');
 const { Waiter } = require('./Waiter');
 
 // 扩展接口
-const { EntryGetable, MessageChainGetable } = require('./interface');
+const { MessageChainGetable } = require('./interface');
 
 /**
  * @field config            包含 baseUrl authKey qq
@@ -299,11 +299,6 @@ class Bot {
         // handle 分别作为 value 和 key 包含在一个大对象中
         let processor = callback;
 
-        // 如果 callback 是 EntryGetable(Middleware) 的实例，拿到入口
-        if (callback instanceof EntryGetable) {
-            processor = callback.getEntry();
-        }
-
         // 添加事件处理器
         this.eventProcessorMap[eventType][handle] = processor;
         return handle;
@@ -342,23 +337,17 @@ class Bot {
             handle = random()
         }
 
-        // 如果 callback 是 Middleware 的实例，拿到入口
-        if (callback instanceof EntryGetable) {
-            callback = callback.getEntry();
-        }
-
         // processor
         // 每个事件对应多个 processor，这些 processor 和 h
         // andle 分别作为 value 和 key 包含在一个大对象中
-        const processor = (data) => {
+        const processor = async (data) => {
             if (strict) {
                 // 严格检测回调
-                // 当开发者的处理器结束后才移除该处理器
-                callback(data, () => {
-                    if (handle in this.eventProcessorMap[eventType]) {
-                        delete this.eventProcessorMap[eventType][handle];
-                    }
-                });
+                // 当开发者的处理器结束后才移除该处理器，这里等待异步回调
+                await callback(data);
+                if (handle in this.eventProcessorMap[eventType]) {
+                    delete this.eventProcessorMap[eventType][handle];
+                }
             } else {
                 // 不严格检测，直接移除处理器
                 // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
