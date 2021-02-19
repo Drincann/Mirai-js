@@ -11,7 +11,6 @@ class Middleware {
     constructor() {
         this.middleware = [];
         this.catcher = undefined;
-        this.entry = undefined;
     }
 
     /**
