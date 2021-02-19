@@ -840,7 +840,7 @@ class Bot {
 
     /**
      * @description 设置群配置
-     * @param {number}  target            必选，群号
+     * @param {number}  group             必选，群号
      * @param {string}  name	          可选，群名
      * @param {string}  announcement	  可选，群公告
      * @param {boolean} confessTalk	      可选，是否开启坦白说
