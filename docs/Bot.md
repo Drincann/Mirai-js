@@ -245,7 +245,7 @@ bot.on('FriendMessage', async data => {
 
 - `callback: function` 必选
 
-  用于处理该事件的回调函数，或一个已经调用过 `done` 的 `Middleware` 实例。
+  用于处理该事件的回调函数, 可以由 `Middleware` 实例的 `done` 方法返回。
 
 #### 返回值
 
@@ -345,7 +345,7 @@ bot.on('FriendMessage', async data => {
 
 - `callback: function` 必选
 
-  用于处理该事件的回调函数，或一个已经调用过 `done` 的 `Middleware` 实例。
+  用于处理该事件的回调函数, 可以由 `Middleware` 实例的 `done` 方法返回。
   
 - `strict: boolean` 可选
 
