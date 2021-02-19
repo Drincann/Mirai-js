@@ -119,7 +119,7 @@ class Middleware {
      * @param {boolean} allow          允许通过还是禁止通过
      * 结构 { number => array[number], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
-    groupMemberFilter(groupMemberMap, allow) {
+    groupMemberFilter(groupMemberMap, allow = true) {
         this.middleware.push((data, next) => {
             // 检查参数
             if (!(data?.sender?.id)) {
