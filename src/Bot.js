@@ -218,7 +218,7 @@ class Bot {
             throw new Error(`sendMessage 缺少必要的 ${getInvalidParamsString({
                 'friend 或 group': friend || group,
                 'message 或 messageChain': message || messageChain,
-            })} 参数`)
+            })} 参数`);
         }
 
         if (messageChain) {
@@ -289,9 +289,9 @@ class Bot {
 
         // 生成一个唯一的 handle，作为当前 
         // processor 的标识，用于移除该处理器
-        let handle = random()
+        let handle = random();
         while (handle in this.eventProcessorMap[eventType]) {
-            handle = random()
+            handle = random();
         }
 
         // processor
@@ -332,9 +332,9 @@ class Bot {
 
         // 生成一个唯一的 handle，作为当前 
         // processor 的标识，用于移除该处理器
-        let handle = random()
+        let handle = random();
         while (handle in this.eventProcessorMap[eventType]) {
-            handle = random()
+            handle = random();
         }
 
         // processor
@@ -379,7 +379,7 @@ class Bot {
 
         // 检查参数
         if (!eventType) {
-            throw new Error(`off 缺少必要的 eventType 参数`);
+            throw new Error('off 缺少必要的 eventType 参数');
         }
 
 
@@ -391,7 +391,7 @@ class Bot {
                     if (hd in this.eventProcessorMap[eventType]) {
                         delete this.eventProcessorMap[eventType][hd];
                     }
-                })
+                });
             } else {
                 // 不可迭代，认为是单个标识
                 if (handle in this.eventProcessorMap[eventType]) {
@@ -712,7 +712,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`muteAll 缺少必要的 group 参数`);
+            throw new Error('muteAll 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -755,7 +755,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`unmute 缺少必要的 group 参数`);
+            throw new Error('unmute 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -770,7 +770,7 @@ class Bot {
      * @param {string} message 可选，默认为空串 ""，信息
      * @returns {void}
      */
-    async removeMember({ group, qq, message = "" }) {
+    async removeMember({ group, qq, message = '' }) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('removeMember 请先调用 open，建立一个会话');
@@ -799,7 +799,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`quitGroup 缺少必要的 group 参数`);
+            throw new Error('quitGroup 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -820,7 +820,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`getGroupConfig 缺少必要的 group 参数`);
+            throw new Error('getGroupConfig 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -849,7 +849,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`setGroupConfig 缺少必要的 group 参数`);
+            throw new Error('setGroupConfig 缺少必要的 group 参数');
         }
 
 

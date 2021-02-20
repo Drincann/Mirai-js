@@ -28,4 +28,4 @@ module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => 
     } catch (error) {
         errorHandler(error);
     }
-}
+};

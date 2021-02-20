@@ -43,4 +43,4 @@ module.exports = async ({ baseUrl, sessionKey, type, voice }) => {
     } catch (error) {
         errorHandler(error);
     }
-}
+};

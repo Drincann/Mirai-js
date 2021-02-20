@@ -26,4 +26,4 @@ module.exports = async ({ baseUrl, sessionKey }) => {
     } catch (error) {
         errorHandler(error);
     }
-}
+};

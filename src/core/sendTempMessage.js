@@ -42,4 +42,4 @@ module.exports = async ({ baseUrl, sessionKey, qq, group, quote, messageChain })
         errorHandler(error);
     }
 
-}
+};

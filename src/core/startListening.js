@@ -46,7 +46,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
                 } 
                 */
                 error(err);
-            })
+            });
 
             ws.on('close', (code, reason) => {
                 // 关闭心跳

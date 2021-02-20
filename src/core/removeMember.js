@@ -31,4 +31,4 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId, msg }) => {
         errorHandler(error);
     }
 
-}
+};

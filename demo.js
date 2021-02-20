@@ -76,15 +76,15 @@ const { Bot, Message, Middleware } = require('./src/Mirai-js');
 
             // 你可以像这样来判断群成员的权限
             switch (fromQQPermission) {
-                case Bot.groupPermission.OWNER:
-                    // 群主
-                    break;
-                case Bot.groupPermission.ADMINISTRATOR:
-                    // 管理员
-                    break;
-                case Bot.groupPermission.MEMBER:
-                    // 普通群成员
-                    break;
+            case Bot.groupPermission.OWNER:
+                // 群主
+                break;
+            case Bot.groupPermission.ADMINISTRATOR:
+                // 管理员
+                break;
+            case Bot.groupPermission.MEMBER:
+                // 普通群成员
+                break;
             }
         });
 
@@ -121,6 +121,6 @@ const { Bot, Message, Middleware } = require('./src/Mirai-js');
                 .done()
         );
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 })();

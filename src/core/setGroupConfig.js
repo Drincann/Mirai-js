@@ -45,4 +45,4 @@ module.exports = async ({
     } catch (error) {
         errorHandler(error);
     }
-}
+};

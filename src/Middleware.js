@@ -249,7 +249,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
-            }
+            };
 
             // 拒绝
             data.refuse = async (message) => {
@@ -257,7 +257,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
-            }
+            };
 
             // 拒绝并加入黑名单
             data.refuseAndAddBlacklist = async (message) => {
@@ -265,7 +265,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 2,
                 });
-            }
+            };
 
             next();
         });
@@ -305,7 +305,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
-            }
+            };
 
             // 拒绝
             data.refuse = async (message) => {
@@ -313,7 +313,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
-            }
+            };
 
             // 忽略
             data.ignore = async (message) => {
@@ -321,7 +321,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 2,
                 });
-            }
+            };
 
             // 拒绝并加入黑名单
             data.refuseAndAddBlacklist = async (message) => {
@@ -329,7 +329,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 3,
                 });
-            }
+            };
 
             // 忽略并加入黑名单
             data.ignoreAndAddBlacklist = async (message) => {
@@ -337,7 +337,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 4,
                 });
-            }
+            };
 
             next();
         });
@@ -375,7 +375,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
-            }
+            };
 
             // 拒绝
             data.refuse = async (message) => {
@@ -383,7 +383,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
-            }
+            };
 
             next();
         });
@@ -437,7 +437,7 @@ class Middleware {
                     }
                 }
             });
-        }
+        };
 
     }
 }
