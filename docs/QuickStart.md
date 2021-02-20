@@ -1,15 +1,15 @@
 # 快速开始
 
-把项目 clone 到本地：
+从 `npm` 安装：
 
 ```bash
-$ git clone https://github.com/Drincann/Mirai-js.git
+$ npm install mirai-js
 ```
 
-接口入口位于 `./src/Mirai-js.js` 从该文件解构：
+然后从 `mirai-js` 解构：
 
 ```js
-const { Bot, Message } = require('./src/Mirai-js');
+const { Bot, Message } = require('mirai-js');
 ```
 
 
