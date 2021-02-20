@@ -9,4 +9,4 @@ community_bridge: # Replace with a single Community Bridge project-name e.g., cl
 liberapay: # Replace with a single Liberapay username
 issuehunt: # Replace with a single IssueHunt username
 otechie: # Replace with a single Otechie username
-custom: ['https://gaolihai.cool/note/#/#%E5%A6%82%E6%9E%9C%E6%84%9F%E8%A7%89%E6%88%91%E7%9A%84%E6%96%87%E7%AB%A0%E5%AF%B9%E4%BD%A0%E6%9C%89%E6%89%80%E5%B8%AE%E5%8A%A9%EF%BC%8C%E5%8F%AF%E4%BB%A5%E8%80%83%E8%99%91%E8%AF%B7%E6%88%91%E5%96%9D%E7%93%B6%E7%9F%BF%E6%B3%89%E6%B0%B4%E5%90%97%EF%BC%9F']# Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+custom: ['https://gaolihai.cool/note/']
