@@ -4,7 +4,16 @@
     "description": "QQ robot development framework based on Mirai-api-http.",
     "main": "src/Mirai-js.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "eslint --fix ."
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": "eslint --fix",
+        "*.ts": "eslint --fix"
     },
     "keywords": [
         "mirai",
@@ -28,6 +37,8 @@
         "ws": "^7.4.2"
     },
     "devDependencies": {
-        "eslint": "^7.19.0"
+        "eslint": "^7.19.0",
+        "husky": "^4.3.8",
+        "lint-staged": "^10.5.4"
     }
 }
