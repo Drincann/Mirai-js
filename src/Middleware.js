@@ -119,6 +119,11 @@ class Middleware {
      * 结构 { number => array[number], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
     groupMemberFilter(groupMemberMap, allow = true) {
+        // 每个 qq 数组变成 Set
+        for (const group in groupMemberMap) {
+            groupMemberMap[group] = new Set(groupMemberMap[group]);
+        }
+
         this.middleware.push((data, next) => {
             // 检查参数
             if (!(data?.sender?.id)) {
@@ -126,13 +131,13 @@ class Middleware {
             }
 
             // 检查是否是群消息
-            if (data.sender.group) {
+            if (!(data.sender.group)) {
                 return;
             }
 
             // 检查是否是允许通过的群成员，是则交给下一个中间件处理
-            if (data.sender.group in groupMemberMap &&
-                data.sender.id in groupMemberMap[data.sender.group.id]) {
+            if (data.sender.group.id in groupMemberMap &&
+                groupMemberMap[data.sender.group.id].has(data.sender.id)) {
                 return allow && next();
             }
             !allow && next();
