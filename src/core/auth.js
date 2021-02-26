@@ -16,9 +16,14 @@ module.exports = async ({ baseUrl, authKey }) => {
         const url = new URL('/auth', baseUrl).toString();
 
         // 请求
-        let {
-            data: { msg: message, code, session: sessionKey },
-        } = await axios.post(url, { authKey });
+        const responseData = await axios.post(url, { authKey });
+        try {
+            var {
+                data: { msg: message, code, session: sessionKey },
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.auth 请求返回格式出错，请检查 mirai-console')
+        }
 
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
