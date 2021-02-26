@@ -18,10 +18,14 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId, time }) => {
         const url = new URL('/mute', baseUrl).toString();
 
         // 请求
-        let {
-            data: { code, msg: message }
-        } = await axios.post(url, { sessionKey, target, memberId, time });
-
+        const responseData = await axios.post(url, { sessionKey, target, memberId, time });
+        try {
+            var {
+                data: { code, msg: message }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.mute 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
