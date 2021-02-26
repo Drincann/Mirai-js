@@ -17,10 +17,14 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId }) => {
         const url = new URL('/memberInfo', baseUrl).toString();
 
         // 请求
-        let {
-            data: { msg: message, code, name, specialTitle }
-        } = await axios.get(url, { params: { sessionKey, target, memberId } });
-
+        const responseData = await axios.get(url, { params: { sessionKey, target, memberId } });
+        try {
+            var {
+                data: { msg: message, code, name, specialTitle }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.getMemberInfo 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
