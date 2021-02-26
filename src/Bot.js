@@ -229,11 +229,10 @@ class Bot {
         const { baseUrl, sessionKey } = this.config;
 
         // 处理 message，兼容存在 messageChain 参数的版本
-        if (messageChain) {
-            message = messageChain;
-        }
-        if (message instanceof MessageChainGetable) {
-            messageChain = message.getMessageChain();
+        messageChain = messageChain ?? message;
+
+        if (messageChain instanceof MessageChainGetable) {
+            messageChain = messageChain.getMessageChain();
         }
 
         // 根据 temp、friend、group 参数的情况依次调用
