@@ -16,7 +16,12 @@ module.exports = async ({ baseUrl, sessionKey, target }) => {
         const url = new URL('/groupConfig', baseUrl).toString();
 
         // 请求
-        const { data } = await axios.get(url, { params: { sessionKey, target } });
+        const responseData = await axios.get(url, { params: { sessionKey, target } });
+        try {
+            var { data } = responseData;
+        } catch (error) {
+            throw new Error('core.getGroupConfig 请求返回格式出错，请检查 mirai-console')
+        }
         const { msg: message, code } = data;
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
