@@ -10,10 +10,10 @@ module.exports = (error) => {
     }
 
     // 抛出
-    if ((message ?? miraiMessage ?? resMessage ?? response.data)) {
+    if ((message ?? miraiMessage ?? resMessage ?? response?.data)) {
         // 拼接
         throw new Error(
-            [message, miraiMessage, resMessage, response.data]
+            [message, miraiMessage, resMessage, response?.data]
                 .filter(msg => typeof msg == 'string')
                 .join('\n')
         );
