@@ -4,8 +4,7 @@ const { URL } = require('url');
 const errorHandler = require('../util/errorHandler');
 
 /**
- * FIXME: 目前被邀请入群不会触发 BotInvitedJoinGroupRequestEvent 事件
- * 该功能未经测试
+ * ! 自动同意时，不会触发该事件
  * @description 响应机器人被邀请入群请求
  * @param {string} baseUrl    mirai-api-http server 的地址
  * @param {string} sessionKey 会话标识

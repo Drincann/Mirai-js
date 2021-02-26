@@ -278,8 +278,6 @@ class Middleware {
     }
 
     /**
-     * FIXME: mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
-     * 该功能未经测试
      * @description 用于 MemberJoinRequestEvent 的中间件，经过该中间件后，将在 data 下放置五个方法
      * agree                 同意
      * refuse                拒绝
@@ -295,7 +293,7 @@ class Middleware {
         }
         this.middleware.push((data, next) => {
             // 事件类型
-            if (data.type != 'NewFriendRequestEvent') {
+            if (data.type != 'MemberJoinRequestEvent') {
                 throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
             }
 
@@ -351,8 +349,7 @@ class Middleware {
 
 
     /**
-     * FIXME: 目前被邀请入群不会触发 BotInvitedJoinGroupRequestEvent 事件
-     * 该功能未经测试
+     * ! 自动同意时，不会触发该事件
      * @description 用于 BotInvitedJoinGroupRequestEvent 的中间件，经过该中间件后，将在 data 下放置两个方法
      * agree                 同意
      * refuse                拒绝
