@@ -5,8 +5,8 @@ import {
     // 事件类型    群成员权限
     EventType, GroupPermission,
 
-    // 接口            事件处理器类型
-    MessageChainGetable, Processor
+    // 接口               原始消息类型  事件处理器类型
+    MessageChainGetable, MessageType, Processor
 } from './BaseType';
 
 // 等待器
@@ -274,7 +274,7 @@ declare namespace Bot {
         friend?: number;
         group?: number;
         quote?: MessageId;
-        message?: MessageChainGetable;
+        message?: MessageChainGetable | MessageType[];
     }
 
     interface SessionConfig {

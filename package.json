@@ -1,6 +1,6 @@
 {
     "name": "mirai-js",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "QQ robot development framework based on Mirai-api-http.",
     "main": "src/Mirai-js.js",
     "scripts": {
@@ -37,8 +37,11 @@
         "ws": "^7.4.2"
     },
     "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.15.2",
+        "@typescript-eslint/parser": "^4.15.2",
         "eslint": "^7.19.0",
         "husky": "^4.3.8",
-        "lint-staged": "^10.5.4"
+        "lint-staged": "^10.5.4",
+        "typescript": "^4.2.2"
     }
 }
