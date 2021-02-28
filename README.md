@@ -11,8 +11,9 @@ bot.on('FriendMessage', data => {
 });
 ```
 
-开发文档请参考：[https://drincann.github.io/Mirai-js](https://drincann.github.io/Mirai-js)
+开发文档请参考: [https://drincann.github.io/Mirai-js](https://drincann.github.io/Mirai-js)
 
+QQ 群: 730757181
 
 
 # 快速开始
