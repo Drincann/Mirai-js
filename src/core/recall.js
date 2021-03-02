@@ -16,10 +16,13 @@ module.exports = async ({ baseUrl, sessionKey, target }) => {
         const url = new URL('/recall', baseUrl).toString();
 
         // 请求
-        let {
-            data: { code, msg: message }
-        } = await axios.post(url, { sessionKey, target });
-
+        try {
+            var {
+                data: { code, msg: message }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.recall 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
