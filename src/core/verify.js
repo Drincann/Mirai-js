@@ -16,10 +16,14 @@ module.exports = async ({ baseUrl, sessionKey, qq }) => {
         const url = new URL('/verify', baseUrl).toString();
 
         // 请求
-        let {
-            data: { msg: message, code },
-        } = await axios.post(url, { sessionKey, qq });
-
+        const responseData = await axios.post(url, { sessionKey, qq });
+        try {
+            var {
+                data: { msg: message, code },
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.verify 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
