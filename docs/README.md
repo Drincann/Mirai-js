@@ -9,4 +9,6 @@ bot.on('FriendMessage', data => {
 });
 ```
 
+QQ 群: 730757181
+
 --> [开发你的机器人应用](Preparation)
