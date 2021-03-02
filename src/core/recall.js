@@ -16,6 +16,7 @@ module.exports = async ({ baseUrl, sessionKey, target }) => {
         const url = new URL('/recall', baseUrl).toString();
 
         // 请求
+        const responseData = await axios.post(url, { sessionKey, target });
         try {
             var {
                 data: { code, msg: message }
