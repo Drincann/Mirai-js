@@ -19,19 +19,25 @@ module.exports = async ({ baseUrl, sessionKey, qq, group, quote, messageChain })
         const url = new URL('/sendTempMessage', baseUrl).toString();
 
         // 请求
-        let re;
+        const responseData;
         if (qq) {
-            re = await axios.post(url, {
+            responseData = await axios.post(url, {
                 sessionKey, qq, quote, messageChain
             });
         } else if (group) {
-            re = await axios.post(url, {
+            responseData = await axios.post(url, {
                 sessionKey, qq, quote, messageChain
             });
         } else {// 上层已经做了参数检查，这里有些多余
             throw new Error('sendTempMessage 缺少必要的 qq 或 group 参数');
         }
-        let { data: { msg: message, code, messageId } } = re;
+        try {
+            var {
+                data: { msg: message, code, messageId }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.sendTempMessage 请求返回格式出错，请检查 mirai-console')
+        }
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
