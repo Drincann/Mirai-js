@@ -22,7 +22,7 @@ module.exports = async ({ baseUrl, authKey, command: name, args }) => {
                 data: message
             } = responseData;
         } catch (error) {
-            throw new Error('core.responseMember 请求返回格式出错，请检查 mirai-console')
+            throw new Error('core.sendCommand 请求返回格式出错，请检查 mirai-console')
         }
         return { message };
     } catch (error) {
