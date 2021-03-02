@@ -65,7 +65,7 @@ export class Middleware {
      * @param atArr 必选，qq 号数组
      * @param allow 可选，允许通过还是禁止通过
      */
-    atFilter(friendArr: Number[], allow: boolean): Middleware;
+    atFilter(friendArr: number[], allow: boolean): Middleware;
 
     /**
      * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法

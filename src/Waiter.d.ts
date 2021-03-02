@@ -1,5 +1,5 @@
 import { EventType, Processor } from './BaseType';
-import { Bot } from "./Bot";
+import { Bot } from './Bot';
 
 export class Waiter {
     private bot: Bot;

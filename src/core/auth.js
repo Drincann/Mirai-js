@@ -22,7 +22,7 @@ module.exports = async ({ baseUrl, authKey }) => {
                 data: { msg: message, code, session: sessionKey },
             } = responseData;
         } catch (error) {
-            throw new Error('core.auth 请求返回格式出错，请检查 mirai-console')
+            throw new Error('core.auth 请求返回格式出错，请检查 mirai-console');
         }
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
