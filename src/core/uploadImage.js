@@ -31,6 +31,7 @@ module.exports = async ({ baseUrl, sessionKey, type, img }) => {
             // 机生成的 boundary，即分隔符，用以分隔多个表单项而不会造成混乱
             headers: form.getHeaders(),
         });
+
         try {
             var {
                 data: { msg: message, code, imageId, url, path }
@@ -38,6 +39,7 @@ module.exports = async ({ baseUrl, sessionKey, type, img }) => {
         } catch (error) {
             throw new Error('core.uploadImage 请求返回格式出错，请检查 mirai-console')
         }
+
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
