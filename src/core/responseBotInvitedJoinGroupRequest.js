@@ -22,11 +22,17 @@ module.exports = async ({ baseUrl, sessionKey, eventId, fromId, groupId, operate
         const url = new URL('/resp/botInvitedJoinGroupRequestEvent', baseUrl).toString();
 
         // 请求
-        let { data: { code, msg: serverMessage } } = await axios.post(url, {
+        const responseData = await axios.post(url, {
             sessionKey, eventId, fromId, groupId,
             operate, message
         });
-
+        try {
+            var {
+                data: { code, msg: serverMessage }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.responseBotlnviedJoinGroupRequest 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(serverMessage);

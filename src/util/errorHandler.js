@@ -21,4 +21,4 @@ module.exports = (error) => {
         // 未知异常
         throw error;
     }
-}
+};

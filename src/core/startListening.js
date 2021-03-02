@@ -28,7 +28,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
             const interval = setInterval(() => {
                 ws.ping((err) => {
                     if (err) {
-                        throw err;
+                        console.log(`ws ping error\n${JSON.stringify(err)}`);
                     }
                 });
             }, 60000);
@@ -46,7 +46,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
                 } 
                 */
                 error(err);
-            })
+            });
 
             ws.on('close', (code, reason) => {
                 // 关闭心跳

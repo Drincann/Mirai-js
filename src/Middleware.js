@@ -1,14 +1,3 @@
-/**
- * ! Middleware 的 done 方法不会直接返回一个函数入口，而是将函数入口放在实例的 this.entry 下
- * ! 在 Bot 中将会判断传入的消息处理器的类型，如果是 function，则直接使用，如果是 Middleware，则使用实例的 entry 属性
- * ! 这么做的原因是：
- * ! 中断机制，即 Bot 实例的 waiter.wait 方法，实际上是一个一次性事件的注册器，其内部会等待开发者回调函数的返回值
- * ! 在 Middleware 实例的 done 方法之间返回一个函数入口的情况下，
- * ! 若开发者的回调函数是一个简单回调函数，那么我们可以直接获得返回值，若是一个中间件的函数入口，则需要使用 Promise 进行包装
- * ! 等待 Middleware 提供的异步回调。但这两种情况我们无法提前通过参数得知。
- * ! 所以干脆将 Middleware 看做是一种与 Bot 耦合的事件处理器类型，对事件处理器进行类型检查。
- */
-
 const responseFirendRequest = require('./core/responseFirendRequest');
 const responseMemberJoinRequest = require('./core/responseMemberJoinRequest');
 const responseBotInvitedJoinGroupRequest = require('./core/responseBotInvitedJoinGroupRequest');
@@ -22,7 +11,6 @@ class Middleware {
     constructor() {
         this.middleware = [];
         this.catcher = undefined;
-        this.entry = undefined;
     }
 
     /**
@@ -130,7 +118,7 @@ class Middleware {
      * @param {boolean} allow          允许通过还是禁止通过
      * 结构 { number => array[number], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
-    groupMemberFilter(groupMemberMap, allow) {
+    groupMemberFilter(groupMemberMap, allow = true) {
         this.middleware.push((data, next) => {
             // 检查参数
             if (!(data?.sender?.id)) {
@@ -261,7 +249,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
-            }
+            };
 
             // 拒绝
             data.refuse = async (message) => {
@@ -269,7 +257,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
-            }
+            };
 
             // 拒绝并加入黑名单
             data.refuseAndAddBlacklist = async (message) => {
@@ -277,7 +265,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 2,
                 });
-            }
+            };
 
             next();
         });
@@ -317,7 +305,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
-            }
+            };
 
             // 拒绝
             data.refuse = async (message) => {
@@ -325,7 +313,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
-            }
+            };
 
             // 忽略
             data.ignore = async (message) => {
@@ -333,7 +321,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 2,
                 });
-            }
+            };
 
             // 拒绝并加入黑名单
             data.refuseAndAddBlacklist = async (message) => {
@@ -341,7 +329,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 3,
                 });
-            }
+            };
 
             // 忽略并加入黑名单
             data.ignoreAndAddBlacklist = async (message) => {
@@ -349,7 +337,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 4,
                 });
-            }
+            };
 
             next();
         });
@@ -387,7 +375,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 0,
                 });
-            }
+            };
 
             // 拒绝
             data.refuse = async (message) => {
@@ -395,7 +383,7 @@ class Middleware {
                     baseUrl, sessionKey, eventId, fromId, groupId,
                     message, operate: 1,
                 });
-            }
+            };
 
             next();
         });
@@ -427,28 +415,30 @@ class Middleware {
      * @param {function} callback 事件处理器
      */
     done(callback) {
-        // 中间件模式，第二个参数用来进行外部的 promise 包装，可以忽略
-        this.entry = (data, resolve) => {
-            try {
-                this.middleware.reduceRight((next, middleware) => {
-                    return () => middleware(data, next);
-                }, () => {
-                    let returnVal = callback instanceof Function ? callback(data) : undefined;
-                    // resolve 可能存在的 promise 包装
-                    if (resolve) {
-                        resolve(returnVal);
-                    }
-                })();
-            } catch (error) {
-                if (this.catcher) {
-                    this.catcher(error);
-                } else {
-                    throw error;
-                }
-            }
-        }
+        return data => {
+            return new Promise(resolve => {
+                try {
+                    // 从右侧递归合并中间件链
+                    this.middleware.reduceRight((next, middleware) => {
+                        return () => middleware(data, next);
+                    }, async () => {
+                        // 最深层递归，即开发者提供的回调函数
+                        let returnVal = callback instanceof Function ? (await callback(data)) : undefined;
 
-        return this;
+                        // 异步返回
+                        resolve(returnVal);
+                    })();
+                } catch (error) {
+                    // 优先调用开发者的错误处理器
+                    if (this.catcher) {
+                        this.catcher(error);
+                    } else {
+                        throw error;
+                    }
+                }
+            });
+        };
+
     }
 }
 

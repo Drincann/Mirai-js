@@ -30,8 +30,10 @@ const _startListening = require('./core/startListening');
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
-const { Middleware } = require('./Middleware');
 const { Waiter } = require('./Waiter');
+
+// 扩展接口
+const { MessageChainGetable } = require('./interface');
 
 /**
  * @field config            包含 baseUrl authKey qq
@@ -157,21 +159,25 @@ class Bot {
         // 由于在 ws open 之前关闭连接会抛异常，故应先判断此时是否正在连接中
         if (this.wsConnection.readyState == this.wsConnection.CONNECTING) {
             // 正在连接中，注册一个 open，等待回调时关闭
-            this.wsConnection.on('open', async () => {
-                // 关闭 websocket 的连接
-                this.wsConnection.close(1000);
+            // 由于是一个异步过程，使用 Promise 包装以配合开发者可能存在的同步调用
+            await new Promise(resolve => {
+                this.wsConnection.on('open', async () => {
+                    // 关闭 websocket 的连接
+                    this.wsConnection.close(1000);
 
-                // 释放会话
-                await _releaseSession({ baseUrl, sessionKey, qq });
+                    // 释放会话
+                    await _releaseSession({ baseUrl, sessionKey, qq });
 
-                // 初始化对象状态
-                if (!keepProcessor) {
-                    this.eventProcessorMap = undefined;
-                }
-                if (!keepConfig) {
-                    this.config = undefined;
-                }
-                this.wsConnection = undefined;
+                    // 初始化对象状态
+                    if (!keepProcessor) {
+                        this.eventProcessorMap = undefined;
+                    }
+                    if (!keepConfig) {
+                        this.config = undefined;
+                    }
+                    this.wsConnection = undefined;
+                    resolve(undefined);
+                });
             });
         } else {
             // 关闭 websocket 的连接
@@ -189,17 +195,16 @@ class Bot {
             }
             this.wsConnection = undefined;
         }
-
     }
 
     /**
+     * ! messageChain 将在未来被移除
      * @description 向 qq 好友 或 qq 群发送消息，若同时提供，则优先向好友发送消息
-     * @param {boolean}            temp         可选，是否是临时会话，默认为 false
-     * @param {number}             friend       二选一，好友 qq 号
-     * @param {number}             group        二选一，群号
-     * @param {number}             quote        可选，消息引用，使用发送时返回的 messageId
-     * @param {Message}            message      二选一，Message 实例
-     * @param {array[MessageType]} messageChain 二选一，消息链，MessageType 数组
+     * @param {boolean} temp    可选，是否是临时会话，默认为 false
+     * @param {number}  friend  二选一，好友 qq 号
+     * @param {number}  group   二选一，群号
+     * @param {number}  quote   可选，消息引用，使用发送时返回的 messageId
+     * @param {Message} message 必选，Message 实例或 MessageType 数组
      * @returns {number} messageId
      */
     async sendMessage({ temp = false, friend, group, quote, message, messageChain }) {
@@ -209,18 +214,25 @@ class Bot {
         }
 
         // 检查参数
-        if (!friend && !group || !message && !messageChain) {
-            throw new Error(`缺少必要的 ${getInvalidParamsString({
+        if (!friend && !group | !message && !messageChain) {
+            throw new Error(`sendMessage 缺少必要的 ${getInvalidParamsString({
                 'friend 或 group': friend || group,
                 'message 或 messageChain': message || messageChain,
-            })} 参数`)
+            })} 参数`);
+        }
+
+        if (messageChain) {
+            console.log('warning: 现在 sendMessage 方法的 message 参数可以同时接收 Message 实例或 messageChain，messageChain 参数将在未来被移除');
         }
 
         // 需要使用的参数
         const { baseUrl, sessionKey } = this.config;
 
-        // 处理 message
-        if (!messageChain) {
+        // 处理 message，兼容存在 messageChain 参数的版本
+        if (messageChain) {
+            message = messageChain;
+        }
+        if (message instanceof MessageChainGetable) {
             messageChain = message.getMessageChain();
         }
 
@@ -277,20 +289,15 @@ class Bot {
 
         // 生成一个唯一的 handle，作为当前 
         // processor 的标识，用于移除该处理器
-        let handle = random()
+        let handle = random();
         while (handle in this.eventProcessorMap[eventType]) {
-            handle = random()
+            handle = random();
         }
 
         // processor
         // 每个事件对应多个 processor，这些 processor 和 
         // handle 分别作为 value 和 key 包含在一个大对象中
         let processor = callback;
-
-        // 如果 callback 是 Middleware 的实例，拿到入口
-        if (callback instanceof Middleware) {
-            processor = callback.entry;
-        }
 
         // 添加事件处理器
         this.eventProcessorMap[eventType][handle] = processor;
@@ -325,28 +332,22 @@ class Bot {
 
         // 生成一个唯一的 handle，作为当前 
         // processor 的标识，用于移除该处理器
-        let handle = random()
+        let handle = random();
         while (handle in this.eventProcessorMap[eventType]) {
-            handle = random()
-        }
-
-        // 如果 callback 是 Middleware 的实例，拿到入口
-        if (callback instanceof Middleware) {
-            callback = callback.entry;
+            handle = random();
         }
 
         // processor
         // 每个事件对应多个 processor，这些 processor 和 h
         // andle 分别作为 value 和 key 包含在一个大对象中
-        const processor = (data) => {
+        const processor = async (data) => {
             if (strict) {
                 // 严格检测回调
-                // 当开发者的处理器结束后才移除该处理器
-                callback(data, () => {
-                    if (handle in this.eventProcessorMap[eventType]) {
-                        delete this.eventProcessorMap[eventType][handle];
-                    }
-                });
+                // 当开发者的处理器结束后才移除该处理器，这里等待异步回调
+                await callback(data);
+                if (handle in this.eventProcessorMap[eventType]) {
+                    delete this.eventProcessorMap[eventType][handle];
+                }
             } else {
                 // 不严格检测，直接移除处理器
                 // 从 field eventProcessorMap 中移除 handle 指定的事件处理器
@@ -378,7 +379,7 @@ class Bot {
 
         // 检查参数
         if (!eventType) {
-            throw new Error(`off 缺少必要的 eventType 参数`);
+            throw new Error('off 缺少必要的 eventType 参数');
         }
 
 
@@ -390,7 +391,7 @@ class Bot {
                     if (hd in this.eventProcessorMap[eventType]) {
                         delete this.eventProcessorMap[eventType][hd];
                     }
-                })
+                });
             } else {
                 // 不可迭代，认为是单个标识
                 if (handle in this.eventProcessorMap[eventType]) {
@@ -711,7 +712,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`muteAll 缺少必要的 group 参数`);
+            throw new Error('muteAll 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -754,7 +755,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`unmute 缺少必要的 group 参数`);
+            throw new Error('unmute 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -769,7 +770,7 @@ class Bot {
      * @param {string} message 可选，默认为空串 ""，信息
      * @returns {void}
      */
-    async removeMember({ group, qq, message = "" }) {
+    async removeMember({ group, qq, message = '' }) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('removeMember 请先调用 open，建立一个会话');
@@ -798,7 +799,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`quitGroup 缺少必要的 group 参数`);
+            throw new Error('quitGroup 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -819,7 +820,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`getGroupConfig 缺少必要的 group 参数`);
+            throw new Error('getGroupConfig 缺少必要的 group 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -828,7 +829,7 @@ class Bot {
 
     /**
      * @description 设置群配置
-     * @param {number}  target            必选，群号
+     * @param {number}  group             必选，群号
      * @param {string}  name	          可选，群名
      * @param {string}  announcement	  可选，群公告
      * @param {boolean} confessTalk	      可选，是否开启坦白说
@@ -848,7 +849,7 @@ class Bot {
 
         // 检查参数
         if (!group) {
-            throw new Error(`setGroupConfig 缺少必要的 group 参数`);
+            throw new Error('setGroupConfig 缺少必要的 group 参数');
         }
 
 
@@ -885,7 +886,7 @@ class Bot {
 
 
 // 静态属性: 群成员的权限
-Bot.GroupPermission = {
+Bot.groupPermission = {
     get OWNER() {
         return 'OWNER';
     },

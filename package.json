@@ -1,19 +1,44 @@
 {
-    "name": "Mirai-js",
+    "name": "mirai-js",
     "version": "1.0.0",
-    "description": "",
+    "description": "QQ robot development framework based on Mirai-api-http.",
     "main": "src/Mirai-js.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "eslint --fix ."
     },
-    "keywords": [],
-    "license": "AGPL",
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": "eslint --fix",
+        "*.ts": "eslint --fix"
+    },
+    "keywords": [
+        "mirai",
+        "api",
+        "http",
+        "robot"
+    ],
+    "author": {
+        "email": "gaolihai233@qq.com",
+        "name": "gaolihai",
+        "url": "https://gaolihai.cool/note/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Drincann/Mirai-js"
+    },
+    "license": "AGPL-3.0",
     "dependencies": {
         "axios": "^0.21.1",
         "form-data": "^3.0.0",
         "ws": "^7.4.2"
     },
     "devDependencies": {
-        "eslint": "^7.19.0"
+        "eslint": "^7.19.0",
+        "husky": "^4.3.8",
+        "lint-staged": "^10.5.4"
     }
 }

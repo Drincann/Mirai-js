@@ -1,15 +1,15 @@
 # 快速开始
 
-把项目 clone 到本地：
+从 `npm` 安装：
 
 ```bash
-$ git clone https://github.com/Drincann/Mirai-js.git
+$ npm install mirai-js
 ```
 
-接口入口位于 `./src/Mirai-js.js` 从该文件解构：
+然后从 `mirai-js` 解构：
 
 ```js
-const { Bot, Message } = require('./src/Mirai-js');
+const { Bot, Message } = require('mirai-js');
 ```
 
 
@@ -87,7 +87,7 @@ await bot.sendMessage({
     // 群号
     group: '123456789',
     // 是 http server 接口所需的原始格式，若提供则优先使用
-    messageChain: [
+    message: [
     	{ type: 'Plain', text: 'hello world!'},
         { type: 'Image', url:;'http://example/image.jpg'},
 	],
@@ -141,13 +141,13 @@ bot.on('GroupMessage', async data => {
 
     // 你可以像这样来判断群成员的权限
     switch (data.sender.permission) {
-        case Bot.GroupPermission.OWNER:
+        case Bot.groupPermission.OWNER:
             // 群主
             break;
-        case Bot.GroupPermission.ADMINISTRATOR:
+        case Bot.groupPermission.ADMINISTRATOR:
             // 管理员
             break;
-        case Bot.GroupPermission.MEMBER:
+        case Bot.groupPermission.MEMBER:
             // 普通群成员
             break;
     }

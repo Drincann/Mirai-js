@@ -2,30 +2,30 @@
 
 # 静态属性
 
-## GroupPermission
+## groupPermission
 
-`GroupPermission` 可作为判断群成员权限的途径。
+`groupPermission` 可作为判断群成员权限的途径。
 
 #### 属性
 
-- `GroupPermission.OWNER`：`"OWNER"`
+- `groupPermission.OWNER`：`"OWNER"`
 
-- `GroupPermission.ADMINISTRATOR`：`"ADMINISTRATOR"`
+- `groupPermission.ADMINISTRATOR`：`"ADMINISTRATOR"`
 
-- `GroupPermission.MEMBER`：`"MEMBER"`
+- `groupPermission.MEMBER`：`"MEMBER"`
 
 #### 示例
 
 ```js
 // 你可以像这样来判断群成员的权限
 switch (data.sender.permission) {
-    case Bot.GroupPermission.OWNER:
+    case Bot.groupPermission.OWNER:
         // 群主
         break;
-    case Bot.GroupPermission.ADMINISTRATOR:
+    case Bot.groupPermission.ADMINISTRATOR:
         // 管理员
         break;
-    case Bot.GroupPermission.MEMBER:
+    case Bot.groupPermission.MEMBER:
         // 普通群成员
         break;
 }
@@ -34,7 +34,7 @@ switch (data.sender.permission) {
 #### 实现
 
 ```js
-Bot.GroupPermission = {
+Bot.groupPermission = {
     get OWNER() {
         return 'OWNER';
     },
@@ -196,17 +196,21 @@ bot.close({ keepProcessor: true });
 
   `messageId` 可通过本方法返回，或在事件处理器中的 `messageChain` 中获取。
 
-- `message: Message` 二选一
+- `message: Message | MessageType[]` 必选
 
   用来指示发送的消息内容，需要提供一个 `Message` 的实例。
 
   `Message` 的相关 API 见 [Message](/Message)。
-
-- `messageChain: MessageType[]` 二选一
-
-  用来指示发送的消息内容，是一个 `MessageType` 数组。
+  
+  或提供一个 `MessageChain`，是一个 `MessageType` 数组。
 
   `MessageType` 是 **mirai-api-http** 接口需要的原始类型，见 [MessageType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/MessageType.md)。
+
+- `messageChain: MessageType[]` 不建议使用
+
+  已经被废弃，其功能由 `message` 参数承担，该参数将在未来被移除。
+
+  
 
 #### 返回值
 
@@ -241,7 +245,7 @@ bot.on('FriendMessage', async data => {
 
 - `callback: function` 必选
 
-  用于处理该事件的回调函数，或一个已经调用过 `done` 的 `Middleware` 实例。
+  用于处理该事件的回调函数, 可以由 `Middleware` 实例的 `done` 方法返回。
 
 #### 返回值
 
@@ -341,7 +345,7 @@ bot.on('FriendMessage', async data => {
 
 - `callback: function` 必选
 
-  用于处理该事件的回调函数，或一个已经调用过 `done` 的 `Middleware` 实例。
+  用于处理该事件的回调函数, 可以由 `Middleware` 实例的 `done` 方法返回。
   
 - `strict: boolean` 可选
 
@@ -589,13 +593,13 @@ const groupList = await bot.getGroupList();
 ```js
 // 你可以像这样来判断群成员的权限
 switch (permission) {
-    case Bot.GroupPermission.OWNER:
+    case Bot.groupPermission.OWNER:
         // 群主
         break;
-    case Bot.GroupPermission.ADMINISTRATOR:
+    case Bot.groupPermission.ADMINISTRATOR:
         // 管理员
         break;
-    case Bot.GroupPermission.MEMBER:
+    case Bot.groupPermission.MEMBER:
         // 普通群成员
         break;
 }

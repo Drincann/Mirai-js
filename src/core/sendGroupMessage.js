@@ -18,10 +18,16 @@ module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) =>
         const url = new URL('/sendGroupMessage', baseUrl).toString();
 
         // 请求
-        let { data: { msg: message, code, messageId } } = await axios.post(url, {
+        const responseData = await axios.post(url, {
             sessionKey, target, quote, messageChain
         });
-
+        try {
+            var {
+                data: { msg: message, code, messageId }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.sendGroupMessage 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
@@ -30,4 +36,4 @@ module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) =>
     } catch (error) {
         errorHandler(error);
     }
-}
+};

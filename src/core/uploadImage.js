@@ -48,4 +48,4 @@ module.exports = async ({ baseUrl, sessionKey, type, img }) => {
     } catch (error) {
         errorHandler(error);
     }
-}
+};

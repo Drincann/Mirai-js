@@ -27,14 +27,18 @@ module.exports = async ({ baseUrl, sessionKey, type, voice }) => {
         form.append('voice', voice, { filename: 'voice.mp3' });
 
         // 请求
-        let {
-            data: { msg: message, code, voiceId, url, path }
-        } = await axios.post(targetUrl, form, {
+        const responseData = await axios.post(targetUrl, form, {
             // formdata.getHeaders 将会指定 content-type，同时给定随
             // 机生成的 boundary，即分隔符，用以分隔多个表单项而不会造成混乱
             headers: form.getHeaders(),
         });
-
+        try {
+            var {
+                data: { msg: message, code, voiceId, url, path }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.uploadVoice 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
@@ -43,4 +47,4 @@ module.exports = async ({ baseUrl, sessionKey, type, voice }) => {
     } catch (error) {
         errorHandler(error);
     }
-}
+};

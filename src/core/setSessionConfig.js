@@ -17,9 +17,15 @@ module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => 
         // 拼接 url
         const url = new URL('/config', baseUrl).toString();
 
-        // 请求
-        let { data: { msg: message, code } } = await axios.post(url, { sessionKey, cacheSize, enableWebsocket });
-
+        // 请求 
+        const responseData = await axios.post(url, { sessionKey, cacheSize, enableWebsocket });
+        try {
+            var {
+                data: { msg: message, code }
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.setSessionConfig 请求返回格式出错，请检查 mirai-console')
+        }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCode) {
             throw new Error(message);
@@ -28,4 +34,4 @@ module.exports = async ({ baseUrl, sessionKey, cacheSize, enableWebsocket }) => 
     } catch (error) {
         errorHandler(error);
     }
-}
+};

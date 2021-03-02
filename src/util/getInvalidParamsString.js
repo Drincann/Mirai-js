@@ -6,7 +6,7 @@
 module.exports = parametersMap => {
     return Object.keys(parametersMap)
         .filter(fieldName => {
-            return parametersMap[fieldName] === undefined
+            return parametersMap[fieldName] === undefined;
         })
         .join(' ');
-}
+};

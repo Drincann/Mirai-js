@@ -16,8 +16,14 @@ module.exports = async ({ baseUrl, authKey, command: name, args }) => {
         const url = new URL('/command/send', baseUrl).toString();
 
         // 请求
-        const { data: message } = await axios.post(url, { authKey, name, args, });
-
+        const responseData = await axios.post(url, { authKey, name, args, });
+        try {
+            var {
+                data: message
+            } = responseData;
+        } catch (error) {
+            throw new Error('core.sendCommand 请求返回格式出错，请检查 mirai-console')
+        }
         return { message };
     } catch (error) {
         errorHandler(error);
