@@ -17,7 +17,7 @@ module.exports = async ({ baseUrl, sessionKey }) => {
         // 请求
         const responseData = await axios.get(url, { params: { sessionKey } });
         try {
-            var { data: { msg: message, code } } = responseData;
+            var { data, data: { msg: message, code } } = responseData;
         } catch (error) {
             throw new Error('core.getGroupList 请求返回格式出错，请检查 mirai-console')
         }
