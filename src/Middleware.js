@@ -23,14 +23,23 @@ class Middleware {
     autoReLogin({ bot, baseUrl, authKey, password }) {
         const { Bot } = require('./Mirai-js');
         this.middleware.push(async (data, next) => {
-            await Bot.sendCommand({
-                baseUrl,
-                authKey,
-                command: '/login',
-                args: [data.qq, password],
-            });
-            await bot.open();
-            next();
+            try {
+                await Bot.sendCommand({
+                    baseUrl,
+                    authKey,
+                    command: '/login',
+                    args: [data.qq, password],
+                });
+                await bot.open();
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
+
         });
         return this;
     }
@@ -42,12 +51,21 @@ class Middleware {
      */
     messageProcessor(typeArr) {
         this.middleware.push((data, next) => {
-            const result = {};
-            typeArr.forEach((type) => {
-                result[type] = data.messageChain.filter((message) => message.type == type);
-            });
-            data.classified = result;
-            next();
+            try {
+                const result = {};
+                typeArr.forEach((type) => {
+                    result[type] = data.messageChain.filter((message) => message.type == type);
+                });
+                data.classified = result;
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
+
         });
         return this;
     }
@@ -57,11 +75,19 @@ class Middleware {
      */
     textProcessor() {
         this.middleware.push((data, next) => {
-            data.text = data.messageChain
-                .filter((val) => val.type == 'Plain')
-                .map((val) => val.text)
-                .join('');
-            next();
+            try {
+                data.text = data.messageChain
+                    .filter((val) => val.type == 'Plain')
+                    .map((val) => val.text)
+                    .join('');
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
         });
         return this;
     }
@@ -75,16 +101,24 @@ class Middleware {
         const groupSet = new Set(groupArr);
 
         this.middleware.push((data, next) => {
-            // 检查参数
-            if (!(data?.sender?.group?.id)) {
-                throw new Error('Middleware.groupFilter 消息格式出错');
-            }
+            try {
+                // 检查参数
+                if (!(data?.sender?.group?.id)) {
+                    throw new Error('Middleware.groupFilter 消息格式出错');
+                }
 
-            // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
-            if (groupSet.has(data.sender.group.id)) {
-                return allow && next();
+                // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
+                if (groupSet.has(data.sender.group.id)) {
+                    return allow && next();
+                }
+                !allow && next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
-            !allow && next();
         });
         return this;
     }
@@ -98,16 +132,24 @@ class Middleware {
         const groupSet = new Set(friendArr);
 
         this.middleware.push((data, next) => {
-            // 检查参数
-            if (!(data?.sender?.id)) {
-                throw new Error('Middleware.friendFilter 消息格式出错');
-            }
+            try {
+                // 检查参数
+                if (!(data?.sender?.id)) {
+                    throw new Error('Middleware.friendFilter 消息格式出错');
+                }
 
-            // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
-            if (groupSet.has(data.sender.id)) {
-                return allow && next();
+                // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
+                if (groupSet.has(data.sender.id)) {
+                    return allow && next();
+                }
+                !allow && next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
-            !allow && next();
         });
         return this;
     }
@@ -125,22 +167,30 @@ class Middleware {
         }
 
         this.middleware.push((data, next) => {
-            // 检查参数
-            if (!(data?.sender?.id)) {
-                throw new Error('Middleware.friendFilter 消息格式出错');
-            }
+            try {
+                // 检查参数
+                if (!(data?.sender?.id)) {
+                    throw new Error('Middleware.friendFilter 消息格式出错');
+                }
 
-            // 检查是否是群消息
-            if (!(data.sender.group)) {
-                return;
-            }
+                // 检查是否是群消息
+                if (!(data.sender.group)) {
+                    return;
+                }
 
-            // 检查是否是允许通过的群成员，是则交给下一个中间件处理
-            if (data.sender.group.id in groupMemberMap &&
-                groupMemberMap[data.sender.group.id].has(data.sender.id)) {
-                return allow && next();
+                // 检查是否是允许通过的群成员，是则交给下一个中间件处理
+                if (data.sender.group.id in groupMemberMap &&
+                    groupMemberMap[data.sender.group.id].has(data.sender.id)) {
+                    return allow && next();
+                }
+                !allow && next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
-            !allow && next();
         });
         return this;
     }
@@ -152,25 +202,33 @@ class Middleware {
     memberLock() {
         const memberMap = {/* group -> memberSet */ };
         this.middleware.push((data, next) => {
-            // 检查参数
-            if (!data.sender?.group?.id) {
-                throw new Error('Middleware.memberLock 消息格式出错');
-            }
+            try {
+                // 检查参数
+                if (!data.sender?.group?.id) {
+                    throw new Error('Middleware.memberLock 消息格式出错');
+                }
 
-            // 若该 group 不存在对应的 Set，则添加
-            if (!(memberMap[data.sender?.group?.id] instanceof Set)) {
-                memberMap[data.sender?.group?.id] = new Set();
-            }
+                // 若该 group 不存在对应的 Set，则添加
+                if (!(memberMap[data.sender?.group?.id] instanceof Set)) {
+                    memberMap[data.sender?.group?.id] = new Set();
+                }
 
-            // 是否正在对话
-            if (memberMap[data.sender?.group?.id].has(data.sender?.id)) {
-                // 正在对话则返回
-                return;
-            } else {
-                // 未在对话，则加入对应的 Set，然后继续
-                memberMap[data.sender?.group?.id].add(data.sender?.id);
-                data.unlock = () => memberMap[data.sender?.group?.id].delete(data.sender?.id);
-                next();
+                // 是否正在对话
+                if (memberMap[data.sender?.group?.id].has(data.sender?.id)) {
+                    // 正在对话则返回
+                    return;
+                } else {
+                    // 未在对话，则加入对应的 Set，然后继续
+                    memberMap[data.sender?.group?.id].add(data.sender?.id);
+                    data.unlock = () => memberMap[data.sender?.group?.id].delete(data.sender?.id);
+                    next();
+                }
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
         });
         return this;
@@ -183,20 +241,28 @@ class Middleware {
     friendLock() {
         const friendSet = new Set();
         this.middleware.push((data, next) => {
-            // 检查参数
-            if (!data.sender?.id) {
-                throw new Error('Middleware.memberLock 消息格式出错');
-            }
+            try {
+                // 检查参数
+                if (!data.sender?.id) {
+                    throw new Error('Middleware.memberLock 消息格式出错');
+                }
 
-            // 是否正在对话
-            if (friendSet.has(data.sender?.id)) {
-                // 正在对话则返回
-                return;
-            } else {
-                // 未在对话，则加入 Set，然后继续
-                friendSet.add(data.sender?.id);
-                data.unlock = () => friendSet.delete(data.sender?.id);
-                next();
+                // 是否正在对话
+                if (friendSet.has(data.sender?.id)) {
+                    // 正在对话则返回
+                    return;
+                } else {
+                    // 未在对话，则加入 Set，然后继续
+                    friendSet.add(data.sender?.id);
+                    data.unlock = () => friendSet.delete(data.sender?.id);
+                    next();
+                }
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
         });
         return this;
@@ -211,18 +277,26 @@ class Middleware {
         const friendSet = new Set(friendArr);
 
         this.middleware.push((data, next) => {
-            // 检查参数
-            if (!(data?.messageChain)) {
-                throw new Error('Middleware.atFilter 消息格式出错');
-            }
+            try {
+                // 检查参数
+                if (!(data?.messageChain)) {
+                    throw new Error('Middleware.atFilter 消息格式出错');
+                }
 
-            // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
-            for (const message of data.messageChain) {
-                if (message?.type == 'At' && friendSet.has(message?.target)) {
-                    return allow && next();
+                // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
+                for (const message of data.messageChain) {
+                    if (message?.type == 'At' && friendSet.has(message?.target)) {
+                        return allow && next();
+                    }
+                }
+                !allow && next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
                 }
             }
-            !allow && next();
         });
         return this;
     }
@@ -238,41 +312,49 @@ class Middleware {
             throw new Error('Middleware.NewFriendRequestEvent 缺少必要的 bot 参数');
         }
         this.middleware.push((data, next) => {
-            // 事件类型
-            if (data.type != 'NewFriendRequestEvent') {
-                throw new Error('Middleware.NewFriendRequestEvent 消息格式出错');
+            try {
+                // 事件类型
+                if (data.type != 'NewFriendRequestEvent') {
+                    throw new Error('Middleware.NewFriendRequestEvent 消息格式出错');
+                }
+
+                // ! 这个地方与 Bot 耦合
+                // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+                const { baseUrl, sessionKey } = bot.config;
+                const { eventId, fromId, groupId } = data;
+
+                // 同意
+                data.agree = async (message) => {
+                    await responseFirendRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 0,
+                    });
+                };
+
+                // 拒绝
+                data.refuse = async (message) => {
+                    await responseFirendRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 1,
+                    });
+                };
+
+                // 拒绝并加入黑名单
+                data.refuseAndAddBlacklist = async (message) => {
+                    await responseFirendRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 2,
+                    });
+                };
+
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
-
-            // ! 这个地方与 Bot 耦合
-            // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-            const { baseUrl, sessionKey } = bot.config;
-            const { eventId, fromId, groupId } = data;
-
-            // 同意
-            data.agree = async (message) => {
-                await responseFirendRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 0,
-                });
-            };
-
-            // 拒绝
-            data.refuse = async (message) => {
-                await responseFirendRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 1,
-                });
-            };
-
-            // 拒绝并加入黑名单
-            data.refuseAndAddBlacklist = async (message) => {
-                await responseFirendRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 2,
-                });
-            };
-
-            next();
         });
         return this;
     }
@@ -292,57 +374,65 @@ class Middleware {
             throw new Error('Middleware.memberJoinRequestProcessor 缺少必要的 bot 参数');
         }
         this.middleware.push((data, next) => {
-            // 事件类型
-            if (data.type != 'MemberJoinRequestEvent') {
-                throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
+            try {
+                // 事件类型
+                if (data.type != 'MemberJoinRequestEvent') {
+                    throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
+                }
+
+                // ! 这个地方与 Bot 耦合
+                // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+                const { baseUrl, sessionKey } = bot.config;
+                const { eventId, fromId, groupId } = data;
+
+                // 同意
+                data.agree = async (message) => {
+                    await responseMemberJoinRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 0,
+                    });
+                };
+
+                // 拒绝
+                data.refuse = async (message) => {
+                    await responseMemberJoinRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 1,
+                    });
+                };
+
+                // 忽略
+                data.ignore = async (message) => {
+                    await responseMemberJoinRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 2,
+                    });
+                };
+
+                // 拒绝并加入黑名单
+                data.refuseAndAddBlacklist = async (message) => {
+                    await responseMemberJoinRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 3,
+                    });
+                };
+
+                // 忽略并加入黑名单
+                data.ignoreAndAddBlacklist = async (message) => {
+                    await responseMemberJoinRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 4,
+                    });
+                };
+
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
-
-            // ! 这个地方与 Bot 耦合
-            // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-            const { baseUrl, sessionKey } = bot.config;
-            const { eventId, fromId, groupId } = data;
-
-            // 同意
-            data.agree = async (message) => {
-                await responseMemberJoinRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 0,
-                });
-            };
-
-            // 拒绝
-            data.refuse = async (message) => {
-                await responseMemberJoinRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 1,
-                });
-            };
-
-            // 忽略
-            data.ignore = async (message) => {
-                await responseMemberJoinRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 2,
-                });
-            };
-
-            // 拒绝并加入黑名单
-            data.refuseAndAddBlacklist = async (message) => {
-                await responseMemberJoinRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 3,
-                });
-            };
-
-            // 忽略并加入黑名单
-            data.ignoreAndAddBlacklist = async (message) => {
-                await responseMemberJoinRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 4,
-                });
-            };
-
-            next();
         });
         return this;
     }
@@ -361,33 +451,41 @@ class Middleware {
             throw new Error('Middleware.invitedJoinGroupRequestProcessor 缺少必要的 bot 参数');
         }
         this.middleware.push((data, next) => {
-            // 事件类型
-            if (data.type != 'BotInvitedJoinGroupRequestEvent') {
-                throw new Error('Middleware.invitedJoinGroupRequestProcessor 消息格式出错');
+            try {
+                // 事件类型
+                if (data.type != 'BotInvitedJoinGroupRequestEvent') {
+                    throw new Error('Middleware.invitedJoinGroupRequestProcessor 消息格式出错');
+                }
+
+                // ! 这个地方与 Bot 耦合
+                // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+                const { baseUrl, sessionKey } = bot.config;
+                const { eventId, fromId, groupId } = data;
+
+                // 同意
+                data.agree = async (message) => {
+                    await responseBotInvitedJoinGroupRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 0,
+                    });
+                };
+
+                // 拒绝
+                data.refuse = async (message) => {
+                    await responseBotInvitedJoinGroupRequest({
+                        baseUrl, sessionKey, eventId, fromId, groupId,
+                        message, operate: 1,
+                    });
+                };
+
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
             }
-
-            // ! 这个地方与 Bot 耦合
-            // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-            const { baseUrl, sessionKey } = bot.config;
-            const { eventId, fromId, groupId } = data;
-
-            // 同意
-            data.agree = async (message) => {
-                await responseBotInvitedJoinGroupRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 0,
-                });
-            };
-
-            // 拒绝
-            data.refuse = async (message) => {
-                await responseBotInvitedJoinGroupRequest({
-                    baseUrl, sessionKey, eventId, fromId, groupId,
-                    message, operate: 1,
-                });
-            };
-
-            next();
         });
         return this;
     }
@@ -399,7 +497,18 @@ class Middleware {
      * @param {function} callback (data, next) => void
      */
     use(callback) {
-        this.middleware.push(callback);
+        this.middleware.push(async (data, next) => {
+            // 捕获错误
+            try {
+                await callback(data, next);
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
+        });
         return this;
     }
 
@@ -419,25 +528,16 @@ class Middleware {
     done(callback) {
         return data => {
             return new Promise(resolve => {
-                try {
-                    // 从右侧递归合并中间件链
-                    this.middleware.reduceRight((next, middleware) => {
-                        return () => middleware(data, next);
-                    }, async () => {
-                        // 最深层递归，即开发者提供的回调函数
-                        let returnVal = callback instanceof Function ? (await callback(data)) : undefined;
+                // 从右侧递归合并中间件链
+                this.middleware.reduceRight((next, middleware) => {
+                    return () => middleware(data, next);
+                }, async () => {
+                    // 最深层递归，即开发者提供的回调函数
+                    let returnVal = callback instanceof Function ? (await callback(data)) : undefined;
 
-                        // 异步返回
-                        resolve(returnVal);
-                    })();
-                } catch (error) {
-                    // 优先调用开发者的错误处理器
-                    if (this.catcher) {
-                        this.catcher(error);
-                    } else {
-                        throw error;
-                    }
-                }
+                    // 异步返回
+                    resolve(returnVal);
+                })();
             });
         };
 
