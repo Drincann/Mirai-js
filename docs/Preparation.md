@@ -27,6 +27,8 @@
    .\mcl --update-package net.mamoe:mirai-api-http --channel stable --type plugin
    ```
 
+   然后在命令行中执行 `.\mcl` 以启动 **MCL**，同时会自动安装刚才指定的 mirai-api-http 服务。
+
 3. 配置 **mirai-api-http**
 
    编辑 `config/MiraiApiHttp/setting.yml`。
@@ -37,7 +39,7 @@
 
 4. 启动
 
-   在命令行中执行 `.\mcl` 以启动 **MCL**。
+   在命令行中重启 MCL。
 
 >此外，为了应对可能存在的登录问题，建议额外安装 `mirai-login-solver-selenium`：
 >
