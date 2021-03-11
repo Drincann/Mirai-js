@@ -101,13 +101,13 @@ bot.on('FriendMessage', new Middleware()
 
 `groupFilter` 用于 `GroupMessage`。
 
-该中间件将允许指定的好友通过，相当于为允许通过的群设置白名单。
+该中间件将允许指定的群通过，相当于为允许通过的群设置白名单。
 
 #### 参数
 
-- `groupArr: Map` 必选
+- `groupArr: number[]` 必选
 
-  key 为允许通过的群号，value 为该群允许通过的成员 qq
+  群号数组。
   
 - `allow: boolean` 可选
 
