@@ -1,4 +1,4 @@
-const errCode = require('../util/errCode');
+const { errCodeMap } = require('../util/errCode');
 const axios = require('axios').default;
 const { URL } = require('url');
 const errorHandler = require('../util/errorHandler');
@@ -17,13 +17,13 @@ module.exports = async ({ baseUrl, sessionKey }) => {
         // 请求
         const responseData = await axios.get(url, { params: { sessionKey } });
         try {
-            var { data, data: { msg: message, code }} = responseData;
+            var { data, data: { msg: message, code } } = responseData;
         } catch (error) {
             throw new Error('core.getFriendList 请求返回格式出错，请检查 mirai-console');
         }
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
-        if (code in errCode) {
+        if (code in errCodeMap) {
             throw new Error(message);
         }
         return data;

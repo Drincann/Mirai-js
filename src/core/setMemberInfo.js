@@ -1,4 +1,4 @@
-const errCode = require('../util/errCode');
+const { errCodeMap } = require('../util/errCode');
 const axios = require('axios');
 const { URL } = require('url');
 const errorHandler = require('../util/errorHandler');
@@ -33,7 +33,7 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId, name, specialTi
             throw new Error('core.setMemberInfo 请求返回格式出错，请检查 mirai-console');
         }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
-        if (code in errCode) {
+        if (code in errCodeMap) {
             throw new Error(message);
         }
         return { message, code };
