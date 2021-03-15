@@ -229,6 +229,14 @@ export class Bot {
 
     // 类方法
     /**
+     * @description 检测该账号是否已经在 mirai-console 登录
+     * @param baseUrl 必选，mirai-api-http server 的地址
+     * @param authKey 必选，mirai-api-http server 设置的 authKey
+     * @param qq      必选，qq 号
+     */
+    static isBotLoggedIn({ baseUrl, authKey, qq }: Bot.IsBotLoggedInOptions): Promise<boolean>;
+
+    /**
      * @description 向 mirai-console 发送指令
      * @param baseUrl 必选，mirai-api-http server 的地址
      * @param authKey 必选，mirai-api-http server 设置的 authKey
@@ -401,6 +409,12 @@ declare namespace Bot {
         authKey: string;
         command: string;
         args: string[];
+    }
+
+    interface IsBotLoggedInOptions {
+        baseUrl: string;
+        authKey: string;
+        qq: number;
     }
 
     interface MiraiConsoleMessage {

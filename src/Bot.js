@@ -31,6 +31,8 @@ const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
 const { Waiter } = require('./Waiter');
+const { errCodeEnum } = require('./util/errCode');
+
 
 // 扩展接口
 const { MessageChainGetable } = require('./interface');
@@ -861,6 +863,30 @@ class Bot {
             autoApprove,
             anonymousChat,
         });
+    }
+
+    /**
+     * @description 检测该账号是否已经在 mirai-console 登录
+     * @param {string} baseUrl 必选，mirai-api-http server 的地址
+     * @param {string} authKey 必选，mirai-api-http server 设置的 authKey
+     * @param {number} qq      必选，qq 号
+     * @returns 
+     */
+    static async isBotLoggedIn({ baseUrl, authKey, qq }) {
+        // 检查参数
+        if (!baseUrl || !authKey || !qq) {
+            throw new Error(`isBotLoggedIn 缺少必要的 ${getInvalidParamsString({ baseUrl, authKey, qq })} 参数`);
+        }
+
+        const sessionKey = await _auth({ baseUrl, authKey });
+        const { code } = await _verify({ baseUrl, sessionKey, qq, throwable: false });
+
+        if (code == errCodeEnum.BOT_NOT_FOUND) {
+            return false;
+        } else {
+            _releaseSession({ baseUrl, sessionKey, qq });
+            return true;
+        }
     }
 
     /**
