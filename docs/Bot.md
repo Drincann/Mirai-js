@@ -49,7 +49,7 @@ Bot.groupPermission = {
 
 
 
-# 普通属性
+# 成员属性
 
 ## waiter
 
@@ -104,7 +104,42 @@ const { message } = await Bot.sendCommand({
 
 
 
-# 普通方法
+## isBotLoggedIn
+
+`isisBotLoggedIn` 将判断某 qq 号是否已经在 mirai-console 登录
+
+#### 参数
+
+- `baseUrl: string` 必选
+
+  mirai-api-http 的网络位置。
+
+- `authKey: string` 必选
+
+  mirai-api-http 的认证秘钥。
+
+- `qq: number` 必选
+
+  qq 号。
+
+
+#### 返回值
+
+`boolean` 是否已登录
+
+#### 示例
+
+```js
+const isLoggedIn = await Bot.isBotLoggedIn({ 
+    baseUrl: 'http://example.com:8080',
+    authKey: 'authKey',
+    qq: 1019933576,
+});
+```
+
+
+
+# 成员方法
 
 ## open
 
