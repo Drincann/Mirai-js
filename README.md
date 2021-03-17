@@ -1,4 +1,4 @@
-# Mirai.js
+# Mirai-js
 
 Mirai-js，一个运行在 Node.js 平台的，简单的 QQ 机器人开发框架。
 
