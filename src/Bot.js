@@ -6,6 +6,7 @@ const _sendCommand = require('./core/sendCommand');
 const _sendFriendMessage = require('./core/sendFirendMessage');
 const _sendGroupMessage = require('./core/sendGroupMessage');
 const _sendTempMessage = require('./core/sendTempMessage');
+const _sendNudge = require('./core/sendNudge');
 const _getSessionConfig = require('./core/getSessionConfig');
 const _setSessionConfig = require('./core/setSessionConfig');
 const _uploadImage = require('./core/uploadImage');
@@ -256,6 +257,51 @@ class Bot {
             } else {
                 throw { message: 'sendGroupMessage 缺少必要的 qq 或 group 参数' };
             }
+        }
+    }
+
+    /**
+     * @description 向好友或群成员发送戳一戳
+     * 如果提供了 group 参数则忽略 friend
+     * mirai-api-http-v1.10.1 feature
+     * @param {number} friend 二选一，好友 qq 号
+     * @param {number} group  二选一，群成员所在群 
+     * @param {number} target 必选，目标 qq 号
+     */
+    async sendNudge({ friend, group, target }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('sendNudge 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!((group || friend) && target)) {
+            throw new Error(`sendNudge 缺少必要的 ${getInvalidParamsString({
+                'group 或 friend': group || friend,
+                'target': target,
+            })} 参数`);
+        }
+
+        // 需要使用的参数
+        const { baseUrl, sessionKey } = this.config;
+
+        // 发给群成员
+        if (group) {
+            await _sendNudge({
+                baseUrl, sessionKey,
+                target,
+                subject: group,
+                kind: 'Group',
+            });
+        }
+        // 发给好友
+        else if (friend) {
+            await _sendNudge({
+                baseUrl, sessionKey,
+                target,
+                subject: friend,
+                kind: 'Friend',
+            });
         }
     }
 
