@@ -1,6 +1,6 @@
 {
     "name": "mirai-js",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "QQ robot development framework based on Mirai-api-http.",
     "main": "src/Mirai-js.js",
     "scripts": {
@@ -30,6 +30,7 @@
         "type": "git",
         "url": "https://github.com/Drincann/Mirai-js"
     },
+    "homepage": "https://drincann.github.io/Mirai-js/",
     "license": "AGPL-3.0",
     "dependencies": {
         "axios": "^0.21.1",
