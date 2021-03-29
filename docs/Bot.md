@@ -266,6 +266,44 @@ bot.on('FriendMessage', async data => {
 
 
 
+## sendNudge
+
+`sendNudge`方法向好友或群组的某一目标发送戳一戳。
+
+!> 注意，该 feature 在 mirai-api-http v1.10.0 实现
+
+#### 参数
+
+- `friend: number` 二选一
+
+  好友 qq 号。
+
+- `group: number` 二选一
+
+  群号。
+
+- `target: number` 可选
+
+  目标 qq 号。
+
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+bot.on('GroupMessage', async data => {
+    await bot.sendNudge({
+        group: data.sender.group.id,
+        target: data.sender.id
+    });
+});
+```
+
+
+
 ## on
 
 ?> 这是一个同步方法
