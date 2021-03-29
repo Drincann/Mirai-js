@@ -59,6 +59,15 @@ export class Bot {
     sendMessage({ temp, friend, group, quote, message }: Bot.SendMessageOptions): Promise<MessageId>;
 
     /**
+     * @description 向好友或群成员发送戳一戳
+     * 如果提供了 group 参数则忽略 friend
+     * mirai-api-http-v1.10.1 feature
+     * @param friend 二选一，好友 qq 号
+     * @param group  二选一，群成员所在群 
+     * @param target 必选，目标 qq 号
+     */
+    async sendNudge({ friend, group, target }: Bot.SendNudgeOptions): Promise<void>;
+    /**
      * @description 添加一个事件处理器
      * 框架维护的 WebSocket 实例会在 ws 的事件 message 下分发 Mirai http server 的消息
      * 回调函数 (data) => any，data 的结构取决于消息类型，详见 mirai-api-http 的文档
@@ -283,6 +292,12 @@ declare namespace Bot {
         group?: number;
         quote?: MessageId;
         message?: MessageChainGetable | MessageType[];
+    }
+
+    interface SendNudgeOptions {
+        friend?: number;
+        group?: number;
+        target: number;
     }
 
     interface SessionConfig {
