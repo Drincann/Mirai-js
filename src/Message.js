@@ -69,6 +69,27 @@ class Voice extends MessageType {
     }
 }
 
+class Xml extends MessageType {
+    constructor({ xml }) {
+        super({ type: 'Xml' });
+        this.xml = xml;
+    }
+}
+
+class Json extends MessageType {
+    constructor({ json }) {
+        super({ type: 'Json' });
+        this.json = json;
+    }
+}
+
+class App extends MessageType {
+    constructor({ app }) {
+        super({ type: 'App' });
+        this.app = app;
+    }
+}
+
 
 /**
  * @description 本框架抽象的消息类型，getMessageChainable
@@ -136,6 +157,25 @@ class Message extends MessageChainGetable {
         this.messageChain.push(new Voice({ path }));
         return this;
     }
+
+    // xml
+    addXml(xml) {
+        this.messageChain.push(new Xml({ xml }));
+        return this;
+    }
+
+    // json
+    addJson(json) {
+        this.messageChain.push(new Json({ json }));
+        return this;
+    }
+
+    // app
+    addApp(app) {
+        this.messageChain.push(new App({ app }));
+        return this;
+    }
+
     // get 原接口格式的信息链
     getMessageChain() {
         return this.messageChain;

@@ -29,6 +29,15 @@ export class Message implements MessageChainGetable {
     addVoiceUrl(url: string): Message;
     addVoicePath(path: string): Message;
 
+    // xml
+    addXml(xml: string): Message;
+
+    // json
+    addJson(json: string): Message;
+
+    // aoo
+    addApp(app: string): Message;
+
     // implements MessageChainGetable
     getMessageChain(): MessageType[];
 }
