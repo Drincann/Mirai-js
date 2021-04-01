@@ -158,6 +158,36 @@ await bot.sendMessage({
 
 
 
+## addXml
+
+`addXml` 方法会添加一个 XML 消息。
+
+#### 参数
+
+- `xml` 必选
+
+
+
+## addJson
+
+`addJson` 方法会添加一个语音消息。
+
+#### 参数
+
+- `json` 必选
+
+
+
+## addApp
+
+`addApp` 方法会添加一个 App 消息。
+
+#### 参数
+
+- `app` 必选
+
+
+
 # 接口
 
 ## getMessageChain
