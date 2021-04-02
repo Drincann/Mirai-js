@@ -84,9 +84,9 @@ class Json extends MessageType {
 }
 
 class App extends MessageType {
-    constructor({ app }) {
+    constructor({ content }) {
         super({ type: 'App' });
-        this.app = app;
+        this.content = content;
     }
 }
 
@@ -171,8 +171,8 @@ class Message extends MessageChainGetable {
     }
 
     // app
-    addApp(app) {
-        this.messageChain.push(new App({ app }));
+    addApp(content) {
+        this.messageChain.push(new App({ content }));
         return this;
     }
 

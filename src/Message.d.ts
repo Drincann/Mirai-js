@@ -36,7 +36,7 @@ export class Message implements MessageChainGetable {
     addJson(json: string): Message;
 
     // aoo
-    addApp(app: string): Message;
+    addApp(content: string): Message;
 
     // implements MessageChainGetable
     getMessageChain(): MessageType[];
