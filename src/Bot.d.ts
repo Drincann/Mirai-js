@@ -40,6 +40,11 @@ export class Bot {
     open({ baseUrl, authKey, qq }: Bot.OpenOptions): Promise<void>;
 
     /**
+     * @description 监听 ws 消息
+     */
+    private __wsListen(): Promise<void>;
+
+    /**
      * @description 关闭会话
      * @param keepProcessor 可选，是否保留事件处理器，默认值为 false，不保留
      * @param keepConfig    可选，是否保留 session baseUrl qq authKey，默认值为 false，不保留
@@ -66,7 +71,8 @@ export class Bot {
      * @param group  二选一，群成员所在群 
      * @param target 必选，目标 qq 号
      */
-    async sendNudge({ friend, group, target }: Bot.SendNudgeOptions): Promise<void>;
+    sendNudge({ friend, group, target }: Bot.SendNudgeOptions): Promise<void>;
+
     /**
      * @description 添加一个事件处理器
      * 框架维护的 WebSocket 实例会在 ws 的事件 message 下分发 Mirai http server 的消息
