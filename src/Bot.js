@@ -74,17 +74,7 @@ class Bot {
 
         // 事件处理器 map
         // 如果重复调用 open 则保留事件处理器
-        this.eventProcessorMap = this.eventProcessorMap ?? {
-            /*
-             每个事件对应多个 processor 对象，这些对象和 h
-             andle 分别作为 value 和 key 包含在一个大对象中
-
-            eventType: string -> {
-                                     handle: number -> callback: (data) => void ,
-                                     ...
-                                 }              
-            */
-        };
+        this.eventProcessorMap = this.eventProcessorMap ?? {};
 
         // 需要使用的参数
         ({ baseUrl, qq, authKey } = this.config);
@@ -102,10 +92,20 @@ class Bot {
         // 绑定到一个 qq
         await _verify({ baseUrl, sessionKey, qq });
 
-        // 开启 websocket
+        // 配置服务端 websocket 状态
         await _setSessionConfig({ baseUrl, sessionKey, enableWebsocket: true });
 
         // 开始监听事件
+        await this.__wsListen();
+
+    }
+
+    /**
+     * @private
+     * @description 监听 ws 消息
+     */
+    async __wsListen() {
+        const { baseUrl, sessionKey } = this.config;
         this.wsConnection = await _startListening({
             baseUrl,
             sessionKey,
@@ -117,7 +117,6 @@ class Bot {
                 }
             },
             error: err => {
-                // 如果当前到达的事件拥有处理器，则依次调用所有该事件的处理器
                 const type = 'error';
                 if (type in this.eventProcessorMap) {
                     return Object.values(this.eventProcessorMap[type])
@@ -143,6 +142,7 @@ class Bot {
             }
         });
     }
+
 
     /**
      * @description 关闭会话
