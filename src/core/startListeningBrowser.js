@@ -34,7 +34,9 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close }) => {
             }, 10000);
 
             ws.onmessage = ({ data }) => {
-                message(JSON.parse(data));
+                try {
+                    message(JSON.parse(data));
+                } catch (error) { }// eslint-disable-line no-empty
             };
 
             ws.onerror = err => {

@@ -34,13 +34,17 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
             const interval = setInterval(() => {
                 ws.ping((err) => {
                     if (err) {
-                        console.log(`ws ping error\n${JSON.stringify(err)}`);
+                        try {
+                            console.log(`ws ping error\n${JSON.stringify(err)}`);
+                        } catch (error) { }// eslint-disable-line no-empty
                     }
                 });
             }, 60000);
 
             ws.on('message', data => {
-                message(JSON.parse(data));
+                try {
+                    message(JSON.parse(data));
+                } catch (error) { }// eslint-disable-line no-empty
             });
 
             ws.on('error', err => {
