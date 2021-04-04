@@ -1,4 +1,4 @@
-const { Bot, Message, Middleware } = require('./src/Mirai-js');
+const { Bot, Message, Middleware } = require('./src');
 
 (async () => {
     try {

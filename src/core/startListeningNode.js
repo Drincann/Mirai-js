@@ -1,5 +1,10 @@
 const WebSocket = require('ws');
-const { URL } = require('url');
+let URL;
+if (!process.browser) {
+    ({ URL } = require('url'));
+} else {
+    URL = window.URL;
+}
 const errorHandler = require('../util/errorHandler');
 
 /**
@@ -22,6 +27,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
 
         const ws = new WebSocket(url);
 
+
         // 监听 ws 事件，分发消息
         ws.on('open', () => {
             // 60s 发个心跳
@@ -37,14 +43,14 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
                 message(JSON.parse(data));
             });
 
-            ws.on('error', (err) => {
+            ws.on('error', err => {
                 /* 
-                interface Error {
-                    name: string;
-                    message: string;
-                    stack?: string;
-                } 
-                */
+                    interface Error {
+                        name: string;
+                        message: string;
+                        stack?: string;
+                    } 
+                    */
                 error(err);
             });
 

@@ -21,7 +21,7 @@ class Middleware {
      * @param {string} password 欲重新登陆的 qq 密码
      */
     autoReLogin({ bot, baseUrl, authKey, password }) {
-        const { Bot } = require('./Mirai-js');
+        const { Bot } = require('./index.js');
         this.middleware.push(async (data, next) => {
             try {
                 await Bot.sendCommand({

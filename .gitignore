@@ -2,3 +2,4 @@ node_modules/*
 .vscode/*
 test.js
 .eslintrc.js
+dist

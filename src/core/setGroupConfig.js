@@ -1,6 +1,11 @@
 const { errCodeMap } = require('../util/errCode');
 const axios = require('axios').default;
-const { URL } = require('url');
+let URL;
+if (!process.browser) {
+    ({ URL } = require('url'));
+} else {
+    URL = window.URL;
+}
 const errorHandler = require('../util/errorHandler');
 
 

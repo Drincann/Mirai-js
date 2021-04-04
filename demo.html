@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="./dist/mirai-js.js"></script>
+
+    <div></div>
+
+    <script>
+        (async () => {
+            // 引入 qq 机器人框架
+            const { Bot, Middleware, Message } = miraiJs;
+
+            const baseUrl = 'http://example.com:8080';
+            const authKey = prompt('输入 authkey');
+            const qq = 1019933576;
+            const bot = new Bot();
+
+            // 创建一个会话
+            await bot.open({
+                // mirai-api-http 的服务端地址，
+                baseUrl,
+                // 要绑定的 qq，须确保该用户已在 mirai-console 登录
+                qq,
+                // authKey 用于验证连接者的身份，在插件配置文件中设置
+                authKey,
+            });
+
+            // 监听消息
+            await bot.on('FriendMessage', new Middleware().textProcessor().done(data => {
+                document.querySelector('div').innerHTML = data.text;
+            }));
+        })();
+    </script>
+</body>
+
+</html>

@@ -25,7 +25,8 @@ const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
 const _getGroupConfig = require('./core/getGroupConfig');
 const _setGroupConfig = require('./core/setGroupConfig');
-const _startListening = require('./core/startListening');
+const _startListening = process.browser ? require('./core/startListeningBrowser') : require('./core/startListeningNode');
+const _stopListening = process.browser ? require('./core/stopListeningBrowser') : require('./core/stopListeningNode');
 
 // 其他
 const random = require('./util/random')(0, 2E16);
@@ -159,45 +160,20 @@ class Bot {
         // 需要使用的参数
         const { baseUrl, sessionKey, qq } = this.config;
 
-        // 由于在 ws open 之前关闭连接会抛异常，故应先判断此时是否正在连接中
-        if (this.wsConnection.readyState == this.wsConnection.CONNECTING) {
-            // 正在连接中，注册一个 open，等待回调时关闭
-            // 由于是一个异步过程，使用 Promise 包装以配合开发者可能存在的同步调用
-            await new Promise(resolve => {
-                this.wsConnection.on('open', async () => {
-                    // 关闭 websocket 的连接
-                    this.wsConnection.close(1000);
+        //  关闭 ws 连接
+        await _stopListening(this.wsConnection);
 
-                    // 释放会话
-                    await _releaseSession({ baseUrl, sessionKey, qq });
+        // 释放会话
+        await _releaseSession({ baseUrl, sessionKey, qq });
 
-                    // 初始化对象状态
-                    if (!keepProcessor) {
-                        this.eventProcessorMap = undefined;
-                    }
-                    if (!keepConfig) {
-                        this.config = undefined;
-                    }
-                    this.wsConnection = undefined;
-                    resolve(undefined);
-                });
-            });
-        } else {
-            // 关闭 websocket 的连接
-            this.wsConnection.close(1000);
-
-            // 释放会话
-            await _releaseSession({ baseUrl, sessionKey, qq });
-
-            // 初始化对象状态
-            if (!keepProcessor) {
-                this.eventProcessorMap = undefined;
-            }
-            if (!keepConfig) {
-                this.config = undefined;
-            }
-            this.wsConnection = undefined;
+        // 初始化对象状态
+        if (!keepProcessor) {
+            this.eventProcessorMap = undefined;
         }
+        if (!keepConfig) {
+            this.config = undefined;
+        }
+        this.wsConnection = undefined;
     }
 
     /**
