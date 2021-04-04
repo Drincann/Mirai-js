@@ -534,6 +534,9 @@ class Bot {
         }
 
         // 检查参数
+        if (process.browser && filename) {
+            throw new Error('uploadImage 浏览器端不支持 filename 参数');
+        }
         if (!img && !filename) {
             throw new Error('uploadImage 缺少必要的 img 或 filename 参数');
         }
@@ -564,6 +567,9 @@ class Bot {
         }
 
         // 检查参数
+        if (process.browser && filename) {
+            throw new Error('uploadVoice 浏览器端不支持 filename 参数');
+        }
         if (!voice && !filename) {
             throw new Error('uploadVoice 缺少必要的 voice 或 filename 参数');
         }
