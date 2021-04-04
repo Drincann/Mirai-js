@@ -1,5 +1,9 @@
 # 快速开始
 
+## 加载依赖
+
+### Node.js
+
 从 `npm` 安装：
 
 ```bash
@@ -12,9 +16,25 @@ $ npm install mirai-js
 const { Bot, Message } = require('mirai-js');
 ```
 
+### 浏览器
+
+使用 cdn：
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mirai-js/dist/mirai-js.js"></script>
+```
+
+然后从 `window.miraiJs` 解构：
+
+```js
+const { Bot, Message } = window.miraiJs;
+```
+
 
 
 ## 登录
+
+!> 警告，不应将 `authKey`、`password` 暴露在可被公共访问的网络资源上
 
 可以直接在 **mirai-console** 中输入`/login qq password`。
 
@@ -180,8 +200,16 @@ GroupMessage 事件的消息结构：
 
 框架还提供了一系列预定义的用于处理消息的中间件：
 
+Node.js：
+
 ```js
-const { Middleware } = require('./src/Mirai-js');
+const { Middleware } = require('mirai-js');
+```
+
+浏览器端：
+
+```js
+const { Middleware } = window.miraiJs;
 ```
 
 获得一个 `Middleware` 的实例：

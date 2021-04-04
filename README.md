@@ -2,7 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/drincann/mirai-js/badge)](https://www.codefactor.io/repository/github/drincann/mirai-js)
 
-Mirai-js，一个运行在 Node.js 平台的，简单的 QQ 机器人开发框架。
+Mirai-js，一个运行在 Node.js、浏览器下的，简单的 QQ 机器人开发框架。
 
 ```js
 bot.on('FriendMessage', async data => {
@@ -27,10 +27,14 @@ QQ 群: 730757181
 
 # 快速开始
 
+## 加载依赖
+
+### Node.js
+
 从 `npm` 安装：
 
 ```bash
-npm install mirai-js
+$ npm install mirai-js
 ```
 
 然后从 `mirai-js` 解构：
@@ -39,9 +43,25 @@ npm install mirai-js
 const { Bot, Message } = require('mirai-js');
 ```
 
+### 浏览器
+
+使用 cdn：
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mirai-js/dist/mirai-js.js"></script>
+```
+
+然后从 `window.miraiJs` 解构：
+
+```js
+const { Bot, Message } = window.miraiJs;
+```
+
 
 
 ## 登录
+
+!> 警告，不应将 `authKey`、`password` 暴露在可被公共访问的网络资源上
 
 可以直接在 **mirai-console** 中输入`/login qq password`。
 
@@ -207,8 +227,16 @@ GroupMessage 事件的消息结构：
 
 框架还提供了一系列预定义的用于处理消息的中间件：
 
+Node.js：
+
 ```js
-const { Middleware } = require('./src/Mirai-js');
+const { Middleware } = require('mirai-js');
+```
+
+浏览器端：
+
+```js
+const { Middleware } = window.miraiJs;
 ```
 
 获得一个 `Middleware` 的实例：

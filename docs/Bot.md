@@ -561,6 +561,8 @@ await bot.recall({ messageId });
 
 - `filename: string` 二选一
 
+  !> 该参数无法用于浏览器端
+  
   本地文件的路径。
 
 #### 返回值
@@ -600,6 +602,8 @@ await bot.sendMessage({
 
 - `filename: string` 二选一
 
+  !> 该参数无法用于浏览器端
+  
   本地文件的路径。
 
 #### 返回值
