@@ -295,9 +295,9 @@ class Bot {
      * - 'error':               (err: Error) => void
      * - 'close':               (code: number, message: string) => void
      * - 'unexpected-response': (request: http.ClientRequest, response: http.IncomingMessage) => void
-     * @param {string}   eventType 必选，事件类型
+     * @param {string | string[]}   eventType 必选，事件类型
      * @param {function} callback  必选，回调函数
-     * @returns {number} 事件处理器的标识，用于移除该处理器
+     * @returns {number | string[]} 事件处理器的标识，用于移除该处理器
      */
     on(eventType, callback) {
         // 检查对象状态
@@ -309,6 +309,11 @@ class Bot {
         if (!eventType || !callback) {
             throw new Error(`on 缺少必要的 ${getInvalidParamsString({ eventType, callback })} 参数`);
 
+        }
+
+        // 适配 eventType 数组
+        if (Array.isArray(eventType)) {
+            return eventType.map(event => this.on(event, callback));
         }
 
         // 为没有任何事件处理器的事件生成一个空对象 (空对象 {}，而不是 null)
@@ -335,7 +340,7 @@ class Bot {
 
     /**
      * @description 添加一个一次性事件处理器，回调一次后自动移除
-     * @param {string}   eventType 必选，事件类型
+     * @param {string | string[]}   eventType 必选，事件类型
      * @param {function} callback  必选，回调函数
      * @param {boolean}  strict    可选，是否严格检测调用，由于消息可能会被中间件拦截
      *                             当为 true 时，只有开发者的处理器结束后才会移除该处理器
@@ -352,6 +357,12 @@ class Bot {
         if (!eventType || !callback) {
             throw new Error(`one 缺少必要的 ${getInvalidParamsString({ eventType, callback })} 参数`);
 
+        }
+
+        // 适配 eventType 数组
+        if (Array.isArray(eventType)) {
+            eventType.map(event => this.one(event, callback));
+            return;
         }
 
         // 为没有任何事件处理器的事件生成一个空对象 (空对象 {}，而不是 null)
