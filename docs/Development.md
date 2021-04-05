@@ -26,17 +26,16 @@
 
 ## 待办
 
-- [ ] 文档
+- [x] 文档
   - [ ] 提供更好的文档
 - [ ] 功能
-
   - [ ] 更好地、简洁地生成`MessageChain`的方法
-  - [ ] 实现更多的`MessageType`
+  - [x] 实现更多的`MessageType`
   - [ ] 实现更多的`Middleware`
   - [x] 实现`Middleware`的可扩展，例如可自定义中间件的接口，或者其他
-  - [ ] 中断功能，参考 issue#2
+  - [x] 中断功能，参考 issue#2
 - [ ] 其他一切好的想法
 
-欢迎提 issue 或在 discussions 中讨论。
+欢迎提 issue 或在 discussions 中讨论
 
-欢迎提交 pr。
+pr welcome
