@@ -85,7 +85,7 @@ export class Bot {
      * @param callback  必选，回调函数
      * @returns handle 事件处理器的标识，用于移除该处理器
      */
-    on(eventType: EventType, processor: Processor): number;
+    on(eventType: EventType | EventType[], processor: Processor): number | number[];
 
     /**
      * @description 添加一个一次性事件处理器，回调一次后自动移除
@@ -95,7 +95,7 @@ export class Bot {
      *                  当为 true 时，只有开发者的处理器结束后才会移除该处理器
      *                  当为 false 时，即使消息被拦截，也会移除该处理器
      */
-    one(eventType: EventType, processor: Processor, strict: boolean,): void;
+    one(eventType: EventType | EventType[], processor: Processor, strict: boolean,): void;
 
     /**
      * @description 移除一个事件处理器
