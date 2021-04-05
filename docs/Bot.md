@@ -312,7 +312,9 @@ bot.on('GroupMessage', async data => {
 
 #### 参数
 
-- `eventType: string` 必选
+- `eventType: string | string[]` 必选
+
+  可传入数组，一次性指定多个事件。
 
   事件类型，事件类型及消息结构见 [eventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
@@ -322,7 +324,9 @@ bot.on('GroupMessage', async data => {
 
 #### 返回值
 
- `handle: number`，标识在给定的 `eventType` 下的一个唯一的事件处理器，用于移除该处理器。
+ `handle: number | number[]`，标识在给定的 `eventType` 下的一个唯一的事件处理器，用于移除该处理器。
+
+ `eventType` 参数传入数组时，将返回 `handle` 数组。
 
 ?> 对于 `handle` 来说，每个 `eventType` 都是一个独立的命名空间，在移除事件处理器时，需要给出对应 `handle` 的 `eventType` 
 
@@ -413,6 +417,8 @@ bot.on('FriendMessage', async data => {
 #### 参数
 
 - `eventType: string` 必选
+
+  可传入数组，一次性指定多个事件。
 
   事件类型，事件类型及消息结构见 [eventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
