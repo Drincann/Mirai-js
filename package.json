@@ -1,6 +1,6 @@
 {
     "name": "mirai-js",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "QQ robot development framework based on Mirai-api-http.",
     "main": "src/index.js",
     "scripts": {
@@ -23,7 +23,7 @@
         "robot"
     ],
     "author": {
-        "email": "gaolihai233@qq.com",
+        "email": "devgaolihai@foxmail.com",
         "name": "gaolihai",
         "url": "https://gaolihai.cool/note/"
     },
