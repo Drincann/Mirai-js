@@ -15,6 +15,12 @@ export class Middleware {
     autoReLogin({ bot, baseUrl, authKey, password }: AutoReLoginOptions): Middleware;
 
     /**
+     * @description 自动重建 ws 连接
+     * @param bot 欲重连的 Bot 实例
+     */
+    autoReconnection(bot: Bot): Middleware;
+
+    /**
      * @description 过滤出指定类型的消息，消息类型为 key，对应类型的
      *              message 数组为 value，置于 data.classified
      * @param typeArr message 的类型，例如 Plain Image Voice

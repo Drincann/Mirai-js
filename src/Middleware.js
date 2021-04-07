@@ -45,6 +45,26 @@ class Middleware {
     }
 
     /**
+     * @description 自动重建 ws 连接
+     * @param {Bot} bot 欲重连的 Bot 实例
+     */
+    autoReconnection(bot) {
+        this.middleware.push(async (data, next) => {
+            try {
+                await bot.open();
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
      * @description 过滤出指定类型的消息，消息类型为 key，对应类型的
      *              message 数组为 value，置于 data.classified
      * @param {array[string]} typeArr message 的类型，例如 Plain Image Voice
