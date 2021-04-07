@@ -17,9 +17,12 @@ module.exports = async (wsConnection) => {
                     resolve(undefined);
                 };
             });
-        } else {
+        } else if (wsConnection.readyState == wsConnection.OPEN) {
             // 关闭 websocket 的连接
             wsConnection.close(1000);
+        } else {
+            // CLOSING or CLOSED
+            // do nothing
         }
     } catch (error) {
         errorHandler(error);
