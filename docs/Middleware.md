@@ -50,6 +50,31 @@ bot.on('FriendMessage', new Middleware
 
 
 
+## autoReconnection
+
+`autoReconnection` 用于 WebSocket 的 `close` 事件。
+
+经过该中间件时将重置 WebSocket 连接。
+
+#### 参数
+
+- `bot: Bot` 必选
+
+  Bot 实例
+
+#### 示例
+
+```js
+bot.on('close',
+    new Middleware()
+       .catch(console.log)
+       .autoReconnection(bot)
+       .done()
+);
+```
+
+
+
 ## messageProcessor
 
 `messageProcessor` 用于 `FriendMessage` 、 `GroupMessage`。
