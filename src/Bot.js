@@ -61,7 +61,7 @@ class Bot {
         // 若 config 存在，则认为该对象已经 open 过
         // ，此处应该先令对象回到初始状态，然后重建会话
         if (this.config) {
-            this.close({ keepProcessor: true, keepConfig: true });
+            await this.close({ keepProcessor: true, keepConfig: true });
         }
 
         // 设置对象状态
