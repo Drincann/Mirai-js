@@ -21,7 +21,7 @@ const { Bot, Message } = require('mirai-js');
 使用 cdn：
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mirai-js/dist/mirai-js.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mirai-js/dist/browser/mirai-js.js"></script>
 ```
 
 然后从 `window.miraiJs` 解构：

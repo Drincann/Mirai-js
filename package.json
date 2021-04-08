@@ -1,8 +1,8 @@
 {
     "name": "mirai-js",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "QQ robot development framework based on Mirai-api-http.",
-    "main": "src/index.js",
+    "main": "dist/node/index.js",
     "scripts": {
         "lint": "eslint --fix .",
         "build": "webpack &&　babel src --out-dir dist/node"
