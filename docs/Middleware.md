@@ -235,19 +235,23 @@ bot.on('GroupMessage', new Middleware()
 
 ## memberLock
 
-`memberLock`是一个用于 `GroupMessage` 事件的对话锁，保证群中同一成员不能在中途触发处理器。
+`memberLock`是一个用于 `GroupMessage` 事件的对话锁，保证群中同一成员**不能**在中途触发处理器。
+
+!> 注意是不能触发，而不是等待，事件遇到关上的锁时时将直接返回（单线程保证了大部分并发的安全性）
 
 经过该中间件时默认进入锁保护的区域，同时在 `data` 放置一个 `unlock` 方法，开发者必须在处理器中调用该方法才能释放锁。
 
 #### 参数
 
-无
+- ` autoUnlock: boolean` 可选
+
+  若该选项置为 `true`，则将在下游中间结束时自动调用 `unlock`，默认为 `false`。
 
 #### 示例
 
 ```js
 bot.on('GroupMessage', new Middleware()
-       .memberLock()
+       .memberLock({ autoUnlock: false })
        .done( data => {
     // do sth.
     data.unlock();
@@ -258,19 +262,21 @@ bot.on('GroupMessage', new Middleware()
 
 ## friendLock
 
-`friendLock`是一个用于 `FriendMessage` 事件的对话锁，保证同一好友不能在中途触发处理器。
+`friendLock`是一个用于 `FriendMessage` 事件的对话锁，保证同一好友**不能**在中途触发处理器。
 
 经过该中间件时默认进入锁保护的区域，同时在 `data` 放置一个 `unlock` 方法，开发者必须在处理器中调用该方法才能释放锁。
 
 #### 参数
 
-无
+` autoUnlock: boolean` 可选
+
+若该选项置为 `true`，则将在下游中间结束时自动调用 `unlock`，默认为 `false`。
 
 #### 示例
 
 ```js
 bot.on('FriendMessage', new Middleware()
-       .friendLock()
+       .friendLock({ autoUnlock: false })
        .done( data => {
     // do sth.
     data.unlock();
