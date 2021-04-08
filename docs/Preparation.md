@@ -1,13 +1,15 @@
 # 准备工作
 
-**Mirai-js** 运行在 Node.js 平台或现代浏览器中，确保拥有可使用的 **Node.js v14+** 环境或浏览器环境。
+**Mirai-js** 运行在 Node.js 平台或现代浏览器中，确保拥有可使用的 **Node.js v12+** 环境或浏览器环境。
 
 **Mirai-js** 还依赖 **mirai-api-http** 服务端，基于该框架开发的 Mirai QQ 机器人应用将作为 **mirai-api-http** 的客户端。
 
-> **mirai-api-http** 是 **mirai-console** 的插件
+**mirai-api-http** 是 **mirai-console** 的插件，确保 **Java 11+** 环境。
 
 开始前，请确保开启了 **mirai-console**，并在可访问的网络上（例如本地）加载了 **mirai-api-http** 插件。
 
+- Node.js 12+ / browser
+- Java 11+
 
 
 ## 不会开启？
