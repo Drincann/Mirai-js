@@ -10,6 +10,14 @@ class MessageType {
     }
 }
 
+
+class Plain extends MessageType {
+    constructor({ text }) {
+        super({ type: 'Plain' });
+        this.text = text;
+    }
+}
+
 class Text extends MessageType {
     constructor({ text }) {
         super({ type: 'Plain' });
@@ -103,6 +111,10 @@ class Message extends MessageChainGetable {
     // 文本
     addText(text) {
         this.messageChain.push(new Text({ text }));
+        return this;
+    }
+    addPlain(text) {
+        this.messageChain.push(new Plain({ text }));
         return this;
     }
 

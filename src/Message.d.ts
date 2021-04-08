@@ -9,6 +9,7 @@ export class Message implements MessageChainGetable {
 
     // Plain
     addText(text: string): Message;
+    addPlain(text: string): Message;
 
     // At
     addAt(target: number): Message;
