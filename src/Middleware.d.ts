@@ -58,13 +58,13 @@ export class Middleware {
      * @description 这是一个对话锁，保证群中同一成员不能在中途触发处理器
      * @use 在你需要保护的过程结束后调用 data.unlock 即可
      */
-    memberLock(): Middleware;
+    memberLock({ autoUnlock }?: Middleware.LockOptions): Middleware;
 
     /**
      * @description 这是一个对话锁，保证同一好友不能在中途触发处理器
      * @use 在你需要保护的过程结束后调用 data.unlock 即可
      */
-    friendLock(): Middleware;
+    friendLock({ autoUnlock }?: Middleware.LockOptions): Middleware;
 
     /**
      * @description 过滤包含指定 @ 信息的消息
@@ -134,5 +134,9 @@ declare namespace Middleware {
         baseUrl: string;
         authKey: string;
         password: string;
+    }
+
+    interface LockOptions {
+        autoUnlock?: boolean;
     }
 }

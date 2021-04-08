@@ -219,9 +219,9 @@ class Middleware {
      * @description 这是一个对话锁，保证群中同一成员不能在中途触发处理器
      * @use 在你需要保护的过程结束后调用 data.unlock 即可
      */
-    memberLock() {
+    memberLock({ autoUnlock = false } = {}) {
         const memberMap = {/* group -> memberSet */ };
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 检查参数
                 if (!data.sender?.group?.id) {
@@ -240,8 +240,16 @@ class Middleware {
                 } else {
                     // 未在对话，则加入对应的 Set，然后继续
                     memberMap[data.sender?.group?.id].add(data.sender?.id);
-                    data.unlock = () => memberMap[data.sender?.group?.id].delete(data.sender?.id);
-                    next();
+                    let locked = true;
+                    const unlock = () => {
+                        memberMap[data.sender?.group?.id].delete(data.sender?.id);
+                        locked = false;
+                    };
+                    data.unlock = unlock;
+
+                    // 等待下游中间件结束后 unlock
+                    await next();
+                    autoUnlock && locked && unlock();
                 }
             } catch (error) {
                 if (this.catcher) {
@@ -258,9 +266,9 @@ class Middleware {
      * @description 这是一个对话锁，保证同一好友不能在中途触发处理器
      * @use 在你需要保护的过程结束后调用 data.unlock 即可
      */
-    friendLock() {
+    friendLock({ autoUnlock = false } = {}) {
         const friendSet = new Set();
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 检查参数
                 if (!data.sender?.id) {
@@ -274,8 +282,16 @@ class Middleware {
                 } else {
                     // 未在对话，则加入 Set，然后继续
                     friendSet.add(data.sender?.id);
-                    data.unlock = () => friendSet.delete(data.sender?.id);
-                    next();
+                    let locked = true;
+                    const unlock = () => {
+                        friendSet.delete(data.sender?.id);
+                        locked = false;
+                    };
+                    data.unlock = unlock;
+
+                    // 等待下游中间件结束后 unlock
+                    await next();
+                    autoUnlock && locked && unlock();
                 }
             } catch (error) {
                 if (this.catcher) {
