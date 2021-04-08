@@ -550,7 +550,7 @@ class Middleware {
             return new Promise(resolve => {
                 // 从右侧递归合并中间件链
                 this.middleware.reduceRight((next, middleware) => {
-                    return () => middleware(data, next);
+                    return async () => await middleware(data, next);
                 }, async () => {
                     // 最深层递归，即开发者提供的回调函数
                     let returnVal = callback instanceof Function ? (await callback(data)) : undefined;
