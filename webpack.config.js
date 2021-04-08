@@ -4,7 +4,7 @@ module.exports = {
     context: __dirname,
     entry: './src/index.js',
     output: {
-        path: require('path').resolve(__dirname, 'dist'),
+        path: require('path').resolve(__dirname, 'dist', 'browser'),
         filename: 'mirai-js.js',
         clean: true
     },

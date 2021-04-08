@@ -5,7 +5,7 @@
     "main": "src/index.js",
     "scripts": {
         "lint": "eslint --fix .",
-        "build": "webpack"
+        "build": "webpack &&　babel src --out-dir dist/node"
     },
     "husky": {
         "hooks": {
@@ -39,6 +39,9 @@
         "ws": "^7.4.2"
     },
     "devDependencies": {
+        "@babel/cli": "^7.13.14",
+        "@babel/core": "^7.13.14",
+        "@babel/preset-env": "^7.13.12",
         "@typescript-eslint/eslint-plugin": "^4.15.2",
         "@typescript-eslint/parser": "^4.15.2",
         "eslint": "^7.19.0",
