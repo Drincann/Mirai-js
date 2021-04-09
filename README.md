@@ -13,7 +13,10 @@ bot.on('FriendMessage', async data => {
 });
 ```
 
-开发文档请参考: [https://drincann.github.io/Mirai-js](https://drincann.github.io/Mirai-js)
+开发文档: 
+
+- GitHub Page -> [https://drincann.github.io/Mirai-js](https://drincann.github.io/Mirai-js)
+- Vercel     -> [https://mirai-js.vercel.app](https://mirai-js.vercel.app)
 
 QQ 群: 730757181
 
