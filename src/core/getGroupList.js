@@ -12,7 +12,7 @@ const errorHandler = require('../util/errorHandler');
  * @description 获取群列表
  * @param {string} baseUrl    mirai-api-http server 的地址
  * @param {string} sessionKey 会话标识
- * @returns {array[Object]} 结构 array[...{ id, name, permission }]
+ * @returns {Object[]} 结构 array[...{ id, name, permission }]
  */
 module.exports = async ({ baseUrl, sessionKey }) => {
     try {

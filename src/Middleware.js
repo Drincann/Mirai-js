@@ -67,7 +67,7 @@ class Middleware {
     /**
      * @description 过滤出指定类型的消息，消息类型为 key，对应类型的
      *              message 数组为 value，置于 data.classified
-     * @param {array[string]} typeArr message 的类型，例如 Plain Image Voice
+     * @param {string[]} typeArr message 的类型，例如 Plain Image Voice
      */
     messageProcessor(typeArr) {
         this.middleware.push((data, next) => {
@@ -114,7 +114,7 @@ class Middleware {
 
     /**
      * @description 过滤指定的群消息
-     * @param {array[number]} groupArr 允许通过的群号数组
+     * @param {number[]} groupArr 允许通过的群号数组
      * @param {boolean}       allow    允许通过还是禁止通过
      */
     groupFilter(groupArr, allow = true) {
@@ -145,7 +145,7 @@ class Middleware {
 
     /**
      * @description 过滤指定的好友消息
-     * @param {array[number]} friendArr 好友 qq 号数组
+     * @param {number[]} friendArr 好友 qq 号数组
      * @param {boolean}       allow     允许通过还是禁止通过
      */
     friendFilter(friendArr, allow = true) {
@@ -306,7 +306,7 @@ class Middleware {
 
     /**
      * @description 过滤包含指定 @ 信息的消息
-     * @param {array[number]} atArr 必选，qq 号数组
+     * @param {number[]} atArr 必选，qq 号数组
      * @param {boolean}       allow 可选，允许通过还是禁止通过
      */
     atFilter(friendArr, allow = true) {

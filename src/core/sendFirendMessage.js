@@ -14,7 +14,7 @@ const errorHandler = require('../util/errorHandler');
  * @param {string}             sessionKey   会话标识
  * @param {number}             target       目标好友 qq 号
  * @param {number}             quote        消息引用，使用发送时返回的 messageId
- * @param {array[messageType]} messageChain 消息链，MessageType 数组
+ * @param {MessageType[]} messageChain 消息链，MessageType 数组
  * @returns {Object} 结构 { message, code, messageId }
  */
 module.exports = async ({ baseUrl, sessionKey, target, quote, messageChain }) => {

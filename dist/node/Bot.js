@@ -534,7 +534,7 @@ class Bot {
   /**
    * @description 移除一个事件处理器
    * @param {string}                 eventType 必选，事件类型
-   * @param {number | array[number]} handle    
+   * @param {number | number[]} handle    
    * 可选，事件处理器标识(或数组)，由 on 方法返回，未提供时将移除该事件下的所有处理器
    * @returns {void}
    */
@@ -575,7 +575,7 @@ class Bot {
   }
   /**
    * @description 移除所有事件处理器
-   * @param {string | array[string]} eventType 可选，事件类型(或数组)
+   * @param {string | string[]} eventType 可选，事件类型(或数组)
    * @returns {void}
    */
 
@@ -781,7 +781,7 @@ class Bot {
   }
   /**
    * @description 获取好友列表
-   * @returns {array[Object]} 结构 array[...{ id, name, remark }]
+   * @returns {Object[]} 结构 array[...{ id, name, remark }]
    */
 
 
@@ -809,7 +809,7 @@ class Bot {
   }
   /**
    * @description 获取群列表
-   * @returns {array[Object]} 结构 array[...{ id, name, permission }]
+   * @returns {Object[]} 结构 array[...{ id, name, permission }]
    */
 
 
@@ -831,7 +831,7 @@ class Bot {
   /**
    * @description 获取指定群的成员列表
    * @param {number} group 必选，欲获取成员列表的群号
-   * @returns {array[Object]} 结构 array[...{ id, name, permission }]
+   * @returns {Object[]} 结构 array[...{ id, name, permission }]
    */
 
 
@@ -870,7 +870,7 @@ class Bot {
    * @description 获取群成员信息
    * @param {number} group 必选，群成员所在群号
    * @param {number} qq    必选，群成员的 qq 号
-   * @returns {array[Object]} 结构 { name, title } 群名片和群头衔
+   * @returns {Object[]} 结构 { name, title } 群名片和群头衔
    */
 
 
@@ -1289,10 +1289,10 @@ class Bot {
   }
   /**
    * @description 向 mirai-console 发送指令
-   * @param {string}        baseUrl 必选，mirai-api-http server 的地址
-   * @param {string}        authKey 必选，mirai-api-http server 设置的 authKey
-   * @param {string}        command 必选，指令名
-   * @param {array[string]} args    可选，array[string] 指令的参数
+   * @param {string}   baseUrl 必选，mirai-api-http server 的地址
+   * @param {string}   authKey 必选，mirai-api-http server 设置的 authKey
+   * @param {string}   command 必选，指令名
+   * @param {string[]} args    可选，指令的参数
    * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
    * 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 
    * 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'

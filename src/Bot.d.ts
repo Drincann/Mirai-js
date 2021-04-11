@@ -256,7 +256,7 @@ export class Bot {
      * @param baseUrl 必选，mirai-api-http server 的地址
      * @param authKey 必选，mirai-api-http server 设置的 authKey
      * @param command 必选，指令名
-     * @param args    可选，array[string] 指令的参数
+     * @param args    可选，指令的参数
      */
     static sendCommand({
         baseUrl, authKey,

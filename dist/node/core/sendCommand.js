@@ -15,10 +15,10 @@ if (!process.browser) {
 const errorHandler = require('../util/errorHandler');
 /**
  * @description 向 mirai-console 发送指令
- * @param {string} baseUrl     mirai-api-http server 的地址
- * @param {string} authKey     mirai-api-http server 设置的 authKey
- * @param {string} command     指令名
- * @param {array[string]} args array[string] 指令的参数
+ * @param {string} baseUrl mirai-api-http server 的地址
+ * @param {string} authKey mirai-api-http server 设置的 authKey
+ * @param {string} command 指令名
+ * @param {string[]} args  指令的参数
  * @returns {Object} 结构 { message }
  */
 
