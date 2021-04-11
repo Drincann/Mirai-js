@@ -18,12 +18,12 @@ if (!process.browser) {
 
 const errorHandler = require('../util/errorHandler');
 /**
- * @description 重命名群文件
+ * @description 移动群文件
  * @param {string} baseUrl    mirai-api-http server 的地址
  * @param {string} sessionKey 会话标识
  * @param {number} target     群号
  * @param {number} id         文件 id
- * @param {string} rename     重命名
+ * @param {string} movePath   目标 path
  * @returns {Object} 结构 { message, code }
  */
 
@@ -33,17 +33,17 @@ module.exports = async ({
   sessionKey,
   target,
   id,
-  rename
+  movePath
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/groupFileRename', baseUrl).toString(); // 请求
+    const url = new URL('/groupFileMove', baseUrl).toString(); // 请求
 
     const responseData = await axios.post(url, {
       sessionKey,
       target,
       id,
-      rename
+      movePath
     });
 
     try {

@@ -4,7 +4,7 @@ const {
   errCodeMap
 } = require('../util/errCode');
 
-const axios = require('axios');
+const axios = require('axios').default;
 
 let URL;
 
@@ -18,12 +18,10 @@ if (!process.browser) {
 
 const errorHandler = require('../util/errorHandler');
 /**
- * @description 重命名群文件
- * @param {string} baseUrl    mirai-api-http server 的地址
- * @param {string} sessionKey 会话标识
- * @param {number} target     群号
- * @param {number} id         文件 id
- * @param {string} rename     重命名
+ * @description 设置群精华消息
+ * @param {string}  baseUrl    mirai-api-http server 的地址
+ * @param {string}  sessionKey 会话标识
+ * @param {string}  target	   消息 id
  * @returns {Object} 结构 { message, code }
  */
 
@@ -31,19 +29,15 @@ const errorHandler = require('../util/errorHandler');
 module.exports = async ({
   baseUrl,
   sessionKey,
-  target,
-  id,
-  rename
+  target
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/groupFileRename', baseUrl).toString(); // 请求
+    const url = new URL('/groupConfig', baseUrl).toString(); // 请求
 
     const responseData = await axios.post(url, {
       sessionKey,
-      target,
-      id,
-      rename
+      target
     });
 
     try {
@@ -54,7 +48,7 @@ module.exports = async ({
         }
       } = responseData;
     } catch (error) {
-      throw new Error('core.groupFileRename 请求返回格式出错，请检查 mirai-console');
+      throw new Error('core.setEssence 请求返回格式出错，请检查 mirai-console');
     } // 抛出 mirai 的异常，到 catch 中处理后再抛出
 
 
