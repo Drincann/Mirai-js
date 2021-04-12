@@ -31,7 +31,7 @@ class Middleware {
                     args: [data.qq, password],
                 });
                 await bot.open();
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -52,7 +52,7 @@ class Middleware {
         this.middleware.push(async (data, next) => {
             try {
                 await bot.open();
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -70,14 +70,14 @@ class Middleware {
      * @param {string[]} typeArr message 的类型，例如 Plain Image Voice
      */
     messageProcessor(typeArr) {
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 const result = {};
                 typeArr.forEach((type) => {
                     result[type] = data.messageChain.filter((message) => message.type == type);
                 });
                 data.classified = result;
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -94,13 +94,13 @@ class Middleware {
      * @description 过滤出字符串类型的 message，并拼接在一起，置于 data.text
      */
     textProcessor() {
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 data.text = data.messageChain
                     .filter((val) => val.type == 'Plain')
                     .map((val) => val.text)
                     .join('');
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -116,10 +116,10 @@ class Middleware {
      * @description 过滤出消息 id，置于 data.messageId
      */
     messageIdProcessor() {
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 data.messageId = Array.isArray(data.messageChain) ? data.messageChain[0]?.id : undefined;
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -139,7 +139,7 @@ class Middleware {
     groupFilter(groupArr, allow = true) {
         const groupSet = new Set(groupArr);
 
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 检查参数
                 if (!(data?.sender?.group?.id)) {
@@ -150,7 +150,7 @@ class Middleware {
                 if (groupSet.has(data.sender.group.id)) {
                     return allow && next();
                 }
-                !allow && next();
+                !allow && await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -170,7 +170,7 @@ class Middleware {
     friendFilter(friendArr, allow = true) {
         const groupSet = new Set(friendArr);
 
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 检查参数
                 if (!(data?.sender?.id)) {
@@ -179,9 +179,9 @@ class Middleware {
 
                 // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
                 if (groupSet.has(data.sender.id)) {
-                    return allow && next();
+                    return allow && await next();
                 }
-                !allow && next();
+                !allow && await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -205,7 +205,7 @@ class Middleware {
             groupMemberMap[group] = new Set(groupMemberMap[group]);
         }
 
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 检查参数
                 if (!(data?.sender?.id)) {
@@ -220,9 +220,9 @@ class Middleware {
                 // 检查是否是允许通过的群成员，是则交给下一个中间件处理
                 if (data.sender.group.id in groupMemberMap &&
                     groupMemberMap[data.sender.group.id].has(data.sender.id)) {
-                    return allow && next();
+                    return allow && await next();
                 }
-                !allow && next();
+                !allow && await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -331,7 +331,7 @@ class Middleware {
     atFilter(friendArr, allow = true) {
         const friendSet = new Set(friendArr);
 
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 检查参数
                 if (!(data?.messageChain)) {
@@ -341,10 +341,10 @@ class Middleware {
                 // 如果 id 在 set 里，根据 allow 判断是否交给下一个中间件处理
                 for (const message of data.messageChain) {
                     if (message?.type == 'At' && friendSet.has(message?.target)) {
-                        return allow && next();
+                        return allow && await next();
                     }
                 }
-                !allow && next();
+                !allow && await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -361,7 +361,7 @@ class Middleware {
      * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
      */
     friendRequestProcessor() {
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 事件类型
                 if (data.type != 'NewFriendRequestEvent') {
@@ -397,7 +397,7 @@ class Middleware {
                     });
                 };
 
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -418,7 +418,7 @@ class Middleware {
      * ignoreAndAddBlacklist 忽略并移入黑名单
      */
     memberJoinRequestProcessor() {
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 事件类型
                 if (data.type != 'MemberJoinRequestEvent') {
@@ -470,7 +470,7 @@ class Middleware {
                     });
                 };
 
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);
@@ -490,7 +490,7 @@ class Middleware {
      * refuse                拒绝
      */
     invitedJoinGroupRequestProcessor() {
-        this.middleware.push((data, next) => {
+        this.middleware.push(async (data, next) => {
             try {
                 // 事件类型
                 if (data.type != 'BotInvitedJoinGroupRequestEvent') {
@@ -518,7 +518,7 @@ class Middleware {
                     });
                 };
 
-                next();
+                await next();
             } catch (error) {
                 if (this.catcher) {
                     this.catcher(error);

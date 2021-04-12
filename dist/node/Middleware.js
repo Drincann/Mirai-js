@@ -45,7 +45,7 @@ class Middleware {
           args: [data.qq, password]
         });
         await bot.open();
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -66,7 +66,7 @@ class Middleware {
     this.middleware.push(async (data, next) => {
       try {
         await bot.open();
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -85,14 +85,14 @@ class Middleware {
 
 
   messageProcessor(typeArr) {
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         const result = {};
         typeArr.forEach(type => {
           result[type] = data.messageChain.filter(message => message.type == type);
         });
         data.classified = result;
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -109,10 +109,10 @@ class Middleware {
 
 
   textProcessor() {
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         data.text = data.messageChain.filter(val => val.type == 'Plain').map(val => val.text).join('');
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -129,12 +129,12 @@ class Middleware {
 
 
   messageIdProcessor() {
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$messageChain$;
 
         data.messageId = Array.isArray(data.messageChain) ? (_data$messageChain$ = data.messageChain[0]) === null || _data$messageChain$ === void 0 ? void 0 : _data$messageChain$.id : undefined;
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -154,7 +154,7 @@ class Middleware {
 
   groupFilter(groupArr, allow = true) {
     const groupSet = new Set(groupArr);
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$sender, _data$sender$group;
 
@@ -168,7 +168,7 @@ class Middleware {
           return allow && next();
         }
 
-        !allow && next();
+        !allow && (await next());
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -188,7 +188,7 @@ class Middleware {
 
   friendFilter(friendArr, allow = true) {
     const groupSet = new Set(friendArr);
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$sender2;
 
@@ -199,10 +199,10 @@ class Middleware {
 
 
         if (groupSet.has(data.sender.id)) {
-          return allow && next();
+          return allow && (await next());
         }
 
-        !allow && next();
+        !allow && (await next());
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -227,7 +227,7 @@ class Middleware {
       groupMemberMap[group] = new Set(groupMemberMap[group]);
     }
 
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$sender3;
 
@@ -243,10 +243,10 @@ class Middleware {
 
 
         if (data.sender.group.id in groupMemberMap && groupMemberMap[data.sender.group.id].has(data.sender.id)) {
-          return allow && next();
+          return allow && (await next());
         }
 
-        !allow && next();
+        !allow && (await next());
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -379,7 +379,7 @@ class Middleware {
 
   atFilter(friendArr, allow = true) {
     const friendSet = new Set(friendArr);
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         // 检查参数
         if (!(data !== null && data !== void 0 && data.messageChain)) {
@@ -389,11 +389,11 @@ class Middleware {
 
         for (const message of data.messageChain) {
           if ((message === null || message === void 0 ? void 0 : message.type) == 'At' && friendSet.has(message === null || message === void 0 ? void 0 : message.target)) {
-            return allow && next();
+            return allow && (await next());
           }
         }
 
-        !allow && next();
+        !allow && (await next());
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -411,7 +411,7 @@ class Middleware {
 
 
   friendRequestProcessor() {
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$bot;
 
@@ -470,7 +470,7 @@ class Middleware {
           });
         };
 
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -492,7 +492,7 @@ class Middleware {
 
 
   memberJoinRequestProcessor() {
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$bot2;
 
@@ -577,7 +577,7 @@ class Middleware {
           });
         };
 
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);
@@ -597,7 +597,7 @@ class Middleware {
 
 
   invitedJoinGroupRequestProcessor() {
-    this.middleware.push((data, next) => {
+    this.middleware.push(async (data, next) => {
       try {
         var _data$bot3;
 
@@ -643,7 +643,7 @@ class Middleware {
           });
         };
 
-        next();
+        await next();
       } catch (error) {
         if (this.catcher) {
           this.catcher(error);

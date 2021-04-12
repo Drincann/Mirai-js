@@ -1,12 +1,22 @@
 # 中间件 Middleware
 
+# 介绍
+
+该模块是事件流处理器（回调函数）的中间件机制实现，他允许开发者复用处理逻辑、模块化处理消息。
+
+还提供了相当齐备的一系列预定义中间件，用于增强 `Bot` 模块的功能。
+
+该模块实现了 koa-like 的中间件，即一个中间件调用 `await next()` 后，当下游中间件全部处理完毕时将从该处调用返回，所以建议所有中间件都使用 `async` 修饰，否则可能得不到预期的同步处理行为。
+
+
+
 # 使用
 
 ```js
 bot.on('FriendMessage', new Middleware
        .textProcessor()
        .friendFilter([ 1019933576 ]))
-       .done( data => {
+       .done(async data => {
     // ...
     data.text;
 });
@@ -92,7 +102,7 @@ bot.on('close',
 ```js
 bot.on('FriendMessage', new Middleware()
        .messageProcessor(['Plain', 'Image', 'Voice'])
-       .done( data => {
+       .done(async data => {
     const { Plain, Image, Voice } = data.classified;
     Plain.forEach( v => { console.log(v.text); });
 }));
@@ -115,7 +125,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 bot.on('FriendMessage', new Middleware()
        .textProcessor()
-       .done( data => {
+       .done(async data => {
     console.log(data.text);
 }));
 ```
@@ -137,7 +147,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 bot.on('FriendMessage', new Middleware()
        .textProcessor()
-       .done( data => {
+       .done(async data => {
     console.log(data.messageId);
 }));
 ```
@@ -165,7 +175,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 bot.on('FriendMessage', new Middleware()
        .groupFilter([123456789, 789456123])
-       .done( data => {
+       .done(async data => {
     // do sth.
 }));
 ```
@@ -193,7 +203,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 bot.on('FriendMessage', new Middleware()
        .friendFilter([1019933576, 3070539027])
-       .done( data => {
+       .done(async data => {
     // do sth.
 }));
 ```
@@ -222,7 +232,7 @@ bot.on('FriendMessage', new Middleware()
     123456789: [1019933576],
     789456123: [3070539027, 1019933576],
 })
-       .done( data => {
+       .done(async data => {
     // do sth.
 }));
 ```
@@ -248,7 +258,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 bot.on('GroupMessage', new Middleware()
        .atFilter([1019933576])
-       .done( data => {
+       .done(async data => {
     // do sth.
 }));
 ```
@@ -274,7 +284,7 @@ bot.on('GroupMessage', new Middleware()
 ```js
 bot.on('GroupMessage', new Middleware()
        .memberLock({ autoUnlock: false })
-       .done( data => {
+       .done(async data => {
     // do sth.
     data.unlock();
 }));
@@ -299,7 +309,7 @@ bot.on('GroupMessage', new Middleware()
 ```js
 bot.on('FriendMessage', new Middleware()
        .friendLock({ autoUnlock: false })
-       .done( data => {
+       .done(async data => {
     // do sth.
     data.unlock();
 }));
@@ -326,7 +336,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 bot.on('NewFriendRequestEvent', new Middleware()
        .friendRequestProcessor(bot)
-       .done( data => {
+       .done(async data => {
     data.agree();
 }))
 ```
@@ -358,7 +368,7 @@ bot.on('NewFriendRequestEvent', new Middleware()
 ```js
 bot.on('MemberJoinRequestEvent', new Middleware()
        .memberJoinRequestProcessor(bot)
-       .done( data => {
+       .done(async data => {
     data.agree();
 }))
 ```
@@ -384,7 +394,7 @@ bot.on('MemberJoinRequestEvent', new Middleware()
 ```js
 bot.on('BotInvitedJoinGroupRequestEvent', new Middleware()
        .invitedJoinGroupRequestProcessor(bot)
-       .done( data => {
+       .done(async data => {
     data.agree();
 }))
 ```
@@ -467,10 +477,10 @@ bot -> 56
 
 ```js
 bot.on('FriendMessage', new Middleware()
-.use( (data, next) => {
+.use(async (data, next) => {
     /* do sth. */ 
     next();
-}).done( data => {
+}).done(async data => {
     /* do sth. */ 
 }));
 ```
@@ -495,12 +505,12 @@ bot.on('FriendMessage', new Middleware()
 
 ```js
 bot.on('FriendMessage', new Middleware()
-.use( (data, next) => {
+.use(async (data, next) => {
     /* do sth. */ 
     next();
-}).catch( error => {
+}).catch(async error => {
     /* do sth. */ 
-}).done( data => {
+}).done(async data => {
     /* do sth. */ 
 }));
 ```
@@ -515,7 +525,7 @@ bot.on('FriendMessage', new Middleware()
 ```js
 let returnValue = await new Middleware()
 /* middleware */
-.done(data => {
+.done(async data => {
     // ...
     return /* sth. */;
 });
