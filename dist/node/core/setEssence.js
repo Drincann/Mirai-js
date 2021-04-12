@@ -33,7 +33,7 @@ module.exports = async ({
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/groupConfig', baseUrl).toString(); // 请求
+    const url = new URL('/setEssence', baseUrl).toString(); // 请求
 
     const responseData = await axios.post(url, {
       sessionKey,
