@@ -1242,8 +1242,9 @@ class Bot {
     });
   }
   /**
-   * 
-   * @param {*} param0 
+   * @description 设置群精华消息
+   * @param {number} messageId 必选，消息 id
+   * @returns {void}
    */
 
 

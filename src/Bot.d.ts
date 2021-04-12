@@ -241,6 +241,12 @@ export class Bot {
         allowMemberInvite, autoApprove, anonymousChat,
     }: Bot.SetGroupConfigOptions): Promise<void>;
 
+    /**
+     * @description 设置群精华消息
+     * @param messageId 必选，消息 id
+     */
+    setEssence({ messageId }: Bot.SetEssenceOptions): Promise<void>;
+
 
     // 类方法
     /**
@@ -423,6 +429,10 @@ declare namespace Bot {
         allowMemberInvite?: boolean;
         autoApprove?: boolean;
         anonymousChat?: boolean;
+    }
+
+    interface SetEssenceOptions {
+        messageId: number;
     }
 
     interface SendCommandOptions {

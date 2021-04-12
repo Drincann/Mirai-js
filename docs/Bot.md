@@ -1015,12 +1015,30 @@ await quitGroup({ group: 123456789 })
 
 #### 参数
 
-- `cacheSize` 可选
-- `enableWebSocket` 可选
+- `cacheSize: number` 可选
+- `enableWebSocket: boolean` 可选
 
 #### 返回值
 
 无
+
+
+
+## setEssence
+
+`setEssence` 方法用于设置一条群精华消息。
+
+#### 参数
+
+- `messageId: number` 必选
+
+  消息 id
+
+#### 返回值
+
+无
+
+
 
 
 

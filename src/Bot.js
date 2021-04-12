@@ -25,6 +25,7 @@ const _removeMember = require('./core/removeMember');
 const _quitGroup = require('./core/quitGroup');
 const _getGroupConfig = require('./core/getGroupConfig');
 const _setGroupConfig = require('./core/setGroupConfig');
+const _setEssence = require('./core/setEssence');
 const _startListening = process.browser ? require('./core/startListeningBrowser') : require('./core/startListeningNode');
 const _stopListening = process.browser ? require('./core/stopListeningBrowser') : require('./core/stopListeningNode');
 
@@ -908,6 +909,26 @@ class Bot {
             autoApprove,
             anonymousChat,
         });
+    }
+
+    /**
+     * @description 设置群精华消息
+     * @param {number} messageId 必选，消息 id
+     * @returns {void}
+     */
+    async setEssence({ messageId }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('setEssence 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!messageId) {
+            throw new Error('setEssence 缺少必要的 messageId 参数');
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        await _setEssence({ baseUrl, sessionKey, target: messageId });
     }
 
     /**
