@@ -113,6 +113,25 @@ class Middleware {
     }
 
     /**
+     * @description 过滤出消息 id，置于 data.messageId
+     */
+    messageIdProcessor() {
+        this.middleware.push((data, next) => {
+            try {
+                data.messageId = Array.isArray(data.messageChain) ? data.messageChain[0]?.id : undefined;
+                next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
      * @description 过滤指定的群消息
      * @param {number[]} groupArr 允许通过的群号数组
      * @param {boolean}       allow    允许通过还是禁止通过

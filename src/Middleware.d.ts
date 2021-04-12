@@ -33,6 +33,11 @@ export class Middleware {
     textProcessor(): Middleware;
 
     /**
+     * @description 过滤出消息 id，置于 data.messageId
+     */
+    messageIdProcessor(): Middleware;
+
+    /**
      * @description 过滤指定的群消息
      * @param groupArr 允许通过的群号数组
      * @param allow    允许通过还是禁止通过

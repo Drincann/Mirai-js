@@ -122,6 +122,28 @@ bot.on('FriendMessage', new Middleware()
 
 
 
+## messageIdProcessor
+
+`messageIdProcessor` 用于 `FriendMessage` 、 `GroupMessage`。
+
+该中间件将解析消息 id，并置于 `data.messageId` 属性。
+
+#### 属性
+
+无
+
+#### 示例
+
+```js
+bot.on('FriendMessage', new Middleware()
+       .textProcessor()
+       .done( data => {
+    console.log(data.messageId);
+}));
+```
+
+
+
 ## groupFilter
 
 `groupFilter` 用于 `GroupMessage`。
