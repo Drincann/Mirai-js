@@ -359,13 +359,8 @@ class Middleware {
     /**
      * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
      * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
-     * @param {Bot} bot 必选，Bot 实例
      */
-    friendRequestProcessor(bot) {
-        // 检查参数
-        if (!bot) {
-            throw new Error('Middleware.NewFriendRequestEvent 缺少必要的 bot 参数');
-        }
+    friendRequestProcessor() {
         this.middleware.push((data, next) => {
             try {
                 // 事件类型
@@ -375,7 +370,7 @@ class Middleware {
 
                 // ! 这个地方与 Bot 耦合
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-                const { baseUrl, sessionKey } = bot.config;
+                const { baseUrl, sessionKey } = data.bot?.config;
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
@@ -421,13 +416,8 @@ class Middleware {
      * ignore                忽略
      * refuseAndAddBlacklist 拒绝并移入黑名单
      * ignoreAndAddBlacklist 忽略并移入黑名单
-     * @param {Bot} bot 必选，Bot 实例
      */
-    memberJoinRequestProcessor(bot) {
-        // 检查参数
-        if (!bot) {
-            throw new Error('Middleware.memberJoinRequestProcessor 缺少必要的 bot 参数');
-        }
+    memberJoinRequestProcessor() {
         this.middleware.push((data, next) => {
             try {
                 // 事件类型
@@ -437,7 +427,7 @@ class Middleware {
 
                 // ! 这个地方与 Bot 耦合
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-                const { baseUrl, sessionKey } = bot.config;
+                const { baseUrl, sessionKey } = data.bot?.config;
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
@@ -498,13 +488,8 @@ class Middleware {
      * @description 用于 BotInvitedJoinGroupRequestEvent 的中间件，经过该中间件后，将在 data 下放置两个方法
      * agree                 同意
      * refuse                拒绝
-     * @param {Bot} bot 必选，Bot 实例
      */
-    invitedJoinGroupRequestProcessor(bot) {
-        // 检查参数
-        if (!bot) {
-            throw new Error('Middleware.invitedJoinGroupRequestProcessor 缺少必要的 bot 参数');
-        }
+    invitedJoinGroupRequestProcessor() {
         this.middleware.push((data, next) => {
             try {
                 // 事件类型
@@ -514,7 +499,7 @@ class Middleware {
 
                 // ! 这个地方与 Bot 耦合
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-                const { baseUrl, sessionKey } = bot.config;
+                const { baseUrl, sessionKey } = data.bot?.config;
                 const { eventId, fromId, groupId } = data;
 
                 // 同意

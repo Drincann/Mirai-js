@@ -81,9 +81,8 @@ export class Middleware {
     /**
      * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
      * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
-     * @param bot 必选，Bot 实例
      */
-    friendRequestProcessor(bot: Bot): Middleware;
+    friendRequestProcessor(): Middleware;
 
     /**
      * ! mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
@@ -96,7 +95,7 @@ export class Middleware {
      * ignoreAndAddBlacklist 忽略并移入黑名单
      * @param bot 必选，Bot 实例
      */
-    memberJoinRequestProcessor(bot: Bot): Middleware;
+    memberJoinRequestProcessor(): Middleware;
 
     /**
      * ! 目前被邀请入群不会触发 BotInvitedJoinGroupRequestEvent 事件
@@ -106,7 +105,7 @@ export class Middleware {
      * refuse                拒绝
      * @param bot 必选，Bot 实例
      */
-    invitedJoinGroupRequestProcessor(bot: Bot): Middleware;
+    invitedJoinGroupRequestProcessor(): Middleware;
     /**
      * @description 添加一个自定义中间件
      * @param callback (data, next) => void

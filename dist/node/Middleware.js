@@ -407,18 +407,14 @@ class Middleware {
   /**
    * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
    * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
-   * @param {Bot} bot 必选，Bot 实例
    */
 
 
-  friendRequestProcessor(bot) {
-    // 检查参数
-    if (!bot) {
-      throw new Error('Middleware.NewFriendRequestEvent 缺少必要的 bot 参数');
-    }
-
+  friendRequestProcessor() {
     this.middleware.push((data, next) => {
       try {
+        var _data$bot;
+
         // 事件类型
         if (data.type != 'NewFriendRequestEvent') {
           throw new Error('Middleware.NewFriendRequestEvent 消息格式出错');
@@ -429,7 +425,7 @@ class Middleware {
         const {
           baseUrl,
           sessionKey
-        } = bot.config;
+        } = (_data$bot = data.bot) === null || _data$bot === void 0 ? void 0 : _data$bot.config;
         const {
           eventId,
           fromId,
@@ -492,18 +488,14 @@ class Middleware {
    * ignore                忽略
    * refuseAndAddBlacklist 拒绝并移入黑名单
    * ignoreAndAddBlacklist 忽略并移入黑名单
-   * @param {Bot} bot 必选，Bot 实例
    */
 
 
-  memberJoinRequestProcessor(bot) {
-    // 检查参数
-    if (!bot) {
-      throw new Error('Middleware.memberJoinRequestProcessor 缺少必要的 bot 参数');
-    }
-
+  memberJoinRequestProcessor() {
     this.middleware.push((data, next) => {
       try {
+        var _data$bot2;
+
         // 事件类型
         if (data.type != 'MemberJoinRequestEvent') {
           throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
@@ -514,7 +506,7 @@ class Middleware {
         const {
           baseUrl,
           sessionKey
-        } = bot.config;
+        } = (_data$bot2 = data.bot) === null || _data$bot2 === void 0 ? void 0 : _data$bot2.config;
         const {
           eventId,
           fromId,
@@ -601,18 +593,14 @@ class Middleware {
    * @description 用于 BotInvitedJoinGroupRequestEvent 的中间件，经过该中间件后，将在 data 下放置两个方法
    * agree                 同意
    * refuse                拒绝
-   * @param {Bot} bot 必选，Bot 实例
    */
 
 
-  invitedJoinGroupRequestProcessor(bot) {
-    // 检查参数
-    if (!bot) {
-      throw new Error('Middleware.invitedJoinGroupRequestProcessor 缺少必要的 bot 参数');
-    }
-
+  invitedJoinGroupRequestProcessor() {
     this.middleware.push((data, next) => {
       try {
+        var _data$bot3;
+
         // 事件类型
         if (data.type != 'BotInvitedJoinGroupRequestEvent') {
           throw new Error('Middleware.invitedJoinGroupRequestProcessor 消息格式出错');
@@ -623,7 +611,7 @@ class Middleware {
         const {
           baseUrl,
           sessionKey
-        } = bot.config;
+        } = (_data$bot3 = data.bot) === null || _data$bot3 === void 0 ? void 0 : _data$bot3.config;
         const {
           eventId,
           fromId,

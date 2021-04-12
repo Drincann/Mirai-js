@@ -114,6 +114,7 @@ class Bot {
             message: data => {
                 // 如果当前到达的事件拥有处理器，则依次调用所有该事件的处理器
                 if (data.type in this.eventProcessorMap) {
+                    data.bot = this;
                     return Object.values(this.eventProcessorMap[data.type])
                         .forEach(processor => processor(data));
                 }
