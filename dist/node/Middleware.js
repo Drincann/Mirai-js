@@ -655,6 +655,51 @@ class Middleware {
     return this;
   }
   /**
+   * @description Waiter 的包装器，提供方便的同步 IO 方式
+   */
+
+
+  syncWrapper() {
+    this.middleware.push(async (data, next) => {
+      try {
+        // 事件类型
+        if (data.type != 'GroupMessage' && data.type != 'FriendMessage') {
+          throw new Error('Middleware.syncWrapper 消息格式出错');
+        }
+
+        data.waitFor = {
+          messageChain: () => {
+            var _data$bot4, _data$bot4$waiter;
+
+            return (_data$bot4 = data.bot) === null || _data$bot4 === void 0 ? void 0 : (_data$bot4$waiter = _data$bot4.waiter) === null || _data$bot4$waiter === void 0 ? void 0 : _data$bot4$waiter.wait(data.type, ({
+              messageChain
+            }) => messageChain);
+          },
+          text: () => {
+            var _data$bot5, _data$bot5$waiter;
+
+            return (_data$bot5 = data.bot) === null || _data$bot5 === void 0 ? void 0 : (_data$bot5$waiter = _data$bot5.waiter) === null || _data$bot5$waiter === void 0 ? void 0 : _data$bot5$waiter.wait(data.type, new Middleware().textProcessor().done(({
+              text
+            }) => text));
+          },
+          custom: processor => {
+            var _data$bot6, _data$bot6$waiter;
+
+            return (_data$bot6 = data.bot) === null || _data$bot6 === void 0 ? void 0 : (_data$bot6$waiter = _data$bot6.waiter) === null || _data$bot6$waiter === void 0 ? void 0 : _data$bot6$waiter.wait(data.type, processor);
+          }
+        };
+        await next();
+      } catch (error) {
+        if (this.catcher) {
+          this.catcher(error);
+        } else {
+          throw error;
+        }
+      }
+    });
+    return this;
+  }
+  /**
    * @description 添加一个自定义中间件
    * @param {function} callback (data, next) => void
    */

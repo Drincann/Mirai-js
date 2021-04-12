@@ -63,3 +63,61 @@ bot.on('FriendMessage',
 ```
 
 只要用正确的中间件过滤你需要等待的消息，这就像写同步代码一样。
+
+
+
+
+
+# syncWrapper 中间件
+
+`Middleware.syncWrapper` 是 `Waiter` 的包装器，提供**方便的同步 IO 方式**，将在 `data` 下放置一个方法的集合 `waitFor` 对象，该对象拥有三个异步方法：
+
+- `messageChain`
+
+  等待下一条消息，返回 `messageChain`
+
+- `text`
+
+  等待下一条消息，返回下一条消息的文本部分
+
+- `custom`
+
+  等待下一条消息，开发者负责传入一个消息处理器（回调函数），并将需要的消息从消息处理器中返回
+
+#### 参数
+
+无
+
+#### 示例
+
+连续对话，获得随机数
+
+```js
+bot.on('GroupMessage',
+    new Middleware()
+        // 保证连续对话未处理完成时不会多次触发
+        .memberLock({ autoUnlock: true })
+        // 同步包装器
+        .syncWrapper()
+        .done(async ({ waitFor, bot, sender: { group: { id: group } } }) => {
+            await bot.sendMessage({
+                group,
+                message: new Message().addPlain('请输入随机数上限'),
+            });
+            // 等待下一次输入
+            const max = Number.parseInt(await waitFor.text());
+            await bot.sendMessage({
+                group,
+                message: new Message().addPlain(Math.floor(Math.random() * (max + 1))),
+            });
+        })
+);
+```
+
+<- 1
+
+bot -> 请输入随机数上限
+
+<- 100
+
+bot -> 56

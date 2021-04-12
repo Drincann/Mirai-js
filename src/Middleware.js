@@ -530,6 +530,34 @@ class Middleware {
         return this;
     }
 
+    /**
+     * @description Waiter 的包装器，提供方便的同步 IO 方式
+     */
+    syncWrapper() {
+        this.middleware.push(async (data, next) => {
+            try {
+                // 事件类型
+                if (data.type != 'GroupMessage' && data.type != 'FriendMessage') {
+                    throw new Error('Middleware.syncWrapper 消息格式出错');
+                }
+                data.waitFor = {
+                    messageChain: () => data.bot?.waiter?.wait(data.type, ({ messageChain }) => messageChain),
+                    text: () => data.bot?.waiter?.wait(data.type, new Middleware().textProcessor().done(({ text }) => text)),
+                    custom: (processor) => data.bot?.waiter?.wait(data.type, processor),
+                };
+
+                await next();
+            } catch (error) {
+                if (this.catcher) {
+                    this.catcher(error);
+                } else {
+                    throw error;
+                }
+            }
+        });
+        return this;
+    }
+
 
 
     /**

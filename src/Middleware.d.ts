@@ -106,6 +106,12 @@ export class Middleware {
      * @param bot 必选，Bot 实例
      */
     invitedJoinGroupRequestProcessor(): Middleware;
+
+    /**
+     * @description Waiter 的包装器，提供方便的同步 IO 方式
+     */
+    syncWrapper(): Middleware;
+
     /**
      * @description 添加一个自定义中间件
      * @param callback (data, next) => void
