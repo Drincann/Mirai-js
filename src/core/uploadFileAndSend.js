@@ -15,11 +15,12 @@ const FormData = require('form-data');
  * @param {string}  baseUrl    mirai-api-http server 的地址
  * @param {string}  sessionKey 会话标识
  * @param {string}  type       "friend" 或 "group"，目前仅支持 group
+ * @param {string}  target     群/好友号
  * @param {string}  path       上传目录
  * @param {Buffer}  file       文件二进制数据
  * @returns {string} 文件 id
  */
-module.exports = async ({ baseUrl, sessionKey, type, path, file }) => {
+module.exports = async ({ baseUrl, sessionKey, type, target, path, file }) => {
     try {
         // 拼接 url
         const targetUrl = new URL('/uploadFileAndSend', baseUrl).toString();
@@ -28,6 +29,7 @@ module.exports = async ({ baseUrl, sessionKey, type, path, file }) => {
         const form = new FormData();
         form.append('sessionKey', sessionKey);
         form.append('type', type);
+        form.append('target', target);
         form.append('path', path);
         form.append('file', file);
 
