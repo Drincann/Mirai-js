@@ -71,6 +71,10 @@ const {
 } = require('./Waiter');
 
 const {
+  FileManager
+} = require('./FileManager');
+
+const {
   errCodeEnum
 } = require('./util/errCode'); // 扩展接口
 
@@ -1240,6 +1244,26 @@ class Bot {
       allowMemberInvite,
       autoApprove,
       anonymousChat
+    });
+  }
+  /**
+   * @description 文件管理器的工厂方法
+   * @param {number} group 群号 
+   * @returns {FileManager} 文件管理器实例
+   */
+
+
+  fileManager({
+    group
+  }) {
+    const {
+      baseUrl,
+      sessionKey
+    } = this.config;
+    return new FileManager({
+      baseUrl,
+      sessionKey,
+      group
     });
   }
   /**

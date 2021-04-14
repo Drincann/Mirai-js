@@ -34,6 +34,7 @@ const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
 const { Waiter } = require('./Waiter');
+const { FileManager } = require('./FileManager');
 const { errCodeEnum } = require('./util/errCode');
 
 
@@ -910,6 +911,16 @@ class Bot {
             autoApprove,
             anonymousChat,
         });
+    }
+
+    /**
+     * @description 文件管理器的工厂方法
+     * @param {number} group 群号 
+     * @returns {FileManager} 文件管理器实例
+     */
+    fileManager({ group }) {
+        const { baseUrl, sessionKey } = this.config;
+        return new FileManager({ baseUrl, sessionKey, group });
     }
 
     /**

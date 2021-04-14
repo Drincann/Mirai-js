@@ -17,7 +17,8 @@ module.exports = {
     resolve: {
         fallback: {
             url: false,
-            fs: false
+            fs: false,
+            util: false
         }
     },
 
