@@ -48,7 +48,9 @@ module.exports = async ({
     form.append('type', type);
     form.append('target', target);
     form.append('path', path);
-    form.append('file', file); // 请求
+    form.append('file', file, {
+      filename: 'payload'
+    }); // 请求
 
     const responseData = await axios.post(targetUrl, form, {
       // formdata.getHeaders 将会指定 content-type，同时给定随

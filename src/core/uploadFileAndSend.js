@@ -31,7 +31,7 @@ module.exports = async ({ baseUrl, sessionKey, type, target, path, file }) => {
         form.append('type', type);
         form.append('target', target);
         form.append('path', path);
-        form.append('file', file);
+        form.append('file', file, { filename: 'payload' });
 
         // 请求
         const responseData = await axios.post(targetUrl, form, {

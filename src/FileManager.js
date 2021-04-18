@@ -1,8 +1,10 @@
 const fs = require('fs');
+const path = require('path');
 const { promisify } = require('util');
 
 class FileManager {
-    constructor({ baseUrl, sessionKey, group }) {
+    constructor({ botConfig, group }) {
+        const { baseUrl, sessionKey } = botConfig;
         // core 柯里化，为内部类 File Directory 提供包装的接口
         this._getGroupFileList = ({ dir }) => require('./core/getGroupFileList')({
             baseUrl, sessionKey, target: group, dir
@@ -175,29 +177,34 @@ class FileManager {
              * @param {string} dir 可选，目录，默认为当前实例指代的目录
              * @returns 
              */
-            async getFileList(dir = this._path) {
+            async getFileList(dir = this._details.path) {
                 return (await FileManager_this._getGroupFileList({ dir })).map(fileObj => FileManager_this._getInstance(fileObj));
             }
 
             /**
              * @description 上传文件至当前实例指代的目录下
-             * @param {Buffer} file    二选一，语音二进制数据
-             * @param {string} filename 二选一，文件路径
+             * @param {Buffer} file     二选一，文件二进制数据
+             * @param {string} filePath 二选一，文件路径
+             * @param {string} filename 可选，文件名，默认为指定路径的文件名
              */
-            async upload({ file, filename }) {
+            async upload({ file, filePath, filename }) {
                 // 检查参数
-                if (process.browser && filename) {
-                    throw new Error('Bot.FileManager.Directory.upload 浏览器端不支持 filename 参数');
+                if (process.browser && filePath) {
+                    throw new Error('Bot.FileManager.Directory.upload 浏览器端不支持 filePath 参数');
                 }
-                if (!file && !filename) {
-                    throw new Error('Bot.FileManager.Directory.upload 缺少必要的 file 或 filename 参数');
+                if (!file && !filePath) {
+                    throw new Error('Bot.FileManager.Directory.upload 缺少必要的 file 或 filePath 参数');
                 }
                 // 若传入 filename 则统一转换为 Buffer
                 if (filename) {
-                    // 优先使用 img 的原值
-                    file = file || await promisify(fs.readFile)(filename);
+                    // 优先使用 file 的原值
+                    file = file ?? await promisify(fs.readFile)(filename);
                 }
-                await this._uploadFileAndSend({ type: 'group', path: this._path, file });
+                await this._uploadFileAndSend({
+                    file,
+                    type: 'group',
+                    path: await this.path() + filename ?? path.parse(filePath).base,
+                });
             }
         }
 
@@ -231,26 +238,26 @@ class FileManager {
     }
 
     /**
-     * @description 上传文件至指定的目录下
-     * @param {string} path     可选，上传到的目录，默认为根目录
-     * @param {Buffer} file     二选一，语音二进制数据
-     * @param {string} filename 二选一，文件路径
+     * @description 上传文件至指定的绝对路径
+     * @param {string} uploadPath 必须，上传的绝对路径
+     * @param {Buffer} file       二选一，文件二进制数据
+     * @param {string} filePath   二选一，文件路径
      */
-    async uploadTo({ path = '', file, filename }) {
+    async uploadTo({ uploadPath, file, filePath }) {
         // 检查参数
-        if (process.browser && filename) {
-            throw new Error('Bot.FileManager.uploadTo 浏览器端不支持 filename 参数');
+        if (process.browser && filePath) {
+            throw new Error('Bot.FileManager.uploadTo 浏览器端不支持 filePath 参数');
         }
-        if (!file && !filename) {
-            throw new Error('Bot.FileManager.uploadTo 缺少必要的 file 或 filename 参数');
+        if (!file && !filePath) {
+            throw new Error('Bot.FileManager.uploadTo 缺少必要的 file 或 filePath 参数');
         }
         // 若传入 filename 则统一转换为 Buffer
-        if (filename) {
-            // 优先使用 img 的原值
-            file = file || fs.createReadStream(filename);// await promisify(fs.readFile)(filename);
+        if (filePath) {
+            // 优先使用 file 的原值
+            file = file ?? await promisify(fs.readFile)(filePath);
 
         }
-        await this._uploadFileAndSend({ type: 'Group', path, file });
+        await this._uploadFileAndSend({ type: 'Group', path: uploadPath, file });
     }
 }
 

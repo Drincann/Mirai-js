@@ -919,8 +919,7 @@ class Bot {
      * @returns {FileManager} 文件管理器实例
      */
     fileManager({ group }) {
-        const { baseUrl, sessionKey } = this.config;
-        return new FileManager({ baseUrl, sessionKey, group });
+        return new FileManager({ botConfig: this.config, group });
     }
 
     /**

@@ -1256,13 +1256,8 @@ class Bot {
   fileManager({
     group
   }) {
-    const {
-      baseUrl,
-      sessionKey
-    } = this.config;
     return new FileManager({
-      baseUrl,
-      sessionKey,
+      botConfig: this.config,
       group
     });
   }

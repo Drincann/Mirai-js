@@ -18,7 +18,8 @@ module.exports = {
         fallback: {
             url: false,
             fs: false,
-            util: false
+            util: false,
+            path: require.resolve('path-browserify'),
         }
     },
 
