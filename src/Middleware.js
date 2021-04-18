@@ -366,9 +366,9 @@ class Middleware {
                     throw new Error('Middleware.NewFriendRequestEvent 消息格式出错');
                 }
 
-                // ! 这个地方与 Bot 耦合
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-                const { baseUrl, sessionKey } = data.bot?.config;
+                const baseUrl = data.bot.getBaseUrl();
+                const sessionKey = data.bot.sessionKey();
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
@@ -423,9 +423,9 @@ class Middleware {
                     throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
                 }
 
-                // ! 这个地方与 Bot 耦合
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-                const { baseUrl, sessionKey } = data.bot?.config;
+                const baseUrl = data.bot.getBaseUrl();
+                const sessionKey = data.bot.sessionKey();
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
@@ -495,9 +495,9 @@ class Middleware {
                     throw new Error('Middleware.invitedJoinGroupRequestProcessor 消息格式出错');
                 }
 
-                // ! 这个地方与 Bot 耦合
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
-                const { baseUrl, sessionKey } = data.bot?.config;
+                const baseUrl = data.bot.getBaseUrl();
+                const sessionKey = data.bot.sessionKey();
                 const { eventId, fromId, groupId } = data;
 
                 // 同意

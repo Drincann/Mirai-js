@@ -10,7 +10,7 @@ const {
 
 class FileManager {
   constructor({
-    botConfig,
+    bot,
     group
   }) {
     const {
