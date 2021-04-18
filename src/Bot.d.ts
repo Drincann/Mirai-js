@@ -6,14 +6,14 @@ import {
     EventType, GroupPermission,
 
     // 接口               原始消息类型  事件处理器类型
-    MessageChainGetable, MessageType, Processor
+    MessageChainGetable, BotConfigGetable, MessageType, Processor
 } from './BaseType';
 
 // 等待器
 import { Waiter } from './Waiter';
 
 
-export class Bot {
+export class Bot implements BotConfigGetable {
     // 成员属性
     public waiter: Waiter;
 
@@ -30,6 +30,12 @@ export class Bot {
     private wsConnection: WebSocket;
 
     // 普通成员方法
+    // implements BotConfigGetable
+    getBaseUrl(): string;
+    getQQ(): number;
+    getAuthKey(): string;
+    getSessionKey(): string;
+
     /**
      * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
      * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接

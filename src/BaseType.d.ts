@@ -47,6 +47,18 @@ interface MessageChainGetable {
     getMessageChain(): MessageType[];
 }
 
+/**
+ * @description Bot 实现的接口，其他类访问 bot.config
+ * 的途径，避免其他类直接访问实现，用来解耦
+ */
+interface BotConfigGetable {
+    getBaseUrl(): string;
+    getQQ(): number;
+    getAuthKey(): string;
+    getSessionKey(): string;
+}
+
+
 // 图片 id
 type ImageId = string;
 // 语音 id
@@ -92,7 +104,7 @@ type Processor = (data: any) => Promise<any> | any;
 // 消息处理器类型
 export {
     // 接口
-    MessageChainGetable,
+    MessageChainGetable, BotConfigGetable,
 
     // 消息类型
     MessageType,
