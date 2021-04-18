@@ -33,6 +33,7 @@ const _stopListening = process.browser ? require('./core/stopListeningBrowser') 
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
+const { promisify } = require('util');
 const { Waiter } = require('./Waiter');
 const { FileManager } = require('./FileManager');
 const { errCodeEnum } = require('./util/errCode');
@@ -558,7 +559,7 @@ class Bot {
         // 若传入 filename 则统一转换为 Buffer
         if (filename) {
             // 优先使用 img 的原值
-            img = img || fs.readFileSync(filename);
+            img = img ?? await promisify(fs.readFile)(filename);
         }
 
         const { baseUrl, sessionKey } = this.config;
@@ -591,7 +592,7 @@ class Bot {
         // 若传入 filename 则统一转换为 Buffer
         if (filename) {
             // 优先使用 img 的原值
-            voice = voice || fs.readFileSync(filename);
+            voice = voice ?? await promisify(fs.readFile)(filename);
         }
 
         const { baseUrl, sessionKey } = this.config;

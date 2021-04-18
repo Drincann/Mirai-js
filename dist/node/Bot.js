@@ -67,6 +67,10 @@ const getInvalidParamsString = require('./util/getInvalidParamsString');
 const fs = require('fs');
 
 const {
+  promisify
+} = require('util');
+
+const {
   Waiter
 } = require('./Waiter');
 
@@ -724,8 +728,10 @@ class Bot {
 
 
     if (filename) {
+      var _img;
+
       // 优先使用 img 的原值
-      img = img || fs.readFileSync(filename);
+      img = (_img = img) !== null && _img !== void 0 ? _img : await promisify(fs.readFile)(filename);
     }
 
     const {
@@ -771,8 +777,10 @@ class Bot {
 
 
     if (filename) {
+      var _voice;
+
       // 优先使用 img 的原值
-      voice = voice || fs.readFileSync(filename);
+      voice = (_voice = voice) !== null && _voice !== void 0 ? _voice : await promisify(fs.readFile)(filename);
     }
 
     const {
