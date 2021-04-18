@@ -19,7 +19,6 @@ class Middleware {
   }
   /**
    * @description 自动重新登陆
-   * @param {Bot}    bot      欲重新登陆的 Bot 实例
    * @param {string} baseUrl  mirai-api-http server 的地址
    * @param {string} authKey  mirai-api-http server 设置的 authKey
    * @param {string} password 欲重新登陆的 qq 密码
@@ -27,7 +26,6 @@ class Middleware {
 
 
   autoReLogin({
-    bot,
     baseUrl,
     authKey,
     password
@@ -44,7 +42,7 @@ class Middleware {
           command: '/login',
           args: [data.qq, password]
         });
-        await bot.open();
+        await data.bot.open();
         await next();
       } catch (error) {
         if (this.catcher) {
@@ -58,14 +56,13 @@ class Middleware {
   }
   /**
    * @description 自动重建 ws 连接
-   * @param {Bot} bot 欲重连的 Bot 实例
    */
 
 
-  autoReconnection(bot) {
+  autoReconnection() {
     this.middleware.push(async (data, next) => {
       try {
-        await bot.open();
+        await data.bot.open();
         await next();
       } catch (error) {
         if (this.catcher) {

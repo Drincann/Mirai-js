@@ -70,7 +70,10 @@ module.exports = async ({
       }) => {
         // 关闭心跳
         clearInterval(interval);
-        close(code, reason);
+        close({
+          code,
+          reason
+        });
       };
     };
 

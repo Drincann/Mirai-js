@@ -61,11 +61,11 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
             ws.on('close', (code, reason) => {
                 // 关闭心跳
                 clearInterval(interval);
-                close(code, reason);
+                close({ code, reason });
             });
 
-            ws.on('unexpectedResponse', (req, res) => {
-                unexpectedResponse(req, res);
+            ws.on('unexpectedResponse', ({ req, res }) => {
+                unexpectedResponse({ req, res });
             });
         });
         return ws;

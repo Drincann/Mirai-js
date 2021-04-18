@@ -195,6 +195,7 @@ class Bot {
         const type = 'error';
 
         if (type in this.eventProcessorMap) {
+          err.bot = this;
           return Object.values(this.eventProcessorMap[type]).forEach(processor => processor(err));
         }
 
@@ -203,33 +204,29 @@ class Bot {
         } catch (error) {} // eslint-disable-line no-empty
 
       },
-      close: (code, message) => {
+      close: obj => {
         const type = 'close';
 
         if (type in this.eventProcessorMap) {
-          return Object.values(this.eventProcessorMap[type]).forEach(processor => processor(code, message));
+          obj.bot = this;
+          return Object.values(this.eventProcessorMap[type]).forEach(processor => processor(obj));
         }
 
         try {
-          console.log(`ws close\n${JSON.stringify({
-            code,
-            message
-          })}`);
+          console.log(`ws close\n${JSON.stringify(obj)}`);
         } catch (error) {} // eslint-disable-line no-empty
 
       },
-      unexpectedResponse: (req, res) => {
+      unexpectedResponse: obj => {
         const type = 'unexpected-response';
 
         if (type in this.eventProcessorMap) {
-          return Object.values(this.eventProcessorMap[type]).forEach(processor => processor(req, res));
+          obj.bot = this;
+          return Object.values(this.eventProcessorMap[type]).forEach(processor => processor(obj));
         }
 
         try {
-          console.log(`ws unexpectedResponse\n${JSON.stringify({
-            req,
-            res
-          })}`);
+          console.log(`ws unexpectedResponse\n${JSON.stringify(obj)}`);
         } catch (error) {} // eslint-disable-line no-empty
 
       }

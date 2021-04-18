@@ -53,7 +53,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close }) => {
             ws.onclose = ({ code, reason }) => {
                 // 关闭心跳
                 clearInterval(interval);
-                close(code, reason);
+                close({ code, reason });
             };
         };
         return ws;
