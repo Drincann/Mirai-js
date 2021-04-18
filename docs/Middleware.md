@@ -8,8 +8,6 @@
 
 该模块实现了 koa-like 的中间件，即一个中间件调用 `await next()` 后，当下游中间件全部处理完毕时将从该处调用返回，所以建议所有中间件都使用 `async` 修饰，否则可能得不到预期的同步处理行为。
 
-
-
 # 使用
 
 ```js
@@ -28,8 +26,6 @@ bot.on('FriendMessage', new Middleware
 
 其他方法都是预定义的中间件，如 `textProcessor`，经过该中间件处理后，传入事件处理器的 `data` 将拥有一个 `text` 属性，该属性由文本消息拼接而成。
 
-
-
 # 预定义中间件
 
 ## autoReLogin
@@ -41,10 +37,6 @@ bot.on('FriendMessage', new Middleware
 !> 已知的问题，当 Bot 下线后，当前 session 会失效。框架提供了解决方法：再次调用 `open` 来重置 session。
 
 #### 参数
-
-- `bot: Bot` 必选
-
-  Bot 实例
 
 - `baseUrl: string` 必选
 
@@ -58,8 +50,6 @@ bot.on('FriendMessage', new Middleware
 
   qq 密码
 
-
-
 ## autoReconnection
 
 `autoReconnection` 用于 WebSocket 的 `close` 事件。
@@ -68,9 +58,7 @@ bot.on('FriendMessage', new Middleware
 
 #### 参数
 
-- `bot: Bot` 必选
-
-  Bot 实例
+无
 
 #### 示例
 
@@ -78,12 +66,10 @@ bot.on('FriendMessage', new Middleware
 bot.on('close',
     new Middleware()
        .catch(console.log)
-       .autoReconnection(bot)
+       .autoReconnection()
        .done()
 );
 ```
-
-
 
 ## messageProcessor
 
@@ -108,8 +94,6 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
-
-
 ## textProcessor
 
 `textProcessor` 用于 `FriendMessage` 、 `GroupMessage`。
@@ -130,8 +114,6 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
-
-
 ## messageIdProcessor
 
 `messageIdProcessor` 用于 `FriendMessage` 、 `GroupMessage`。
@@ -151,8 +133,6 @@ bot.on('FriendMessage', new Middleware()
     console.log(data.messageId);
 }));
 ```
-
-
 
 ## groupFilter
 
@@ -180,8 +160,6 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
-
-
 ## friendFilter
 
 `groupFilter` 用于 `FriendMessage` 或 `GroupMessage`。
@@ -207,8 +185,6 @@ bot.on('FriendMessage', new Middleware()
     // do sth.
 }));
 ```
-
-
 
 ## groupMemberFilter
 
@@ -237,8 +213,6 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
-
-
 ## atFilter
 
 `atFilter` 中间件将识别消息中的 @ 信息，仅允许 @ 了指定 qq 的消息通过。
@@ -263,8 +237,6 @@ bot.on('GroupMessage', new Middleware()
 }));
 ```
 
-
-
 ## memberLock
 
 `memberLock`是一个用于 `GroupMessage` 事件的对话锁，保证群中同一成员**不能**在中途触发处理器。
@@ -275,7 +247,7 @@ bot.on('GroupMessage', new Middleware()
 
 #### 参数
 
-- ` autoUnlock: boolean` 可选
+- `autoUnlock: boolean` 可选
 
   若该选项置为 `true`，则将在下游中间结束时自动调用 `unlock`，默认为 `false`。
 
@@ -290,8 +262,6 @@ bot.on('GroupMessage', new Middleware()
 }));
 ```
 
-
-
 ## friendLock
 
 `friendLock`是一个用于 `FriendMessage` 事件的对话锁，保证同一好友**不能**在中途触发处理器。
@@ -300,7 +270,7 @@ bot.on('GroupMessage', new Middleware()
 
 #### 参数
 
-` autoUnlock: boolean` 可选
+`autoUnlock: boolean` 可选
 
 若该选项置为 `true`，则将在下游中间结束时自动调用 `unlock`，默认为 `false`。
 
@@ -315,8 +285,6 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
-
-
 ## friendRequestProcessor
 
 `friendRequestProcessor` 中间件用于方便地处理 `NewFriendRequestEvent` 事件，经过该中间件后，将在 data 下放置三个方法
@@ -327,21 +295,17 @@ bot.on('FriendMessage', new Middleware()
 
 #### 参数
 
-- `bot` 必选
-
-  `Bot` 的实例
+无
 
 #### 示例
 
 ```js
 bot.on('NewFriendRequestEvent', new Middleware()
-       .friendRequestProcessor(bot)
+       .friendRequestProcessor()
        .done(async data => {
     data.agree();
 }))
 ```
-
-
 
 ## memberJoinRequestProcessor
 
@@ -359,21 +323,17 @@ bot.on('NewFriendRequestEvent', new Middleware()
 
 #### 参数
 
-- `bot` 必选
-
-  `Bot` 的实例
+无
 
 #### 示例
 
 ```js
 bot.on('MemberJoinRequestEvent', new Middleware()
-       .memberJoinRequestProcessor(bot)
+       .memberJoinRequestProcessor()
        .done(async data => {
     data.agree();
 }))
 ```
-
-
 
 ## invitedJoinGroupRequestProcessor
 
@@ -385,21 +345,17 @@ bot.on('MemberJoinRequestEvent', new Middleware()
 
 #### 参数
 
-- `bot` 必选
-
-  `Bot` 的实例
+无
 
 #### 示例
 
 ```js
 bot.on('BotInvitedJoinGroupRequestEvent', new Middleware()
-       .invitedJoinGroupRequestProcessor(bot)
+       .invitedJoinGroupRequestProcessor()
        .done(async data => {
     data.agree();
 }))
 ```
-
-
 
 ## syncWrapper
 
@@ -455,10 +411,6 @@ bot -> 请输入随机数上限
 
 bot -> 56
 
-
-
-
-
 # 自定义中间件
 
 ## use
@@ -484,8 +436,6 @@ bot.on('FriendMessage', new Middleware()
     /* do sth. */ 
 }));
 ```
-
-
 
 # 错误处理
 
@@ -515,12 +465,9 @@ bot.on('FriendMessage', new Middleware()
 }));
 ```
 
-
-
 # 异步
 
 `Middleware` 生成的事件处理器已经进行了异步包装，调用入口将直接返回一个 `Promise` 实例。该实例将在 `done` 中传入的回调函数返回后回调。
-
 
 ```js
 let returnValue = await new Middleware()

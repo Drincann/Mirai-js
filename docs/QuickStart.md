@@ -7,7 +7,7 @@
 从 `npm` 安装：
 
 ```bash
-$ npm install mirai-js
+npm install mirai-js
 ```
 
 然后从 `mirai-js` 解构：
@@ -29,8 +29,6 @@ const { Bot, Message } = require('mirai-js');
 ```js
 const { Bot, Message } = window.miraiJs;
 ```
-
-
 
 ## 登录
 
@@ -55,11 +53,9 @@ await Bot.sendCommand({
 
 注意该方法的返回值，已知的问题：
 
-> 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'
+> 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 请更换协议后重试. 另请参阅: <https://github.com/project-mirai/mirai-login-solver-selenium>'
 
 > 不要重复登录！
-
-
 
 ## 建立连接
 
@@ -77,11 +73,9 @@ await bot.open({
 });
 ```
 
->  重复调用 `open` 方法将重建连接，需要重建连接时，可以传入想要修改的参数。
+> 重复调用 `open` 方法将重建连接，需要重建连接时，可以传入想要修改的参数。
 >
->  若未提供任何参数，将保持原先的配置。
-
-
+> 若未提供任何参数，将保持原先的配置。
 
 ## 发送消息
 
@@ -108,15 +102,13 @@ await bot.sendMessage({
     group: '123456789',
     // 是 http server 接口所需的原始格式，若提供则优先使用
     message: [
-    	{ type: 'Plain', text: 'hello world!'},
+     { type: 'Plain', text: 'hello world!'},
         { type: 'Image', url:;'http://example/image.jpg'},
-	],
+ ],
 });
 ```
 
 具体的`MessageChain`的消息类型见 [MessageType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/MessageType.md)。
-
-
 
 ## 接收消息和事件
 
@@ -194,8 +186,6 @@ GroupMessage 事件的消息结构：
 
 具体的事件类型及消息结构见 [EventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)。
 
-
-
 ## 使用中间件
 
 框架还提供了一系列预定义的用于处理消息的中间件：
@@ -272,8 +262,6 @@ const processor = middleware.use((data, next) => {
 }).done(/* callback */);
 ```
 
-
-
 ## 已知的问题
 
 当我们的机器人下线并重新登陆后，当前会话会陷入一种未失效但无法操作的状态，强行操作（例如发送消息）将抛出服务端异常（status 500）。
@@ -285,7 +273,7 @@ const processor = middleware.use((data, next) => {
 ```js
 bot.on('BotOfflineEventForce',
     new Middleware()
-       .autoReLogin({ bot, baseUrl, authKey, password })
+       .autoReLogin({ baseUrl, authKey, password })
        .done()
 );
 ```
