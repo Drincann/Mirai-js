@@ -46,11 +46,15 @@ const { MessageChainGetable } = require('./interface');
  * @field config            包含 baseUrl authKey qq
  * @field eventProcessorMap 事件处理器 map
  * @field wsConnection      建立连接的 WebSocket 实例
+ * @field waiter            内部类单例，提供同步 io 机制
  */
 class Bot {
     constructor() {
         // 实例化一个内部类 Waiter
         this.waiter = new Waiter(this);
+        this.config = undefined;
+        this.eventProcessorMap = undefined;
+        this.wsConnection = undefined;
     }
     /**
      * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
