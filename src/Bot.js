@@ -937,7 +937,7 @@ class Bot extends BotConfigGetable {
      * @returns {FileManager} 文件管理器实例
      */
     fileManager({ group }) {
-        return new FileManager({ botConfig: this.config, group });
+        return new FileManager({ bot: this, group });
     }
 
     /**

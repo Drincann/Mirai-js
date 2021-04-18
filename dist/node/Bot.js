@@ -1288,7 +1288,7 @@ class Bot extends BotConfigGetable {
     group
   }) {
     return new FileManager({
-      botConfig: this.config,
+      bot: this,
       group
     });
   }

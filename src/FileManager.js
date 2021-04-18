@@ -3,8 +3,9 @@ const path = require('path');
 const { promisify } = require('util');
 
 class FileManager {
-    constructor({ botConfig, group }) {
-        const { baseUrl, sessionKey } = botConfig;
+    constructor({ bot, group }) {
+        const baseUrl = bot.getBaseUrl();
+        const sessionKey = bot.sessionKey();
         // core 柯里化，为内部类 File Directory 提供包装的接口
         this._getGroupFileList = ({ dir }) => require('./core/getGroupFileList')({
             baseUrl, sessionKey, target: group, dir

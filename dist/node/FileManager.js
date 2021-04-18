@@ -13,10 +13,8 @@ class FileManager {
     bot,
     group
   }) {
-    const {
-      baseUrl,
-      sessionKey
-    } = botConfig; // core 柯里化，为内部类 File Directory 提供包装的接口
+    const baseUrl = bot.getBaseUrl();
+    const sessionKey = bot.sessionKey(); // core 柯里化，为内部类 File Directory 提供包装的接口
 
     this._getGroupFileList = ({
       dir
