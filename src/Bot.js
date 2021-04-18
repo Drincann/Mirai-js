@@ -40,7 +40,7 @@ const { errCodeEnum } = require('./util/errCode');
 
 
 // 扩展接口
-const { MessageChainGetable } = require('./interface');
+const { MessageChainGetable, BotConfigGetable } = require('./interface');
 
 /**
  * @field config            包含 baseUrl authKey qq
@@ -48,14 +48,24 @@ const { MessageChainGetable } = require('./interface');
  * @field wsConnection      建立连接的 WebSocket 实例
  * @field waiter            内部类单例，提供同步 io 机制
  */
-class Bot {
+class Bot extends BotConfigGetable {
     constructor() {
+        super();
         // 实例化一个内部类 Waiter
         this.waiter = new Waiter(this);
         this.config = undefined;
         this.eventProcessorMap = undefined;
         this.wsConnection = undefined;
     }
+
+    /**
+     * 实现 BotConfigGetable 接口
+     */
+    getBaseUrl() { return this.config.baseUrl; }
+    getQQ() { return this.config.qq; }
+    getAuthKey() { return this.config.authKey; }
+    getSessionKey() { return this.config.sessionKey; }
+
     /**
      * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
      * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接

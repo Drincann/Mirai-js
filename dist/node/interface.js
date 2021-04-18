@@ -8,7 +8,24 @@ class MessageChainGetable {
   getMessageChain() {}
 
 }
+/**
+ * @description Bot 实现的接口，其他类访问 bot.config
+ * 的途径，避免其他类直接访问实现，用来解耦
+ */
+
+
+class BotConfigGetable {
+  getBaseUrl() {}
+
+  getQQ() {}
+
+  getAuthKey() {}
+
+  getSessionKey() {}
+
+}
 
 module.exports = {
-  MessageChainGetable
+  MessageChainGetable,
+  BotConfigGetable
 };

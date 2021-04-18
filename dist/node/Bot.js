@@ -84,7 +84,8 @@ const {
 
 
 const {
-  MessageChainGetable
+  MessageChainGetable,
+  BotConfigGetable
 } = require('./interface');
 /**
  * @field config            包含 baseUrl authKey qq
@@ -94,13 +95,34 @@ const {
  */
 
 
-class Bot {
+class Bot extends BotConfigGetable {
   constructor() {
-    // 实例化一个内部类 Waiter
+    super(); // 实例化一个内部类 Waiter
+
     this.waiter = new Waiter(this);
     this.config = undefined;
     this.eventProcessorMap = undefined;
     this.wsConnection = undefined;
+  }
+  /**
+   * 实现 BotConfigGetable 接口
+   */
+
+
+  getBaseUrl() {
+    return this.config.baseUrl;
+  }
+
+  getQQ() {
+    return this.config.qq;
+  }
+
+  getAuthKey() {
+    return this.config.authKey;
+  }
+
+  getSessionKey() {
+    return this.config.sessionKey;
   }
   /**
    * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话

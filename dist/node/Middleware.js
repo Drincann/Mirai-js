@@ -410,19 +410,14 @@ class Middleware {
   friendRequestProcessor() {
     this.middleware.push(async (data, next) => {
       try {
-        var _data$bot;
-
         // 事件类型
         if (data.type != 'NewFriendRequestEvent') {
           throw new Error('Middleware.NewFriendRequestEvent 消息格式出错');
-        } // ! 这个地方与 Bot 耦合
-        // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+        } // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
 
 
-        const {
-          baseUrl,
-          sessionKey
-        } = (_data$bot = data.bot) === null || _data$bot === void 0 ? void 0 : _data$bot.config;
+        const baseUrl = data.bot.getBaseUrl();
+        const sessionKey = data.bot.sessionKey();
         const {
           eventId,
           fromId,
@@ -491,19 +486,14 @@ class Middleware {
   memberJoinRequestProcessor() {
     this.middleware.push(async (data, next) => {
       try {
-        var _data$bot2;
-
         // 事件类型
         if (data.type != 'MemberJoinRequestEvent') {
           throw new Error('Middleware.memberJoinRequestProcessor 消息格式出错');
-        } // ! 这个地方与 Bot 耦合
-        // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+        } // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
 
 
-        const {
-          baseUrl,
-          sessionKey
-        } = (_data$bot2 = data.bot) === null || _data$bot2 === void 0 ? void 0 : _data$bot2.config;
+        const baseUrl = data.bot.getBaseUrl();
+        const sessionKey = data.bot.sessionKey();
         const {
           eventId,
           fromId,
@@ -596,19 +586,14 @@ class Middleware {
   invitedJoinGroupRequestProcessor() {
     this.middleware.push(async (data, next) => {
       try {
-        var _data$bot3;
-
         // 事件类型
         if (data.type != 'BotInvitedJoinGroupRequestEvent') {
           throw new Error('Middleware.invitedJoinGroupRequestProcessor 消息格式出错');
-        } // ! 这个地方与 Bot 耦合
-        // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
+        } // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
 
 
-        const {
-          baseUrl,
-          sessionKey
-        } = (_data$bot3 = data.bot) === null || _data$bot3 === void 0 ? void 0 : _data$bot3.config;
+        const baseUrl = data.bot.getBaseUrl();
+        const sessionKey = data.bot.sessionKey();
         const {
           eventId,
           fromId,
@@ -666,23 +651,23 @@ class Middleware {
 
         data.waitFor = {
           messageChain: () => {
-            var _data$bot4, _data$bot4$waiter;
+            var _data$bot, _data$bot$waiter;
 
-            return (_data$bot4 = data.bot) === null || _data$bot4 === void 0 ? void 0 : (_data$bot4$waiter = _data$bot4.waiter) === null || _data$bot4$waiter === void 0 ? void 0 : _data$bot4$waiter.wait(data.type, ({
+            return (_data$bot = data.bot) === null || _data$bot === void 0 ? void 0 : (_data$bot$waiter = _data$bot.waiter) === null || _data$bot$waiter === void 0 ? void 0 : _data$bot$waiter.wait(data.type, ({
               messageChain
             }) => messageChain);
           },
           text: () => {
-            var _data$bot5, _data$bot5$waiter;
+            var _data$bot2, _data$bot2$waiter;
 
-            return (_data$bot5 = data.bot) === null || _data$bot5 === void 0 ? void 0 : (_data$bot5$waiter = _data$bot5.waiter) === null || _data$bot5$waiter === void 0 ? void 0 : _data$bot5$waiter.wait(data.type, new Middleware().textProcessor().done(({
+            return (_data$bot2 = data.bot) === null || _data$bot2 === void 0 ? void 0 : (_data$bot2$waiter = _data$bot2.waiter) === null || _data$bot2$waiter === void 0 ? void 0 : _data$bot2$waiter.wait(data.type, new Middleware().textProcessor().done(({
               text
             }) => text));
           },
           custom: processor => {
-            var _data$bot6, _data$bot6$waiter;
+            var _data$bot3, _data$bot3$waiter;
 
-            return (_data$bot6 = data.bot) === null || _data$bot6 === void 0 ? void 0 : (_data$bot6$waiter = _data$bot6.waiter) === null || _data$bot6$waiter === void 0 ? void 0 : _data$bot6$waiter.wait(data.type, processor);
+            return (_data$bot3 = data.bot) === null || _data$bot3 === void 0 ? void 0 : (_data$bot3$waiter = _data$bot3.waiter) === null || _data$bot3$waiter === void 0 ? void 0 : _data$bot3$waiter.wait(data.type, processor);
           }
         };
         await next();
