@@ -239,6 +239,11 @@ class Bot extends BotConfigGetable {
 
         if (messageChain instanceof MessageChainGetable) {
             messageChain = messageChain.getMessageChain();
+        } else if (typeof messageChain === 'string') {
+            messageChain = [{
+                type: 'Plain',
+                text: messageChain,
+            }];
         }
 
         // 根据 temp、friend、group 参数的情况依次调用
