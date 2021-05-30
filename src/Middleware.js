@@ -368,7 +368,7 @@ class Middleware {
 
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
                 const baseUrl = data.bot.getBaseUrl();
-                const sessionKey = data.bot.sessionKey();
+                const sessionKey = data.bot.getSessionKey();
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
@@ -425,7 +425,7 @@ class Middleware {
 
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
                 const baseUrl = data.bot.getBaseUrl();
-                const sessionKey = data.bot.sessionKey();
+                const sessionKey = data.bot.getSessionKey();
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
@@ -497,7 +497,7 @@ class Middleware {
 
                 // ? baseUrl, sessionKey 放在内部获取，使用最新的实例状态
                 const baseUrl = data.bot.getBaseUrl();
-                const sessionKey = data.bot.sessionKey();
+                const sessionKey = data.bot.getSessionKey();
                 const { eventId, fromId, groupId } = data;
 
                 // 同意
