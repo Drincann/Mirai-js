@@ -417,7 +417,7 @@ class Middleware {
 
 
         const baseUrl = data.bot.getBaseUrl();
-        const sessionKey = data.bot.sessionKey();
+        const sessionKey = data.bot.getSessionKey();
         const {
           eventId,
           fromId,
@@ -493,7 +493,7 @@ class Middleware {
 
 
         const baseUrl = data.bot.getBaseUrl();
-        const sessionKey = data.bot.sessionKey();
+        const sessionKey = data.bot.getSessionKey();
         const {
           eventId,
           fromId,
@@ -593,7 +593,7 @@ class Middleware {
 
 
         const baseUrl = data.bot.getBaseUrl();
-        const sessionKey = data.bot.sessionKey();
+        const sessionKey = data.bot.getSessionKey();
         const {
           eventId,
           fromId,
