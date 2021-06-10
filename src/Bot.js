@@ -54,7 +54,7 @@ class Bot extends BotConfigGetable {
         // 实例化一个内部类 Waiter
         this.waiter = new Waiter(this);
         this.config = undefined;
-        this.eventProcessorMap = undefined;
+        this.eventProcessorMap = {};
         this.wsConnection = undefined;
     }
 
@@ -195,7 +195,7 @@ class Bot extends BotConfigGetable {
 
         // 初始化对象状态
         if (!keepProcessor) {
-            this.eventProcessorMap = undefined;
+            this.eventProcessorMap = {};
         }
         if (!keepConfig) {
             this.config = undefined;

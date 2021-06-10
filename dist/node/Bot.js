@@ -101,7 +101,7 @@ class Bot extends BotConfigGetable {
 
     this.waiter = new Waiter(this);
     this.config = undefined;
-    this.eventProcessorMap = undefined;
+    this.eventProcessorMap = {};
     this.wsConnection = undefined;
   }
   /**
@@ -291,7 +291,7 @@ class Bot extends BotConfigGetable {
     }); // 初始化对象状态
 
     if (!keepProcessor) {
-      this.eventProcessorMap = undefined;
+      this.eventProcessorMap = {};
     }
 
     if (!keepConfig) {
