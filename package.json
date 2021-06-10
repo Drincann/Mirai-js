@@ -1,6 +1,6 @@
 {
     "name": "mirai-js",
-    "version": "1.7.5",
+    "version": "1.7.6",
     "description": "QQ robot development framework based on Mirai-api-http.",
     "main": "dist/node/index.js",
     "scripts": {
