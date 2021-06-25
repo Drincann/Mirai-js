@@ -11,7 +11,6 @@
 - Node.js 12+ / browser
 - Java 11+
 
-
 ## 不会开启？
 
 1. 使用加载器
@@ -35,9 +34,49 @@
 
    编辑 `config/MiraiApiHttp/setting.yml`。
 
+    ```yml
+    adapters: 
+    - http
+    - ws
+    debug: false
+    enableVerify: true
+    verifyKey: INITKEYpff86IGV
+    singleMode: false
+    cacheSize: 4096
+    adapterSettings: 
+        http:
+            ## http server 监听的本地地址
+            ## 一般为 localhost 即可, 如果多网卡等情况，自定设置
+            host: localhost
+
+            ## http server 监听的端口
+            ## 与 websocket server 可以重复, 由于协议与路径不同, 不会产生冲突
+            port: 8080
+
+            ## 配置跨域, 默认允许来自所有域名
+            cors: [*]
+        ws:
+            ## websocket server 监听的本地地址
+            ## 一般为 localhost 即可, 如果多网卡等情况，自定设置
+            host: localhost
+
+            ## websocket server 监听的端口
+            ## 与 http server 可以重复, 由于协议与路径不同, 不会产生冲突
+            port: 8080
+
+            ## websocket 用于消息同步的字段为 syncId, 一般值为请求时的原值，用于同步一次请求与响应
+            ## 对于由 websocket server 主动发出的通知, 固定使用一个 syncId, 默认为 ”-1“
+            reservedSyncId: -1
+
+    ```
+
    按照自身需求编辑 `port`，它将指定该服务将开放在哪个端口。
 
    更改 `verifyKey`，然后记住它，它是框架与服务端交互的凭证。
+
+   `mirai-api-http` 使用了模块化的适配器设计，在当前版本，我们要求并用 http 与 ws adaptor，且 port 一致。
+
+   在未来，框架将整体迁移至 ws adaptor。
 
 4. 启动
 
@@ -52,10 +91,6 @@
 ## 什么是 Mirai？
 
 请移步 [Mirai 生态概览](https://github.com/mamoe/mirai/blob/dev/docs/mirai-ecology.md)。
-
-
-
-
 
 ## 相关仓库
 
