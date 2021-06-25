@@ -18,7 +18,7 @@
             const { Bot, Middleware, Message } = miraiJs;
 
             const baseUrl = 'http://example.com:8080';
-            const authKey = prompt('输入 authkey');
+            const verifyKey = prompt('输入 verifyKey');
             const qq = 1019933576;
             const bot = new Bot();
 
@@ -28,8 +28,8 @@
                 baseUrl,
                 // 要绑定的 qq，须确保该用户已在 mirai-console 登录
                 qq,
-                // authKey 用于验证连接者的身份，在插件配置文件中设置
-                authKey,
+                // verifyKey 用于验证连接者的身份，在插件配置文件中设置
+                verifyKey,
             });
 
             // 监听消息

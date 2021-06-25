@@ -54,7 +54,7 @@ interface MessageChainGetable {
 interface BotConfigGetable {
     getBaseUrl(): string;
     getQQ(): number;
-    getAuthKey(): string;
+    getVerifyKey(): string;
     getSessionKey(): string;
 }
 

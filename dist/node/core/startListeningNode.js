@@ -28,6 +28,7 @@ const errorHandler = require('../util/errorHandler');
 module.exports = async ({
   baseUrl,
   sessionKey,
+  verifyKey,
   message,
   error,
   close,
@@ -35,7 +36,7 @@ module.exports = async ({
 }) => {
   try {
     // 拼接 url
-    let url = new URL(`/all?sessionKey=${sessionKey}`, baseUrl); // 更改协议为 ws
+    let url = new URL(`/all?sessionKey=${sessionKey}&verifyKey=${verifyKey}`, baseUrl); // 更改协议为 ws
 
     url.protocol = 'ws';
     url = url.toString();
@@ -55,7 +56,9 @@ module.exports = async ({
       }, 60000);
       ws.on('message', data => {
         try {
-          message(JSON.parse(data));
+          var _JSON$parse;
+
+          message((_JSON$parse = JSON.parse(data)) === null || _JSON$parse === void 0 ? void 0 : _JSON$parse.data);
         } catch (error) {} // eslint-disable-line no-empty
 
       });

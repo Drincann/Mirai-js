@@ -17,10 +17,10 @@ const errorHandler = require('../util/errorHandler');
  * @param {function} unexpectedResponse 回调函数
  * @returns {WebSocket} 建立连接的 WebSocket 实例
  */
-module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpectedResponse }) => {
+module.exports = async ({ baseUrl, sessionKey, verifyKey, message, error, close, unexpectedResponse }) => {
     try {
         // 拼接 url
-        let url = new URL(`/all?sessionKey=${sessionKey}`, baseUrl);
+        let url = new URL(`/all?sessionKey=${sessionKey}&verifyKey=${verifyKey}`, baseUrl);
         // 更改协议为 ws
         url.protocol = 'ws';
         url = url.toString();
@@ -43,7 +43,7 @@ module.exports = async ({ baseUrl, sessionKey, message, error, close, unexpected
 
             ws.on('message', data => {
                 try {
-                    message(JSON.parse(data));
+                    message(JSON.parse(data)?.data);
                 } catch (error) { }// eslint-disable-line no-empty
             });
 

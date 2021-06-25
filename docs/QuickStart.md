@@ -32,7 +32,7 @@ const { Bot, Message } = window.miraiJs;
 
 ## 登录
 
-!> 警告，不应将 `authKey`、`password` 暴露在可被公共访问的网络资源上
+!> 警告，不应将 `verifyKey`、`password` 暴露在可被公共访问的网络资源上
 
 可以直接在 **mirai-console** 中输入`/login qq password`。
 
@@ -42,8 +42,8 @@ const { Bot, Message } = window.miraiJs;
 await Bot.sendCommand({
     // mirai-api-http 服务的网络位置
     baseUrl: 'http://example.com:8080',
-    // 在 mirai-api-http 的配置中设置的 authKey
-    authKey: 'authKey',
+    // 在 mirai-api-http 的配置中设置的 verifyKey
+    verifyKey: 'verifyKey',
     // 指令名
     command: '/login',
     // 指令参数列表，这条指令等价于 /login 1019933576 password
@@ -67,7 +67,7 @@ const bot = new Bot();
 // 连接到一个 mirai-api-http 服务
 await bot.open({
     baseUrl: 'http://example.com:8080',
-    authKey: 'authKey',
+    verifyKey: 'verifyKey',
     // 要绑定的 qq，须确保该用户已在 mirai-console 登录
     qq: 1019933576,
 });
@@ -273,7 +273,7 @@ const processor = middleware.use((data, next) => {
 ```js
 bot.on('BotOfflineEventForce',
     new Middleware()
-       .autoReLogin({ baseUrl, authKey, password })
+       .autoReLogin({ baseUrl, verifyKey, password })
        .done()
 );
 ```

@@ -16,7 +16,7 @@ const errorHandler = require('../util/errorHandler');
 /**
  * @description 向 mirai-console 发送指令
  * @param {string} baseUrl mirai-api-http server 的地址
- * @param {string} authKey mirai-api-http server 设置的 authKey
+ * @param {string} verifyKey mirai-api-http server 设置的 verifyKey
  * @param {string} command 指令名
  * @param {string[]} args  指令的参数
  * @returns {Object} 结构 { message }
@@ -25,7 +25,7 @@ const errorHandler = require('../util/errorHandler');
 
 module.exports = async ({
   baseUrl,
-  authKey,
+  verifyKey,
   command: name,
   args
 }) => {
@@ -34,7 +34,7 @@ module.exports = async ({
     const url = new URL('/command/send', baseUrl).toString(); // 请求
 
     const responseData = await axios.post(url, {
-      authKey,
+      verifyKey,
       name,
       args
     });

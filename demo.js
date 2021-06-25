@@ -3,7 +3,7 @@ const { Bot, Message, Middleware } = require('./src');
 (async () => {
     try {
         const baseUrl = 'http://example.com:8080';
-        const authKey = 'authKey';
+        const verifyKey = 'verifyKey';
         const qq = 1019933576;
         const password = 'password';
         const bot = new Bot();
@@ -11,7 +11,7 @@ const { Bot, Message, Middleware } = require('./src');
         // 在 mirai - console 登录一个账号
         await Bot.sendCommand({
             baseUrl,
-            authKey,
+            verifyKey,
             // 指令名
             command: '/login',
             // 指令参数列表，这条指令等价于 /login 1019933576 password
@@ -24,8 +24,8 @@ const { Bot, Message, Middleware } = require('./src');
             baseUrl,
             // 要绑定的 qq，须确保该用户已在 mirai-console 登录
             qq,
-            // authKey 用于验证连接者的身份，在插件配置文件中设置
-            authKey,
+            // verifyKey 用于验证连接者的身份，在插件配置文件中设置
+            verifyKey,
         });
 
 
@@ -117,7 +117,7 @@ const { Bot, Message, Middleware } = require('./src');
         // 自动重新登陆
         bot.on('BotOfflineEventForce',
             new Middleware()
-                .autoReLogin({ bot, baseUrl, authKey, password })
+                .autoReLogin({ bot, baseUrl, verifyKey, password })
                 .done()
         );
     } catch (err) {

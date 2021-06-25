@@ -19,7 +19,7 @@ class BotConfigGetable {
 
   getQQ() {}
 
-  getAuthKey() {}
+  getVerifyKey() {}
 
   getSessionKey() {}
 

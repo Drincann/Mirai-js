@@ -16,16 +16,16 @@ class Middleware {
     /**
      * @description 自动重新登陆
      * @param {string} baseUrl  mirai-api-http server 的地址
-     * @param {string} authKey  mirai-api-http server 设置的 authKey
+     * @param {string} verifyKey  mirai-api-http server 设置的 verifyKey
      * @param {string} password 欲重新登陆的 qq 密码
      */
-    autoReLogin({ baseUrl, authKey, password }) {
+    autoReLogin({ baseUrl, verifyKey, password }) {
         const { Bot } = require('./index.js');
         this.middleware.push(async (data, next) => {
             try {
                 await Bot.sendCommand({
                     baseUrl,
-                    authKey,
+                    verifyKey,
                     command: '/login',
                     args: [data.qq, password],
                 });

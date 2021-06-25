@@ -19,23 +19,23 @@ if (!process.browser) {
 const errorHandler = require('../util/errorHandler');
 /**
  *
- * @description 认证 authKey，创建回话，返回一个 sessionKey
+ * @description 认证 verifyKey，创建回话，返回一个 sessionKey
  * @param {string} baseUrl mirai-api-http server 的地址
- * @param {string} authKey mirai-api-http server 设置的 authKey
+ * @param {string} verifyKey mirai-api-http server 设置的 verifyKey
  * @returns {string} 会话标识 sessionKey
  */
 
 
 module.exports = async ({
   baseUrl,
-  authKey
+  verifyKey
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/auth', baseUrl).toString(); // 请求
+    const url = new URL('/verify', baseUrl).toString(); // 请求
 
     const responseData = await axios.post(url, {
-      authKey
+      verifyKey
     });
 
     try {

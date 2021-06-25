@@ -13,7 +13,7 @@ class MessageChainGetable {
 class BotConfigGetable {
     getBaseUrl() { }
     getQQ() { }
-    getAuthKey() { }
+    getVerifyKey() { }
     getSessionKey() { }
 }
 

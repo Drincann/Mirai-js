@@ -47,8 +47,6 @@ Bot.groupPermission = {
 };
 ```
 
-
-
 # 成员属性
 
 ## waiter
@@ -58,8 +56,6 @@ Bot.groupPermission = {
 它有一些方法，用于在异步代码中对消息进行同步等待，例如连续对话。
 
 API 见 [Waiter](/Waiter)。
-
-
 
 # 静态方法
 
@@ -75,7 +71,7 @@ API 见 [Waiter](/Waiter)。
 
   mirai-api-http 的网络位置。
 
-- `authKey: string` 必选
+- `verifyKey: string` 必选
 
   mirai-api-http 的认证秘钥。
 
@@ -96,13 +92,11 @@ API 见 [Waiter](/Waiter)。
 ```js
 const { message } = await Bot.sendCommand({
     baseUrl: 'http://example.com:8080',
-    authKey: 'authKey',
+    verifyKey: 'verifyKey',
     command: '/login',
     args: ['1019933576', 'password'],
 });
 ```
-
-
 
 ## isBotLoggedIn
 
@@ -114,14 +108,13 @@ const { message } = await Bot.sendCommand({
 
   mirai-api-http 的网络位置。
 
-- `authKey: string` 必选
+- `verifyKey: string` 必选
 
   mirai-api-http 的认证秘钥。
 
 - `qq: number` 必选
 
   qq 号。
-
 
 #### 返回值
 
@@ -132,12 +125,10 @@ const { message } = await Bot.sendCommand({
 ```js
 const isLoggedIn = await Bot.isBotLoggedIn({ 
     baseUrl: 'http://example.com:8080',
-    authKey: 'authKey',
+    verifyKey: 'verifyKey',
     qq: 1019933576,
 });
 ```
-
-
 
 # 成员方法
 
@@ -151,7 +142,7 @@ const isLoggedIn = await Bot.isBotLoggedIn({
 
   mirai-api-http 的网络位置。
 
-- `authKey: string` 必选
+- `verifyKey: string` 必选
 
   mirai-api-http 的认证秘钥。
 
@@ -168,7 +159,7 @@ const isLoggedIn = await Bot.isBotLoggedIn({
 ```js
 await bot.open({
     baseUrl: 'http://example.com:8080',
-    authKey: 'authKey',
+    verifyKey: 'verifyKey',
     // 要绑定的 qq，须确保该用户已在 mirai-console 登录
     qq: 1019933576,
 });
@@ -178,8 +169,6 @@ await bot.open({
 // 重复调用时不需要提供参数
 await bot.open();
 ```
-
-
 
 ## close
 
@@ -193,7 +182,7 @@ await bot.open();
 
 - `keepConfig: boolean` 可选
 
-  是否保留在调用 `open` 时提供的 session、baseUrl、qq、authKey 等配置，默认值 `false`。
+  是否保留在调用 `open` 时提供的 session、baseUrl、qq、verifyKey 等配置，默认值 `false`。
 
 #### 返回值
 
@@ -204,8 +193,6 @@ await bot.open();
 ```js
 bot.close({ keepProcessor: true });
 ```
-
-
 
 ## sendMessage
 
@@ -245,8 +232,6 @@ bot.close({ keepProcessor: true });
 
   已经被废弃，其功能由 `message` 参数承担，该参数将在未来被移除。
 
-  
-
 #### 返回值
 
 `messageId: number`，标识刚刚发送的消息。
@@ -263,8 +248,6 @@ bot.on('FriendMessage', async data => {
     });
 });
 ```
-
-
 
 ## sendNudge
 
@@ -286,7 +269,6 @@ bot.on('FriendMessage', async data => {
 
   目标 qq 号。
 
-
 #### 返回值
 
 无
@@ -301,8 +283,6 @@ bot.on('GroupMessage', async data => {
     });
 });
 ```
-
-
 
 ## on
 
@@ -328,14 +308,14 @@ bot.on('GroupMessage', async data => {
 
  `eventType` 参数传入数组时，将返回 `handle` 数组。
 
-?> 对于 `handle` 来说，每个 `eventType` 都是一个独立的命名空间，在移除事件处理器时，需要给出对应 `handle` 的 `eventType` 
+?> 对于 `handle` 来说，每个 `eventType` 都是一个独立的命名空间，在移除事件处理器时，需要给出对应 `handle` 的 `eventType`
 
 #### 示例
 
 ```js
 // 监听好友消息事件
 bot.on('FriendMessage', async data => {
-	// ...
+ // ...
 });
 ```
 
@@ -372,12 +352,12 @@ bot.on('FriendMessage', async data => {
 ```json
 {
     "type": "GroupMessage",            // 消息类型：GroupMessage或FriendMessage或TempMessage或各类Event
-	"messageChain": [                  // 消息链，是一个消息对象构成的数组
+ "messageChain": [                  // 消息链，是一个消息对象构成的数组
       {
-	    "type": "Source",
-	    "id": 123456,
+     "type": "Source",
+     "id": 123456,
         "time": 123456789
-	  },
+   },
       {
         "type": "Plain",
         "text": "Miral牛逼"
@@ -403,10 +383,6 @@ bot.on('FriendMessage', async data => {
 'close'              : (code: number, message: string) => void
 'unexpected-response': (request: http.ClientRequest, response: http.IncomingMessage) => void
 ```
-
-
-
-
 
 ## one
 
@@ -443,11 +419,9 @@ bot.on('FriendMessage', async data => {
 ```js
 // 监听好友消息事件
 bot.one('FriendMessage', async data => {
-	// ...
+ // ...
 });
 ```
-
-
 
 ## off
 
@@ -481,13 +455,11 @@ bot.one('FriendMessage', async data => {
 
 ```js
 const handle = bot.on('FriendMessage', async data => {
-	// ...
+ // ...
 });
 
 bot.off('FriendMessage', handle);
 ```
-
-
 
 ## offAll
 
@@ -517,8 +489,6 @@ bot.offAll();
 bot.offAll(['FriendMessage', 'GroupMessage']);
 ```
 
-
-
 ## recall
 
 `recall` 方法用于撤回一条消息。
@@ -544,8 +514,6 @@ const messageId = await bot.sendMessage({
 
 await bot.recall({ messageId });
 ```
-
-
 
 ## uploadImage
 
@@ -588,8 +556,6 @@ await bot.sendMessage({
 });
 ```
 
-
-
 ## uploadVoice
 
 `uploadVoice` 方法用于向服务器上传一段语音，返回的信息可用于发送语音消息。
@@ -614,7 +580,7 @@ await bot.sendMessage({
 
 #### 返回值
 
-`{ voiceId: string, url: string, path: string } `
+`{ voiceId: string, url: string, path: string }`
 
 返回一个包含 "语音 id"、"语音在腾讯服务器的 url" 和 "语音在 mirai-api-http 服务端的位置" 的 Map，用法见示例。
 
@@ -628,8 +594,6 @@ await bot.sendMessage({
     message: new Message().addVoiceUrl(url).addVoicePath(path).addVoiceId(voiceId),
 });
 ```
-
-
 
 ## getFriendList
 
@@ -650,8 +614,6 @@ await bot.sendMessage({
 ```js
 const friendList = await bot.getFriendList();
 ```
-
-
 
 ## getGroupList
 
@@ -688,8 +650,6 @@ switch (permission) {
 }
 ```
 
-
-
 ## getMemberList
 
 `getMemberList` 方法用于获得指定群的成员列表。
@@ -711,8 +671,6 @@ switch (permission) {
 ```js
 const memberList = await bot.getMemberList();
 ```
-
-
 
 ## getMemberInfo
 
@@ -739,8 +697,6 @@ const memberList = await bot.getMemberList();
 ```js
 const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 });
 ```
-
-
 
 ## setMemberInfo
 
@@ -774,8 +730,6 @@ const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 }
 await setMemberInfo({ group: 123456789, qq: 1019933576, title: 'title' });
 ```
 
-
-
 ## mute
 
 `mute` 方法用于禁言群成员。
@@ -804,8 +758,6 @@ await setMemberInfo({ group: 123456789, qq: 1019933576, title: 'title' });
 await mute({ group: 123456789, qq: 1019933576, time: 3600 });
 ```
 
-
-
 ## muteAll
 
 `muteAll` 方法用于全员禁言。
@@ -825,8 +777,6 @@ await mute({ group: 123456789, qq: 1019933576, time: 3600 });
 ```js
 await muteAll({ group: 123456789 });
 ```
-
-
 
 ## unmute
 
@@ -852,8 +802,6 @@ await muteAll({ group: 123456789 });
 await unmute({ group: 123456789, qq: 1019933576 });
 ```
 
-
-
 ## muteAll
 
 `muteAll` 方法用于解除全员禁言。
@@ -873,8 +821,6 @@ await unmute({ group: 123456789, qq: 1019933576 });
 ```js
 await unmuteAll({ group: 123456789 });
 ```
-
-
 
 ## removeMember
 
@@ -904,8 +850,6 @@ await unmuteAll({ group: 123456789 });
 await removeMember({ group: 123456789, qq: 1019933576, message: "message" });
 ```
 
-
-
 ## quitGroup
 
 `quitGroup` 方法用于令机器人退出指定群。
@@ -925,8 +869,6 @@ await removeMember({ group: 123456789, qq: 1019933576, message: "message" });
 ```js
 await quitGroup({ group: 123456789 })
 ```
-
-
 
 ## getGroupConfig
 
@@ -951,47 +893,43 @@ await quitGroup({ group: 123456789 })
 }
 ```
 
-
-
 ## setGroupConfig
 
 `setGroupConfig` 方法用于设置群配置
 
 #### 参数
 
-* `target:number` 必选
+- `target:number` 必选
 
   群号
 
-* `name:string` 可选
+- `name:string` 可选
 
   群名
 
-* `announcement:string` 可选
+- `announcement:string` 可选
 
   群公告
 
-* `confessTalk:boolean` 可选
+- `confessTalk:boolean` 可选
 
   是否开启坦白说
 
-* `allowMemberInvite:boolean` 可选
+- `allowMemberInvite:boolean` 可选
 
   是否允许群员邀请
 
-* `autoApprove:boolean` 可选
+- `autoApprove:boolean` 可选
 
   是否开启自动审批入群
 
-* `anonymousChat:boolean` 可选
+- `anonymousChat:boolean` 可选
 
   是否允许匿名聊天
 
 #### 返回值
 
 无
-
-
 
 ## getSessionConfig
 
@@ -1004,8 +942,6 @@ await quitGroup({ group: 123456789 })
 #### 返回值
 
 `{ cacheSize, enableWebsocket }`
-
-
 
 ## setSessionConfig
 
@@ -1022,8 +958,6 @@ await quitGroup({ group: 123456789 })
 
 无
 
-
-
 ## setEssence
 
 `setEssence` 方法用于设置一条群精华消息。
@@ -1038,17 +972,11 @@ await quitGroup({ group: 123456789 })
 
 无
 
-
-
-
-
 # 错误处理
 
 ## Bot 实例的方法
 
 `Bot` 实例的方法将在出错后抛出异常，message 将给出具体原因。
-
-
 
 ## WebSocket 连接
 
@@ -1065,5 +993,3 @@ await quitGroup({ group: 123456789 })
 > ws unexpectedResponse
 >
 > { req, res }
-
-

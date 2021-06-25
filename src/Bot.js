@@ -1,7 +1,7 @@
 // 引入核心功能，前缀下划线时为了与方法名区别 (视觉上的区别)
 const _releaseSession = require('./core/releaseSession');
-const _verify = require('./core/verify');
-const _auth = require('./core/auth');
+const _verify = require('./core/auth');
+const _bind = require('./core/verify');
 const _sendCommand = require('./core/sendCommand');
 const _sendFriendMessage = require('./core/sendFirendMessage');
 const _sendGroupMessage = require('./core/sendGroupMessage');
@@ -43,7 +43,7 @@ const { errCodeEnum } = require('./util/errCode');
 const { MessageChainGetable, BotConfigGetable } = require('./interface');
 
 /**
- * @field config            包含 baseUrl authKey qq
+ * @field config            包含 baseUrl verifyKey qq
  * @field eventProcessorMap 事件处理器 map
  * @field wsConnection      建立连接的 WebSocket 实例
  * @field waiter            内部类单例，提供同步 io 机制
@@ -63,18 +63,18 @@ class Bot extends BotConfigGetable {
      */
     getBaseUrl() { return this.config.baseUrl; }
     getQQ() { return this.config.qq; }
-    getAuthKey() { return this.config.authKey; }
+    getVerifyKey() { return this.config.verifyKey; }
     getSessionKey() { return this.config.sessionKey; }
 
     /**
      * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
      * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接
      * @param {string} baseUrl 必选，mirai-api-http server 的地址
-     * @param {string} authKey 必选，mirai-api-http server 设置的 authKey
+     * @param {string} verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param {number} qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
      * @returns {void}
      */
-    async open({ baseUrl, qq, authKey } = {}) {
+    async open({ baseUrl, qq, verifyKey } = {}) {
         // 若 config 存在，则认为该对象已经 open 过
         // ，此处应该先令对象回到初始状态，然后重建会话
         if (this.config) {
@@ -86,7 +86,7 @@ class Bot extends BotConfigGetable {
         this.config = {
             baseUrl: this.config?.baseUrl ?? baseUrl,
             qq: this.config?.qq ?? qq,
-            authKey: this.config?.authKey ?? authKey,
+            verifyKey: this.config?.verifyKey ?? verifyKey,
             sessionKey: this.config?.sessionKey ?? '',
         };
 
@@ -95,23 +95,23 @@ class Bot extends BotConfigGetable {
         this.eventProcessorMap = this.eventProcessorMap ?? {};
 
         // 需要使用的参数
-        ({ baseUrl, qq, authKey } = this.config);
+        ({ baseUrl, qq, verifyKey } = this.config);
 
         // 检查参数
-        if (!this.config.baseUrl || !this.config.qq || !this.config.authKey) {
+        if (!this.config.baseUrl || !this.config.qq || !this.config.verifyKey) {
             throw new Error(`open 缺少必要的 ${getInvalidParamsString({
-                baseUrl, qq, authKey,
+                baseUrl, qq, verifyKey,
             })} 参数`);
         }
 
         // 创建会话
-        const sessionKey = this.config.sessionKey = await _auth({ baseUrl, authKey });
+        const sessionKey = this.config.sessionKey = await _verify({ baseUrl, verifyKey });
 
         // 绑定到一个 qq
-        await _verify({ baseUrl, sessionKey, qq });
+        await _bind({ baseUrl, sessionKey, qq });
 
         // 配置服务端 websocket 状态
-        await _setSessionConfig({ baseUrl, sessionKey, enableWebsocket: true });
+        // await _setSessionConfig({ baseUrl, sessionKey, enableWebsocket: true });
 
         // 开始监听事件
         await this.__wsListen();
@@ -123,10 +123,11 @@ class Bot extends BotConfigGetable {
      * @description 监听 ws 消息
      */
     async __wsListen() {
-        const { baseUrl, sessionKey } = this.config;
+        const { baseUrl, sessionKey, verifyKey } = this.config;
         this.wsConnection = await _startListening({
             baseUrl,
             sessionKey,
+            verifyKey,
             message: data => {
                 // 如果当前到达的事件拥有处理器，则依次调用所有该事件的处理器
                 if (data.type in this.eventProcessorMap) {
@@ -175,7 +176,7 @@ class Bot extends BotConfigGetable {
     /**
      * @description 关闭会话
      * @param {boolean} keepProcessor 可选，是否保留事件处理器，默认值为 false，不保留
-     * @param {boolean} keepConfig    可选，是否保留 session baseUrl qq authKey，默认值为 false，不保留
+     * @param {boolean} keepConfig    可选，是否保留 session baseUrl qq verifyKey，默认值为 false，不保留
      * @returns {void}
      */
     async close({ keepProcessor = false, keepConfig = false } = {}) {
@@ -968,18 +969,18 @@ class Bot extends BotConfigGetable {
     /**
      * @description 检测该账号是否已经在 mirai-console 登录
      * @param {string} baseUrl 必选，mirai-api-http server 的地址
-     * @param {string} authKey 必选，mirai-api-http server 设置的 authKey
+     * @param {string} verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param {number} qq      必选，qq 号
      * @returns 
      */
-    static async isBotLoggedIn({ baseUrl, authKey, qq }) {
+    static async isBotLoggedIn({ baseUrl, verifyKey, qq }) {
         // 检查参数
-        if (!baseUrl || !authKey || !qq) {
-            throw new Error(`isBotLoggedIn 缺少必要的 ${getInvalidParamsString({ baseUrl, authKey, qq })} 参数`);
+        if (!baseUrl || !verifyKey || !qq) {
+            throw new Error(`isBotLoggedIn 缺少必要的 ${getInvalidParamsString({ baseUrl, verifyKey, qq })} 参数`);
         }
 
-        const sessionKey = await _auth({ baseUrl, authKey });
-        const { code } = await _verify({ baseUrl, sessionKey, qq, throwable: false });
+        const sessionKey = await _verify({ baseUrl, verifyKey });
+        const { code } = await _bind({ baseUrl, sessionKey, qq, throwable: false });
 
         if (code == errCodeEnum.BOT_NOT_FOUND) {
             return false;
@@ -992,20 +993,20 @@ class Bot extends BotConfigGetable {
     /**
      * @description 向 mirai-console 发送指令
      * @param {string}   baseUrl 必选，mirai-api-http server 的地址
-     * @param {string}   authKey 必选，mirai-api-http server 设置的 authKey
+     * @param {string}   verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param {string}   command 必选，指令名
      * @param {string[]} args    可选，指令的参数
      * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
      * 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 
      * 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'
      */
-    static async sendCommand({ baseUrl, authKey, command, args }) {
+    static async sendCommand({ baseUrl, verifyKey, command, args }) {
         // 检查参数
-        if (!baseUrl || !authKey || !command) {
-            throw new Error(`sendCommand 缺少必要的 ${getInvalidParamsString({ baseUrl, authKey, command })} 参数`);
+        if (!baseUrl || !verifyKey || !command) {
+            throw new Error(`sendCommand 缺少必要的 ${getInvalidParamsString({ baseUrl, verifyKey, command })} 参数`);
         }
 
-        return await _sendCommand({ baseUrl, authKey, command, args });
+        return await _sendCommand({ baseUrl, verifyKey, command, args });
     }
 }
 

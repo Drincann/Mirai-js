@@ -9,10 +9,10 @@ export class Middleware {
      * @description 自动重新登陆
      * @param bot      欲重新登陆的 Bot 实例
      * @param baseUrl  mirai-api-http server 的地址
-     * @param authKey  mirai-api-http server 设置的 authKey
+     * @param verifyKey  mirai-api-http server 设置的 verifyKey
      * @param password 欲重新登陆的 qq 密码
      */
-    autoReLogin({ bot, baseUrl, authKey, password }: AutoReLoginOptions): Middleware;
+    autoReLogin({ bot, baseUrl, verifyKey, password }: AutoReLoginOptions): Middleware;
 
     /**
      * @description 自动重建 ws 连接
@@ -142,7 +142,7 @@ declare namespace Middleware {
     interface AutoReLoginOptions {
         bot: Bot;
         baseUrl: string;
-        authKey: string;
+        verifyKey: string;
         password: string;
     }
 

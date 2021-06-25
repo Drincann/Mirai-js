@@ -19,7 +19,7 @@ const errorHandler = require('../util/errorHandler');
 module.exports = async ({ baseUrl, sessionKey, qq, throwable = true }) => {
     try {
         // 拼接 auth url
-        const url = new URL('/verify', baseUrl).toString();
+        const url = new URL('/bind', baseUrl).toString();
 
         // 请求
         const responseData = await axios.post(url, { sessionKey, qq });

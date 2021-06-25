@@ -42,7 +42,7 @@ bot.on('FriendMessage', new Middleware
 
   mirai-api-http 的网络位置。
 
-- `authKey: string` 必选
+- `verifyKey: string` 必选
 
   mirai-api-http 的认证秘钥。
 

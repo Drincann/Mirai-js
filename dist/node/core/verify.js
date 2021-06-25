@@ -35,7 +35,7 @@ module.exports = async ({
 }) => {
   try {
     // 拼接 auth url
-    const url = new URL('/verify', baseUrl).toString(); // 请求
+    const url = new URL('/bind', baseUrl).toString(); // 请求
 
     const responseData = await axios.post(url, {
       sessionKey,

@@ -33,17 +33,17 @@ export class Bot implements BotConfigGetable {
     // implements BotConfigGetable
     getBaseUrl(): string;
     getQQ(): number;
-    getAuthKey(): string;
+    getVerifyKey(): string;
     getSessionKey(): string;
 
     /**
      * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
      * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接
      * @param baseUrl 必选，mirai-api-http server 的地址
-     * @param authKey 必选，mirai-api-http server 设置的 authKey
+     * @param verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
      */
-    open({ baseUrl, authKey, qq }: Bot.OpenOptions): Promise<void>;
+    open({ baseUrl, verifyKey, qq }: Bot.OpenOptions): Promise<void>;
 
     /**
      * @description 监听 ws 消息
@@ -53,7 +53,7 @@ export class Bot implements BotConfigGetable {
     /**
      * @description 关闭会话
      * @param keepProcessor 可选，是否保留事件处理器，默认值为 false，不保留
-     * @param keepConfig    可选，是否保留 session baseUrl qq authKey，默认值为 false，不保留
+     * @param keepConfig    可选，是否保留 session baseUrl qq averifyKey，默认值为 false，不保留
      */
     close({ keepProcessor, keepConfig }: Bot.CloseOptions): Promise<void>;
 
@@ -258,20 +258,20 @@ export class Bot implements BotConfigGetable {
     /**
      * @description 检测该账号是否已经在 mirai-console 登录
      * @param baseUrl 必选，mirai-api-http server 的地址
-     * @param authKey 必选，mirai-api-http server 设置的 authKey
+     * @param verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param qq      必选，qq 号
      */
-    static isBotLoggedIn({ baseUrl, authKey, qq }: Bot.IsBotLoggedInOptions): Promise<boolean>;
+    static isBotLoggedIn({ baseUrl, verifyKey, qq }: Bot.IsBotLoggedInOptions): Promise<boolean>;
 
     /**
      * @description 向 mirai-console 发送指令
      * @param baseUrl 必选，mirai-api-http server 的地址
-     * @param authKey 必选，mirai-api-http server 设置的 authKey
+     * @param verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param command 必选，指令名
      * @param args    可选，指令的参数
      */
     static sendCommand({
-        baseUrl, authKey,
+        baseUrl, verifyKey,
         command, args,
     }: Bot.SendCommandOptions): Promise<Bot.MiraiConsoleMessage>;
 }
@@ -282,7 +282,7 @@ declare namespace Bot {
     interface BotConfig {
         baseUrl: string;
         qq: number;
-        authKey: string;
+        verifyKey: string;
         sessionKey: string;
     }
     // An index signature parameter type cannot be a union type. Consider using a mapped object type instead.
@@ -295,7 +295,7 @@ declare namespace Bot {
 
     interface OpenOptions {
         baseUrl?: string;
-        authKey?: string;
+        verifyKey?: string;
         qq?: number;
     }
 
@@ -443,14 +443,14 @@ declare namespace Bot {
 
     interface SendCommandOptions {
         baseUrl: string;
-        authKey: string;
+        verifyKey: string;
         command: string;
         args: string[];
     }
 
     interface IsBotLoggedInOptions {
         baseUrl: string;
-        authKey: string;
+        verifyKey: string;
         qq: number;
     }
 

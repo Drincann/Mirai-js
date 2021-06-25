@@ -3,9 +3,9 @@
 // 引入核心功能，前缀下划线时为了与方法名区别 (视觉上的区别)
 const _releaseSession = require('./core/releaseSession');
 
-const _verify = require('./core/verify');
+const _verify = require('./core/auth');
 
-const _auth = require('./core/auth');
+const _bind = require('./core/verify');
 
 const _sendCommand = require('./core/sendCommand');
 
@@ -88,7 +88,7 @@ const {
   BotConfigGetable
 } = require('./interface');
 /**
- * @field config            包含 baseUrl authKey qq
+ * @field config            包含 baseUrl verifyKey qq
  * @field eventProcessorMap 事件处理器 map
  * @field wsConnection      建立连接的 WebSocket 实例
  * @field waiter            内部类单例，提供同步 io 机制
@@ -117,8 +117,8 @@ class Bot extends BotConfigGetable {
     return this.config.qq;
   }
 
-  getAuthKey() {
-    return this.config.authKey;
+  getVerifyKey() {
+    return this.config.verifyKey;
   }
 
   getSessionKey() {
@@ -128,7 +128,7 @@ class Bot extends BotConfigGetable {
    * @description 连接到 mirai-api-http，并开启一个会话，重复调用意为重建会话
    * open 方法 1. 建立会话 2. 绑定 qq 3. 与服务端建立 WebSocket 连接
    * @param {string} baseUrl 必选，mirai-api-http server 的地址
-   * @param {string} authKey 必选，mirai-api-http server 设置的 authKey
+   * @param {string} verifyKey 必选，mirai-api-http server 设置的 verifyKey
    * @param {number} qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
    * @returns {void}
    */
@@ -137,9 +137,9 @@ class Bot extends BotConfigGetable {
   async open({
     baseUrl,
     qq,
-    authKey
+    verifyKey
   } = {}) {
-    var _this$config$baseUrl, _this$config, _this$config$qq, _this$config2, _this$config$authKey, _this$config3, _this$config$sessionK, _this$config4, _this$eventProcessorM;
+    var _this$config$baseUrl, _this$config, _this$config$qq, _this$config2, _this$config$verifyKe, _this$config3, _this$config$sessionK, _this$config4, _this$eventProcessorM;
 
     // 若 config 存在，则认为该对象已经 open 过
     // ，此处应该先令对象回到初始状态，然后重建会话
@@ -155,7 +155,7 @@ class Bot extends BotConfigGetable {
     this.config = {
       baseUrl: (_this$config$baseUrl = (_this$config = this.config) === null || _this$config === void 0 ? void 0 : _this$config.baseUrl) !== null && _this$config$baseUrl !== void 0 ? _this$config$baseUrl : baseUrl,
       qq: (_this$config$qq = (_this$config2 = this.config) === null || _this$config2 === void 0 ? void 0 : _this$config2.qq) !== null && _this$config$qq !== void 0 ? _this$config$qq : qq,
-      authKey: (_this$config$authKey = (_this$config3 = this.config) === null || _this$config3 === void 0 ? void 0 : _this$config3.authKey) !== null && _this$config$authKey !== void 0 ? _this$config$authKey : authKey,
+      verifyKey: (_this$config$verifyKe = (_this$config3 = this.config) === null || _this$config3 === void 0 ? void 0 : _this$config3.verifyKey) !== null && _this$config$verifyKe !== void 0 ? _this$config$verifyKe : verifyKey,
       sessionKey: (_this$config$sessionK = (_this$config4 = this.config) === null || _this$config4 === void 0 ? void 0 : _this$config4.sessionKey) !== null && _this$config$sessionK !== void 0 ? _this$config$sessionK : ''
     }; // 事件处理器 map
     // 如果重复调用 open 则保留事件处理器
@@ -165,34 +165,30 @@ class Bot extends BotConfigGetable {
     ({
       baseUrl,
       qq,
-      authKey
+      verifyKey
     } = this.config); // 检查参数
 
-    if (!this.config.baseUrl || !this.config.qq || !this.config.authKey) {
+    if (!this.config.baseUrl || !this.config.qq || !this.config.verifyKey) {
       throw new Error(`open 缺少必要的 ${getInvalidParamsString({
         baseUrl,
         qq,
-        authKey
+        verifyKey
       })} 参数`);
     } // 创建会话
 
 
-    const sessionKey = this.config.sessionKey = await _auth({
+    const sessionKey = this.config.sessionKey = await _verify({
       baseUrl,
-      authKey
+      verifyKey
     }); // 绑定到一个 qq
 
-    await _verify({
+    await _bind({
       baseUrl,
       sessionKey,
       qq
     }); // 配置服务端 websocket 状态
-
-    await _setSessionConfig({
-      baseUrl,
-      sessionKey,
-      enableWebsocket: true
-    }); // 开始监听事件
+    // await _setSessionConfig({ baseUrl, sessionKey, enableWebsocket: true });
+    // 开始监听事件
 
     await this.__wsListen();
   }
@@ -205,11 +201,13 @@ class Bot extends BotConfigGetable {
   async __wsListen() {
     const {
       baseUrl,
-      sessionKey
+      sessionKey,
+      verifyKey
     } = this.config;
     this.wsConnection = await _startListening({
       baseUrl,
       sessionKey,
+      verifyKey,
       message: data => {
         // 如果当前到达的事件拥有处理器，则依次调用所有该事件的处理器
         if (data.type in this.eventProcessorMap) {
@@ -261,7 +259,7 @@ class Bot extends BotConfigGetable {
   /**
    * @description 关闭会话
    * @param {boolean} keepProcessor 可选，是否保留事件处理器，默认值为 false，不保留
-   * @param {boolean} keepConfig    可选，是否保留 session baseUrl qq authKey，默认值为 false，不保留
+   * @param {boolean} keepConfig    可选，是否保留 session baseUrl qq verifyKey，默认值为 false，不保留
    * @returns {void}
    */
 
@@ -1330,7 +1328,7 @@ class Bot extends BotConfigGetable {
   /**
    * @description 检测该账号是否已经在 mirai-console 登录
    * @param {string} baseUrl 必选，mirai-api-http server 的地址
-   * @param {string} authKey 必选，mirai-api-http server 设置的 authKey
+   * @param {string} verifyKey 必选，mirai-api-http server 设置的 verifyKey
    * @param {number} qq      必选，qq 号
    * @returns 
    */
@@ -1338,25 +1336,25 @@ class Bot extends BotConfigGetable {
 
   static async isBotLoggedIn({
     baseUrl,
-    authKey,
+    verifyKey,
     qq
   }) {
     // 检查参数
-    if (!baseUrl || !authKey || !qq) {
+    if (!baseUrl || !verifyKey || !qq) {
       throw new Error(`isBotLoggedIn 缺少必要的 ${getInvalidParamsString({
         baseUrl,
-        authKey,
+        verifyKey,
         qq
       })} 参数`);
     }
 
-    const sessionKey = await _auth({
+    const sessionKey = await _verify({
       baseUrl,
-      authKey
+      verifyKey
     });
     const {
       code
-    } = await _verify({
+    } = await _bind({
       baseUrl,
       sessionKey,
       qq,
@@ -1378,7 +1376,7 @@ class Bot extends BotConfigGetable {
   /**
    * @description 向 mirai-console 发送指令
    * @param {string}   baseUrl 必选，mirai-api-http server 的地址
-   * @param {string}   authKey 必选，mirai-api-http server 设置的 authKey
+   * @param {string}   verifyKey 必选，mirai-api-http server 设置的 verifyKey
    * @param {string}   command 必选，指令名
    * @param {string[]} args    可选，指令的参数
    * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
@@ -1389,22 +1387,22 @@ class Bot extends BotConfigGetable {
 
   static async sendCommand({
     baseUrl,
-    authKey,
+    verifyKey,
     command,
     args
   }) {
     // 检查参数
-    if (!baseUrl || !authKey || !command) {
+    if (!baseUrl || !verifyKey || !command) {
       throw new Error(`sendCommand 缺少必要的 ${getInvalidParamsString({
         baseUrl,
-        authKey,
+        verifyKey,
         command
       })} 参数`);
     }
 
     return await _sendCommand({
       baseUrl,
-      authKey,
+      verifyKey,
       command,
       args
     });
