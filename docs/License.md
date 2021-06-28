@@ -1,1 +1,0 @@
-根据 `mirai` 的开源协议，`Mirai-js` 使用 [AGPLv3](https://github.com/project-mirai/mirai-api-http/blob/master/LICENSE) 协议开源。
