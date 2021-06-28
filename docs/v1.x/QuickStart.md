@@ -7,7 +7,7 @@
 从 `npm` 安装：
 
 ```bash
-npm install mirai-js
+npm install mirai-js@1
 ```
 
 然后从 `mirai-js` 解构：
