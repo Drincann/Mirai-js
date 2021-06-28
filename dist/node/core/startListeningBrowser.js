@@ -26,13 +26,14 @@ const errorHandler = require('../util/errorHandler');
 module.exports = async ({
   baseUrl,
   sessionKey,
+  verifyKey,
   message,
   error,
   close
 }) => {
   try {
     // 拼接 url
-    let url = new URL(`/all?sessionKey=${sessionKey}`, baseUrl); // 更改协议为 ws
+    let url = new URL(`/all?sessionKey=${sessionKey}&verifyKey=${verifyKey}`, baseUrl); // 更改协议为 ws
 
     url.protocol = 'ws';
     url = url.toString();

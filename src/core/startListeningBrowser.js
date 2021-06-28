@@ -16,10 +16,10 @@ const errorHandler = require('../util/errorHandler');
  * @param {function} close              回调函数
  * @returns {WebSocket} 建立连接的 WebSocket 实例
  */
-module.exports = async ({ baseUrl, sessionKey, message, error, close }) => {
+module.exports = async ({ baseUrl, sessionKey, verifyKey, message, error, close }) => {
     try {
         // 拼接 url
-        let url = new URL(`/all?sessionKey=${sessionKey}`, baseUrl);
+        let url = new URL(`/all?sessionKey=${sessionKey}&verifyKey=${verifyKey}`, baseUrl);
         // 更改协议为 ws
         url.protocol = 'ws';
         url = url.toString();
