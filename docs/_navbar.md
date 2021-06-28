@@ -1,4 +1,11 @@
 <!-- _navbar.md -->
 
-* [GitHub](https://github.com/drinkal/Mirai-js)
-* [作者](https://gaolihai.cool/note)
+* 作者
+  
+  * [博客](http://gaolihai.cool/)
+  * [GitHub](https://github.com/Drincann)
+
+* 版本
+
+  * [v1.x](/v1.x/)
+  * [v2.x](/v2.x/)
