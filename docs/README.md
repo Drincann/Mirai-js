@@ -11,4 +11,4 @@ bot.on('FriendMessage', async data => {
 
 QQ 群: 730757181
 
---> [开发你的机器人应用](Preparation)
+--> [开发你的机器人应用](v2.x/Preparation)
