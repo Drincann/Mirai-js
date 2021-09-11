@@ -12,7 +12,7 @@ export class Middleware {
      * @param verifyKey  mirai-api-http server 设置的 verifyKey
      * @param password 欲重新登陆的 qq 密码
      */
-    autoReLogin({ bot, baseUrl, verifyKey, password }: AutoReLoginOptions): Middleware;
+    autoReLogin({ bot, baseUrl, verifyKey, password }: Middleware.AutoReLoginOptions): Middleware;
 
     /**
      * @description 自动重建 ws 连接
@@ -57,7 +57,7 @@ export class Middleware {
      * @param allow          允许通过还是禁止通过
      * 结构 { number => number[], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
-    groupMemberFilter(groupMemberMap: GroupMemberMap, allow: boolean): Middleware;
+    groupMemberFilter(groupMemberMap: Middleware.GroupMemberMap, allow: boolean): Middleware;
 
     /**
      * @description 这是一个对话锁，保证群中同一成员不能在中途触发处理器
