@@ -41,10 +41,10 @@ module.exports = async ({
 
     try {
       var {
-        data,
         data: {
           msg: message,
-          code
+          code,
+          data
         }
       } = responseData;
     } catch (error) {
