@@ -39,15 +39,14 @@ module.exports = async ({
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/sendTempMessage', baseUrl).toString(); // 请求
-
-    var responseData;
+    const url = new URL('/sendTempMessage', baseUrl).toString();
 
     if (!qq || !group) {
       throw new Error('sendTempMessage 缺少必要的 qq 和 group 参数');
-    }
+    } // 请求
 
-    responseData = await axios.post(url, {
+
+    const responseData = await axios.post(url, {
       sessionKey,
       qq,
       group,
