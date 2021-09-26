@@ -43,24 +43,17 @@ module.exports = async ({
 
     var responseData;
 
-    if (qq) {
-      responseData = await axios.post(url, {
-        sessionKey,
-        qq,
-        quote,
-        messageChain
-      });
-    } else if (group) {
-      responseData = await axios.post(url, {
-        sessionKey,
-        qq,
-        quote,
-        messageChain
-      });
-    } else {
-      // 上层已经做了参数检查，这里有些多余
-      throw new Error('sendTempMessage 缺少必要的 qq 或 group 参数');
+    if (!qq || !group) {
+      throw new Error('sendTempMessage 缺少必要的 qq 和 group 参数');
     }
+
+    responseData = await axios.post(url, {
+      sessionKey,
+      qq,
+      group,
+      quote,
+      messageChain
+    });
 
     try {
       var {
