@@ -434,14 +434,14 @@ class Bot extends BotConfigGetable {
       });
     } // 发给好友
     else if (friend) {
-      await _sendNudge({
-        baseUrl,
-        sessionKey,
-        target,
-        subject: friend,
-        kind: 'Friend'
-      });
-    }
+        await _sendNudge({
+          baseUrl,
+          sessionKey,
+          target,
+          subject: friend,
+          kind: 'Friend'
+        });
+      }
   }
   /**
    * @description 添加一个事件处理器
