@@ -22,13 +22,21 @@
 
    使用 **MCL** 安装 **mirai-api-http**，确保位于 **MCL** 的根目录下。
 
-   在命令行中执行：
+   ~~在命令行中执行：~~
 
-   ```
-   .\mcl --update-package net.mamoe:mirai-api-http --channel stable --type plugin
-   ```
+   ~~.\mcl --update-package net.mamoe:mirai-api-http --channel stable --type plugin~~
 
-   然后在命令行中执行 `.\mcl` 以启动 **MCL**，同时会自动安装刚才指定的 mirai-api-http 服务。
+   ~~然后在命令行中执行 `.\mcl` 以启动 **MCL**，同时会自动安装刚才指定的 mirai-api-http 服务。~~
+   
+   划掉部分为 `mcl` 提供的安装方式，这种方式在之前是可以用的，而且非常方便，只不过目前会有奇奇怪怪的问题。
+   
+   推荐自行下载插件放入**plugins** 文件夹：
+
+   在命令行中执行 `.\mcl` 以生成 **plugins** 文件夹。
+
+   下载 **mirai-api-http** 插件放入 **plugins** 文件夹。插件可在 [mirai-api-http](https://github.com/project-mirai/mirai-api-http/releases) 下载。
+
+   再次执行 `.\mcl` 以启动 **MCL**。
 
 3. 配置 **mirai-api-http**
 
