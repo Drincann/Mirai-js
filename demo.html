@@ -33,7 +33,7 @@
             });
 
             // 监听消息
-            await bot.on('FriendMessage', new Middleware().textProcessor().done(data => {
+            bot.on('FriendMessage', new Middleware().textProcessor().done(data => {
                 document.querySelector('div').innerHTML = data.text;
             }));
         })();

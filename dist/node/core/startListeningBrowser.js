@@ -49,7 +49,9 @@ module.exports = async ({
         data
       }) => {
         try {
-          message(JSON.parse(data));
+          var _JSON$parse;
+
+          message((_JSON$parse = JSON.parse(data)) === null || _JSON$parse === void 0 ? void 0 : _JSON$parse.data);
         } catch (error) {} // eslint-disable-line no-empty
 
       };
