@@ -61,43 +61,6 @@ API 见 [Waiter](/Waiter)。
 
 !> 注意，若没有特别指出，则为异步方法
 
-## sendCommand
-
-`sendCommand` 向 mirai-console 发送指令，可用于登录。
-
-#### 参数
-
-- `baseUrl: string` 必选
-
-  mirai-api-http 的网络位置。
-
-- `verifyKey: string` 必选
-
-  mirai-api-http 的认证秘钥。
-
-- `command: string` 必选
-
-  指令名。
-
-- `args: string[]` 可选
-
-  一个 string 数组，表示指令的参数。
-
-#### 返回值
-
-`{ message }`，message 是控制台返回的字符串消息。
-
-#### 示例
-
-```js
-const { message } = await Bot.sendCommand({
-    baseUrl: 'http://example.com:8080',
-    verifyKey: 'verifyKey',
-    command: '/login',
-    args: ['1019933576', 'password'],
-});
-```
-
 ## isBotLoggedIn
 
 `isisBotLoggedIn` 将判断某 qq 号是否已经在 mirai-console 登录
@@ -971,6 +934,28 @@ await quitGroup({ group: 123456789 })
 #### 返回值
 
 无
+
+## sendCommand
+
+`sendCommand` 向 mirai-console 发送指令，可用于登录。
+
+#### 参数
+
+- `command: string[]` 必选
+
+  指令列表。
+
+#### 返回值
+
+`{ message }`，message 是控制台返回的字符串消息。
+
+#### 示例
+
+```js
+const { message } = await bot.sendCommand({
+    command: ['/login', '1019933576', 'password'],
+});
+```
 
 # 错误处理
 
