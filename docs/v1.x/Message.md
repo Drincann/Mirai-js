@@ -148,6 +148,8 @@ await bot.sendMessage({
 
 ## addVoicePath
 
+?> 必须为SILKv3或AMR格式的音频文件，参考`uploadVoice`的注释
+
 `addVoicePath` 方法会添加一个语音消息。
 
 #### 参数
