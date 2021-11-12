@@ -26,21 +26,12 @@ class Middleware {
 
 
   autoReLogin({
-    baseUrl,
-    verifyKey,
     password
   }) {
-    const {
-      Bot
-    } = require('./index.js');
-
     this.middleware.push(async (data, next) => {
       try {
-        await Bot.sendCommand({
-          baseUrl,
-          verifyKey,
-          command: '/login',
-          args: [data.qq, password]
+        await data.bot.sendCommand({
+          command: ['/login', data.qq, password]
         });
         await data.bot.open();
         await next();

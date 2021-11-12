@@ -19,15 +19,11 @@ class Middleware {
      * @param {string} verifyKey  mirai-api-http server 设置的 verifyKey
      * @param {string} password 欲重新登陆的 qq 密码
      */
-    autoReLogin({ baseUrl, verifyKey, password }) {
-        const { Bot } = require('./index.js');
+    autoReLogin({ password }) {
         this.middleware.push(async (data, next) => {
             try {
-                await Bot.sendCommand({
-                    baseUrl,
-                    verifyKey,
-                    command: '/login',
-                    args: [data.qq, password],
+                await data.bot.sendCommand({
+                    command: ['/login', data.qq, password],
                 });
                 await data.bot.open();
                 await next();

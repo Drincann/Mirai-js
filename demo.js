@@ -2,21 +2,12 @@ const { Bot, Message, Middleware } = require('./src');
 
 (async () => {
     try {
-        const baseUrl = 'http://example.com:8080';
-        const verifyKey = 'verifyKey';
-        const qq = 1019933576;
-        const password = 'password';
+        const baseUrl = 'http://localhost:8080';
+        const verifyKey = '123456789';
+        const qq = 3070539027;
         const bot = new Bot();
 
-        // 在 mirai - console 登录一个账号
-        await Bot.sendCommand({
-            baseUrl,
-            verifyKey,
-            // 指令名
-            command: '/login',
-            // 指令参数列表，这条指令等价于 /login 1019933576 password
-            args: [qq, password],
-        });
+        // 在 mirai-console 登录你的 bot
 
         // 创建一个会话
         await bot.open({
@@ -27,7 +18,6 @@ const { Bot, Message, Middleware } = require('./src');
             // verifyKey 用于验证连接者的身份，在插件配置文件中设置
             verifyKey,
         });
-
 
         // 监听好友消息事件
         bot.on('FriendMessage', async ({
@@ -117,7 +107,7 @@ const { Bot, Message, Middleware } = require('./src');
         // 自动重新登陆
         bot.on('BotOfflineEventForce',
             new Middleware()
-                .autoReLogin({ bot, baseUrl, verifyKey, password })
+                .autoReLogin({ password: 'your password' })
                 .done()
         );
     } catch (err) {

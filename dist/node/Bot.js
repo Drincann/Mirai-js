@@ -97,8 +97,7 @@ const {
 
 class Bot extends BotConfigGetable {
   constructor() {
-    super(); // 实例化一个内部类 Waiter
-
+    super();
     this.waiter = new Waiter(this);
     this.config = undefined;
     this.eventProcessorMap = {};
@@ -1326,6 +1325,48 @@ class Bot extends BotConfigGetable {
     });
   }
   /**
+   * @description 向 mirai-console 发送指令
+   * @param {string[]}   command 必选，指令和参数
+   * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
+   * 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 
+   * 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'
+   */
+
+
+  async sendCommand({
+    command
+  }) {
+    // 检查对象状态
+    if (!this.config) {
+      throw new Error('setEssence 请先调用 open，建立一个会话');
+    } // 检查参数
+
+
+    if (!command) {
+      throw new Error(`sendCommand 缺少必要的 ${getInvalidParamsString({
+        command
+      })} 参数`);
+    }
+
+    const {
+      Message
+    } = require('./Message');
+
+    const {
+      baseUrl,
+      sessionKey
+    } = this.config;
+    return await _sendCommand({
+      baseUrl,
+      sessionKey,
+      command: command.map(v => {
+        var _v$toString;
+
+        return (_v$toString = v === null || v === void 0 ? void 0 : v.toString()) !== null && _v$toString !== void 0 ? _v$toString : '';
+      }).reduce((acc, cur) => acc.addText(cur), new Message()).messageChain
+    });
+  }
+  /**
    * @description 检测该账号是否已经在 mirai-console 登录
    * @param {string} baseUrl 必选，mirai-api-http server 的地址
    * @param {string} verifyKey 必选，mirai-api-http server 设置的 verifyKey
@@ -1372,40 +1413,6 @@ class Bot extends BotConfigGetable {
 
       return true;
     }
-  }
-  /**
-   * @description 向 mirai-console 发送指令
-   * @param {string}   baseUrl 必选，mirai-api-http server 的地址
-   * @param {string}   verifyKey 必选，mirai-api-http server 设置的 verifyKey
-   * @param {string}   command 必选，指令名
-   * @param {string[]} args    可选，指令的参数
-   * @returns {Object} 结构 { message }，注意查看 message 的内容，已知的问题：
-   * 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 
-   * 请更换协议后重试. 另请参阅: https://github.com/project-mirai/mirai-login-solver-selenium'
-   */
-
-
-  static async sendCommand({
-    baseUrl,
-    verifyKey,
-    command,
-    args
-  }) {
-    // 检查参数
-    if (!baseUrl || !verifyKey || !command) {
-      throw new Error(`sendCommand 缺少必要的 ${getInvalidParamsString({
-        baseUrl,
-        verifyKey,
-        command
-      })} 参数`);
-    }
-
-    return await _sendCommand({
-      baseUrl,
-      verifyKey,
-      command,
-      args
-    });
   }
 
 } // 静态属性: 群成员的权限

@@ -253,6 +253,11 @@ export class Bot implements BotConfigGetable {
      */
     setEssence({ messageId }: Bot.SetEssenceOptions): Promise<void>;
 
+    /**
+     * @description 向 mirai-console 发送指令
+     * @param command 必选，指令名
+     */
+    sendCommand({ command }: Bot.SendCommandOptions): Promise<Bot.MiraiConsoleMessage>;
 
     // 类方法
     /**
@@ -263,17 +268,6 @@ export class Bot implements BotConfigGetable {
      */
     static isBotLoggedIn({ baseUrl, verifyKey, qq }: Bot.IsBotLoggedInOptions): Promise<boolean>;
 
-    /**
-     * @description 向 mirai-console 发送指令
-     * @param baseUrl 必选，mirai-api-http server 的地址
-     * @param verifyKey 必选，mirai-api-http server 设置的 verifyKey
-     * @param command 必选，指令名
-     * @param args    可选，指令的参数
-     */
-    static sendCommand({
-        baseUrl, verifyKey,
-        command, args,
-    }: Bot.SendCommandOptions): Promise<Bot.MiraiConsoleMessage>;
 }
 
 // 类型
@@ -442,10 +436,7 @@ declare namespace Bot {
     }
 
     interface SendCommandOptions {
-        baseUrl: string;
-        verifyKey: string;
-        command: string;
-        args: string[];
+        command: string[];
     }
 
     interface IsBotLoggedInOptions {
