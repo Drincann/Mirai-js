@@ -1,6 +1,7 @@
 * **入门**
   * [准备工作](v2.x/Preparation.md)
   * [快速开始](v2.x/QuickStart.md)
+  * [从 v1 迁移到 v2](v2.x/MigratingDoc.md)
 * **API 参考**
   * [机器人 Bot](v2.x/Bot.md)
   * [消息类型 Message](v2.x/Message.md)
