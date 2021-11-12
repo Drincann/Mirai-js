@@ -525,8 +525,7 @@ await bot.sendMessage({
 
 ?> FIXME: 目前该方法存在很大问题，返回的 voiceId 无法发送给好友，不过可以发到群里，但无法在短时间内正常播放。
 
-?> 必须上传SILKv3或AMR格式的音频文件，否则无法在QQPC客户端播放只能在安卓与OS中播放。若希望转换成SILK格式，一个已验证的方法是通过https://github.com/kn007/silk-v3-decoder/tree/master/windows进行mp3到silk的转换，
-选择ffmpeg版本并使用它的"SILK(QQ兼容)"模式，但仍然不可在ios客户端播放(可以在安卓、PC、OS播放)
+?> 必须上传 SILKv3 或 AMR 格式的音频文件，其他格式的文件可能遇到无法播放或无法接收的问题。若希望转换成 SILK 格式，一个已验证的方法是通过 [silk-v3-decoder](https://github.com/kn007/silk-v3-decoder/tree/master/windows)进行 mp3 到 silk 的转换，选择 ffmpeg 版本并使用它的 "SILK(QQ兼容)" 模式，但此方法仍然不可在 ios 客户端播放(可以在安卓、PC、OS播放)
 
 #### 参数
 
