@@ -30,7 +30,7 @@
     "homepage": "https://drincann.github.io/Mirai-js/",
     "license": "AGPL-3.0",
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.24.0",
         "form-data": "^3.0.0",
         "ws": "^7.4.2"
     },
