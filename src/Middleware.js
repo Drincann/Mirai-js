@@ -534,10 +534,58 @@ class Middleware {
                 if (data.type != 'GroupMessage' && data.type != 'FriendMessage') {
                     throw new Error('Middleware.syncWrapper 消息格式出错');
                 }
+                const watiForMessageChain = async (qq) => {
+                    qq = qq ?? data?.sender?.id;
+                    if (qq == undefined) {
+                        throw new Error('Middleware.syncWrapper 消息格式出错');
+                    }
+                    do {
+                        var { messageChain, id } = await data.bot?.waiter?.wait(data.type, ({ messageChain, sender: { id } }) => ({ messageChain, id })) ?? {};
+                    } while (qq != id);
+
+                    return messageChain;
+                };
+
+                const waitForText = async (qq) => {
+                    qq = qq ?? data?.sender?.id;
+                    if (qq == undefined) {
+                        throw new Error('Middleware.syncWrapper 消息格式出错');
+                    }
+                    do {
+                        var { text, id } = await data.bot?.waiter?.wait(data.type, new Middleware().textProcessor().done(({ text, sender: { id } }) => ({ text, id }))) ?? {};
+                    } while (qq != id);
+                    return text;
+                };
+
+                const waitForCustom = async (qq, processor) => {
+                    qq = qq ?? data?.sender?.id;
+                    if (qq == undefined) {
+                        throw new Error('Middleware.syncWrapper 消息格式出错');
+                    }
+                    do {
+                        var data = await data.bot?.waiter?.wait(data.type, new Middleware().textProcessor().done((data) => data));
+                    } while (qq != data?.sender?.id);
+                    return await processor(data);
+                };
+
                 data.waitFor = {
-                    messageChain: () => data.bot?.waiter?.wait(data.type, ({ messageChain }) => messageChain),
-                    text: () => data.bot?.waiter?.wait(data.type, new Middleware().textProcessor().done(({ text }) => text)),
-                    custom: (processor) => data.bot?.waiter?.wait(data.type, processor),
+                    groupMember: (qq = undefined) => {
+                        return {
+                            messageChain: () => watiForMessageChain(qq),
+                            text: () => waitForText(qq),
+                            custom: (processor) => waitForCustom(qq, processor),
+                        };
+                    },
+                    friend: (qq) => {
+                        return {
+                            messageChain: () => watiForMessageChain(qq),
+                            text: () => waitForText(qq),
+                            custom: (processor) => waitForCustom(qq, processor),
+                        };
+                    },
+                    messageChain: () => watiForMessageChain(data.sender.id),
+                    text: () => waitForText(data.sender.id),
+                    custom: (processor) => waitForCustom(data.sender.id, processor),
                 };
 
                 await next();

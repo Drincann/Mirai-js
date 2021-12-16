@@ -640,26 +640,100 @@ class Middleware {
           throw new Error('Middleware.syncWrapper 消息格式出错');
         }
 
-        data.waitFor = {
-          messageChain: () => {
-            var _data$bot, _data$bot$waiter;
+        const watiForMessageChain = async qq => {
+          var _qq, _data$sender17;
 
-            return (_data$bot = data.bot) === null || _data$bot === void 0 ? void 0 : (_data$bot$waiter = _data$bot.waiter) === null || _data$bot$waiter === void 0 ? void 0 : _data$bot$waiter.wait(data.type, ({
-              messageChain
-            }) => messageChain);
-          },
-          text: () => {
-            var _data$bot2, _data$bot2$waiter;
+          qq = (_qq = qq) !== null && _qq !== void 0 ? _qq : data === null || data === void 0 ? void 0 : (_data$sender17 = data.sender) === null || _data$sender17 === void 0 ? void 0 : _data$sender17.id;
 
-            return (_data$bot2 = data.bot) === null || _data$bot2 === void 0 ? void 0 : (_data$bot2$waiter = _data$bot2.waiter) === null || _data$bot2$waiter === void 0 ? void 0 : _data$bot2$waiter.wait(data.type, new Middleware().textProcessor().done(({
-              text
-            }) => text));
-          },
-          custom: processor => {
-            var _data$bot3, _data$bot3$waiter;
-
-            return (_data$bot3 = data.bot) === null || _data$bot3 === void 0 ? void 0 : (_data$bot3$waiter = _data$bot3.waiter) === null || _data$bot3$waiter === void 0 ? void 0 : _data$bot3$waiter.wait(data.type, processor);
+          if (qq == undefined) {
+            throw new Error('Middleware.syncWrapper 消息格式出错');
           }
+
+          do {
+            var _await$data$bot$waite, _data$bot, _data$bot$waiter;
+
+            var {
+              messageChain,
+              id
+            } = (_await$data$bot$waite = await ((_data$bot = data.bot) === null || _data$bot === void 0 ? void 0 : (_data$bot$waiter = _data$bot.waiter) === null || _data$bot$waiter === void 0 ? void 0 : _data$bot$waiter.wait(data.type, ({
+              messageChain,
+              sender: {
+                id
+              }
+            }) => ({
+              messageChain,
+              id
+            })))) !== null && _await$data$bot$waite !== void 0 ? _await$data$bot$waite : {};
+          } while (qq != id);
+
+          return messageChain;
+        };
+
+        const waitForText = async qq => {
+          var _qq2, _data$sender18;
+
+          qq = (_qq2 = qq) !== null && _qq2 !== void 0 ? _qq2 : data === null || data === void 0 ? void 0 : (_data$sender18 = data.sender) === null || _data$sender18 === void 0 ? void 0 : _data$sender18.id;
+
+          if (qq == undefined) {
+            throw new Error('Middleware.syncWrapper 消息格式出错');
+          }
+
+          do {
+            var _await$data$bot$waite2, _data$bot2, _data$bot2$waiter;
+
+            var {
+              text,
+              id
+            } = (_await$data$bot$waite2 = await ((_data$bot2 = data.bot) === null || _data$bot2 === void 0 ? void 0 : (_data$bot2$waiter = _data$bot2.waiter) === null || _data$bot2$waiter === void 0 ? void 0 : _data$bot2$waiter.wait(data.type, new Middleware().textProcessor().done(({
+              text,
+              sender: {
+                id
+              }
+            }) => ({
+              text,
+              id
+            }))))) !== null && _await$data$bot$waite2 !== void 0 ? _await$data$bot$waite2 : {};
+          } while (qq != id);
+
+          return text;
+        };
+
+        const waitForCustom = async (qq, processor) => {
+          var _qq3, _data$sender19;
+
+          qq = (_qq3 = qq) !== null && _qq3 !== void 0 ? _qq3 : data === null || data === void 0 ? void 0 : (_data$sender19 = data.sender) === null || _data$sender19 === void 0 ? void 0 : _data$sender19.id;
+
+          if (qq == undefined) {
+            throw new Error('Middleware.syncWrapper 消息格式出错');
+          }
+
+          do {
+            var _data$sender20, _data$bot3, _data$bot3$waiter;
+
+            var data = await ((_data$bot3 = data.bot) === null || _data$bot3 === void 0 ? void 0 : (_data$bot3$waiter = _data$bot3.waiter) === null || _data$bot3$waiter === void 0 ? void 0 : _data$bot3$waiter.wait(data.type, new Middleware().textProcessor().done(data => data)));
+          } while (qq != (data === null || data === void 0 ? void 0 : (_data$sender20 = data.sender) === null || _data$sender20 === void 0 ? void 0 : _data$sender20.id));
+
+          return await processor(data);
+        };
+
+        data.waitFor = {
+          groupMember: (qq = undefined) => {
+            return {
+              messageChain: () => watiForMessageChain(qq),
+              text: () => waitForText(qq),
+              custom: processor => waitForCustom(qq, processor)
+            };
+          },
+          friend: qq => {
+            return {
+              messageChain: () => watiForMessageChain(qq),
+              text: () => waitForText(qq),
+              custom: processor => waitForCustom(qq, processor)
+            };
+          },
+          messageChain: () => watiForMessageChain(data.sender.id),
+          text: () => waitForText(data.sender.id),
+          custom: processor => waitForCustom(data.sender.id, processor)
         };
         await next();
       } catch (error) {
