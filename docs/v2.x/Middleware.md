@@ -359,7 +359,7 @@ bot.on('BotInvitedJoinGroupRequestEvent', new Middleware()
 
 ## syncWrapper
 
-`syncWrapper` 中间件用于包装 Waiter，提供方便的同步 IO 方式，将在 `data` 下放置一个方法的集合 `waitFor` 对象，该对象拥有三个异步方法：
+`Middleware.syncWrapper` 是 `Waiter` 的包装器，提供**方便的同步 IO 方式**，将在 `data` 下放置一个方法的集合 `waitFor` 对象，该对象拥有三个异步方法：
 
 - `messageChain`
 
@@ -410,6 +410,57 @@ bot -> 请输入随机数上限
 <- 100
 
 bot -> 56
+
+此外，如果要等待其他好友或群成员的消息，请像这样调用：
+
+```js
+let text = await waitFor.friend(qq).text();
+```
+
+```js
+let text = await waitFor.groupMember(11).messageChain();
+```
+
+如果要等待所有好友或群成员的消息，请使用 `Bot.Waiter.wait` 这个更细粒度的接口，并实现一个对整个事件处理器的锁。
+
+这是一个示例：
+
+```js
+let locked = false;
+bot.on('GroupMessage',
+    new Middleware()
+        // 实现一个对所有成员的锁，来保证机器人在该事件上的上下文唯一
+        .use(async (_, next) => {
+            if (locked) return;
+            locked = true;
+
+            // 下游中间件处理结束后，解锁
+            await next();
+            locked = false;
+        })
+        // 同步包装器
+        .syncWrapper()
+        .done(async ({ bot, sender: { group: { id: group } } }) => {
+            await bot.sendMessage({
+                group,
+                message: new Message().addPlain('请输入随机数上限'),
+            });
+            // 等待下一次输入
+            const max = Number.parseInt(
+                await bot.waiter.wait('GroupMessage',
+                    new Middleware()
+                        .textProcessor()
+                        .done(data => data.text)
+                )
+            );
+
+            await bot.sendMessage({
+                group,
+                message: new Message().addPlain(Math.floor(Math.random() * (max + 1))),
+            });
+        })
+);
+```
 
 # 自定义中间件
 
