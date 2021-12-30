@@ -2,7 +2,7 @@
 
 * 作者
   
-  * [博客](http://gaolihai.cool/)
+  * [博客](http://codingfor.life/)
   * [GitHub](https://github.com/Drincann)
 
 * 版本
