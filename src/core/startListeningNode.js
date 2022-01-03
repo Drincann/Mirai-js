@@ -6,6 +6,8 @@ if (!process.browser) {
     URL = window.URL;
 }
 const errorHandler = require('../util/errorHandler');
+const path = require('path');
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 
 /**
  * @description 开始侦听事件
@@ -70,6 +72,7 @@ module.exports = async ({ baseUrl, sessionKey, verifyKey, message, error, close,
         });
         return ws;
     } catch (error) {
+        console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
     }
 };

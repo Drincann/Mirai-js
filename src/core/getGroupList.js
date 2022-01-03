@@ -7,6 +7,8 @@ if (!process.browser) {
     URL = window.URL;
 }
 const errorHandler = require('../util/errorHandler');
+const path = require('path');
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 
 /**
  * @description 获取群列表
@@ -24,7 +26,7 @@ module.exports = async ({ baseUrl, sessionKey }) => {
         try {
             var { data, data: { msg: message, code } } = responseData;
         } catch (error) {
-            throw new Error('core.getGroupList 请求返回格式出错，请检查 mirai-console');
+            throw new Error(('请求返回格式出错，请检查 mirai-console'));
         }
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
@@ -33,6 +35,7 @@ module.exports = async ({ baseUrl, sessionKey }) => {
         }
         return data;
     } catch (error) {
+        console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
     }
 };

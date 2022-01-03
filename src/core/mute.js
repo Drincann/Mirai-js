@@ -7,6 +7,8 @@ if (!process.browser) {
     URL = window.URL;
 }
 const errorHandler = require('../util/errorHandler');
+const path = require('path');
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 
 /**
  * @description 禁言群成员
@@ -29,7 +31,7 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId, time }) => {
                 data: { code, msg: message }
             } = responseData;
         } catch (error) {
-            throw new Error('core.mute 请求返回格式出错，请检查 mirai-console');
+            throw new Error(('请求返回格式出错，请检查 mirai-console'));
         }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCodeMap) {
@@ -37,6 +39,7 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId, time }) => {
         }
         return { message, code };
     } catch (error) {
+        console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
     }
 };
