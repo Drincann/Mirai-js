@@ -18,7 +18,7 @@ class FileManager {
 
     this._getGroupFileList = ({
       dir
-    }) => require('./core/getGroupFileList')({
+    }) => require('./core/fs/getGroupFileList')({
       baseUrl,
       sessionKey,
       target: group,
@@ -27,7 +27,7 @@ class FileManager {
 
     this._getGroupFileInfo = ({
       id
-    }) => require('./core/getGroupFileInfo')({
+    }) => require('./core/fs/getGroupFileInfo')({
       baseUrl,
       sessionKey,
       target: group,
@@ -38,7 +38,7 @@ class FileManager {
       type,
       path,
       file
-    }) => require('./core/uploadFileAndSend')({
+    }) => require('./core/fs/uploadGroupFIle')({
       baseUrl,
       sessionKey,
       type,
@@ -49,17 +49,26 @@ class FileManager {
 
     this._groupFileDelete = ({
       id
-    }) => require('./core/groupFileDelete')({
+    }) => require('./core/fs/deleteGroupFile')({
       baseUrl,
       sessionKey,
       target: group,
       id
     });
 
+    this._makeGroupDir = ({
+      dir
+    }) => require('./core/fs/makeGroupDir')({
+      baseUrl,
+      sessionKey,
+      target: group,
+      dir
+    });
+
     this._groupFileRename = ({
       id,
       rename
-    }) => require('./core/groupFileRename')({
+    }) => require('./core/fs/renameGroupFile')({
       baseUrl,
       sessionKey,
       target: group,
@@ -70,7 +79,7 @@ class FileManager {
     this._groupFileMove = ({
       id,
       movePath
-    }) => require('./core/groupFileMove')({
+    }) => require('./core/fs/moveGroupFile')({
       baseUrl,
       sessionKey,
       target: group,

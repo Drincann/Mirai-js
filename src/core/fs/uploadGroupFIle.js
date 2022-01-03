@@ -1,4 +1,4 @@
-const { errCodeMap } = require('../util/errCode');
+const { errCodeMap } = require('../../util/errCode');
 const axios = require('axios').default;
 let URL;
 if (!process.browser) {
@@ -6,7 +6,7 @@ if (!process.browser) {
 } else {
     URL = window.URL;
 }
-const errorHandler = require('../util/errorHandler');
+const errorHandler = require('../../util/errorHandler');
 const path = require('path');
 const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 const FormData = require('form-data');
@@ -18,14 +18,14 @@ const FormData = require('form-data');
  * @param {string}  sessionKey 会话标识
  * @param {string}  type       "friend" 或 "group"，目前仅支持 group
  * @param {string}  target     群/好友号
- * @param {string}  path       上传目录
+ * @param {string}  path       上传目录id
  * @param {Buffer}  file       文件二进制数据
  * @returns {string} 文件 id
  */
 module.exports = async ({ baseUrl, sessionKey, type, target, path, file }) => {
     try {
         // 拼接 url
-        const targetUrl = new URL('/uploadFileAndSend', baseUrl).toString();
+        const targetUrl = new URL('/file/upload', baseUrl).toString();
 
         // 构造 fromdata
         const form = new FormData();

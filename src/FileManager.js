@@ -7,27 +7,31 @@ class FileManager {
         const baseUrl = bot.getBaseUrl();
         const sessionKey = bot.sessionKey();
         // core 柯里化，为内部类 File Directory 提供包装的接口
-        this._getGroupFileList = ({ dir }) => require('./core/getGroupFileList')({
+        this._getGroupFileList = ({ dir }) => require('./core/fs/getGroupFileList')({
             baseUrl, sessionKey, target: group, dir
         });
 
-        this._getGroupFileInfo = ({ id }) => require('./core/getGroupFileInfo')({
+        this._getGroupFileInfo = ({ id }) => require('./core/fs/getGroupFileInfo')({
             baseUrl, sessionKey, target: group, id
         });
 
-        this._uploadFileAndSend = ({ type, path, file }) => require('./core/uploadFileAndSend')({
+        this._uploadFileAndSend = ({ type, path, file }) => require('./core/fs/uploadGroupFIle')({
             baseUrl, sessionKey, type, target: group, path, file
         });
 
-        this._groupFileDelete = ({ id }) => require('./core/groupFileDelete')({
+        this._groupFileDelete = ({ id }) => require('./core/fs/deleteGroupFile')({
             baseUrl, sessionKey, target: group, id
         });
 
-        this._groupFileRename = ({ id, rename }) => require('./core/groupFileRename')({
+        this._makeGroupDir = ({ dir }) => require('./core/fs/makeGroupDir')({
+            baseUrl, sessionKey, target: group, dir
+        });
+
+        this._groupFileRename = ({ id, rename }) => require('./core/fs/renameGroupFile')({
             baseUrl, sessionKey, target: group, id, rename
         });
 
-        this._groupFileMove = ({ id, movePath }) => require('./core/groupFileMove')({
+        this._groupFileMove = ({ id, movePath }) => require('./core/fs/moveGroupFile')({
             baseUrl, sessionKey, target: group, id, movePath
         });
 
