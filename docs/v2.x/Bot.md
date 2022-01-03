@@ -821,6 +821,28 @@ await unmuteAll({ group: 123456789 });
 await removeMember({ group: 123456789, qq: 1019933576, message: "message" });
 ```
 
+## removeFriend
+
+v2.3.0 开始支持
+
+`removeFriend` 方法用于移除群成员。
+
+#### 参数
+
+- `qq: number` 必选
+
+  好友 qq 号。
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await removeMember({ qq: 1019933576 });
+```
+
 ## quitGroup
 
 `quitGroup` 方法用于令机器人退出指定群。
