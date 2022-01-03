@@ -220,6 +220,13 @@ export class Bot implements BotConfigGetable {
     removeMember({ group, qq, message }: Bot.RemoveMemberOptions): Promise<void>;
 
     /**
+     * @description 删除好友
+     * @param {*} qq 欲删除的好友 qq 号
+     * @returns {void}
+     */
+    removeFriend({ qq }: Bot.RemoveFriendOptions): Promise<void>;
+
+    /**
      * @description 移除群成员
      * @param group   必选，欲移除的成员所在群号
      */
@@ -402,6 +409,10 @@ declare namespace Bot {
         group: number;
         qq: number;
         message?: string;
+    }
+
+    interface RemoveFriendOptions {
+        qq: number;
     }
 
     interface QuitGroupOptions {

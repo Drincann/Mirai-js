@@ -1175,6 +1175,7 @@ class Bot extends BotConfigGetable {
   /**
    * @description 删除好友
    * @param {*} qq 欲删除的好友 qq 号
+   * @returns {void}
    */
 
 
