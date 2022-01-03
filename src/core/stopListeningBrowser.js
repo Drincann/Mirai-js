@@ -1,4 +1,6 @@
 const errorHandler = require('../util/errorHandler');
+const path = require('path');
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 
 /**
  * @description 停止侦听事件
@@ -25,6 +27,7 @@ module.exports = async (wsConnection) => {
             // do nothing
         }
     } catch (error) {
+        console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
     }
 };

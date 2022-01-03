@@ -146,9 +146,9 @@ export class Bot implements BotConfigGetable {
 
     /**
      * @description 上传语音至服务器，返回 voiceId, url 及 path
-     * @param {string} type     目前仅支持 "group"，请忽略该参数
-     * @param {Buffer} voice    二选一，语音二进制数据
-     * @param {string} filename 二选一，语音文件路径
+     * @param type     目前仅支持 "group"，请忽略该参数
+     * @param voice    二选一，语音二进制数据
+     * @param filename 二选一，语音文件路径
      */
     uploadVoice({ type, voice, filename }: Bot.UploadVoiceOptions): Promise<Bot.VoiceInfo>;
 
@@ -181,8 +181,9 @@ export class Bot implements BotConfigGetable {
      * @param qq    必选，群成员的 qq 号
      * @param name  可选，要设置的群名片
      * @param title 可选，要设置的群头衔
+     * @param permission 可选，要设置的群头衔
      */
-    setMemberInfo({ group, qq, name, title }: Bot.SetMemberInfoOptions): Promise<void>;
+    setMemberInfo({ group, qq, name, title, permission }: Bot.SetMemberInfoOptions): Promise<void>;
 
     /**
      * @description 禁言群成员
@@ -218,6 +219,12 @@ export class Bot implements BotConfigGetable {
      * @param message 可选，默认为空串 ""，信息
      */
     removeMember({ group, qq, message }: Bot.RemoveMemberOptions): Promise<void>;
+
+    /**
+     * @description 删除好友
+     * @param qq 欲删除的好友 qq 号
+     */
+    removeFriend({ qq }: Bot.RemoveFriendOptions): Promise<void>;
 
     /**
      * @description 移除群成员
@@ -377,6 +384,7 @@ declare namespace Bot {
         qq: number;
         name?: string;
         title?: string;
+        permission?: GroupPermission
     }
 
     interface MuteOptions {
@@ -402,6 +410,10 @@ declare namespace Bot {
         group: number;
         qq: number;
         message?: string;
+    }
+
+    interface RemoveFriendOptions {
+        qq: number;
     }
 
     interface QuitGroupOptions {

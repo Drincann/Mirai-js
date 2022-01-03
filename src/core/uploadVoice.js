@@ -7,6 +7,8 @@ if (!process.browser) {
     URL = window.URL;
 }
 const errorHandler = require('../util/errorHandler');
+const path = require('path');
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 const FormData = require('form-data');
 
 
@@ -42,7 +44,7 @@ module.exports = async ({ baseUrl, sessionKey, type, voice }) => {
                 data: { msg: message, code, voiceId, url, path }
             } = responseData;
         } catch (error) {
-            throw new Error('core.uploadVoice 请求返回格式出错，请检查 mirai-console');
+            throw new Error(('请求返回格式出错，请检查 mirai-console'));
         }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCodeMap) {
@@ -50,6 +52,7 @@ module.exports = async ({ baseUrl, sessionKey, type, voice }) => {
         }
         return { voiceId, url, path };
     } catch (error) {
+        console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
     }
 };

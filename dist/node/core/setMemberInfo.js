@@ -17,6 +17,10 @@ if (!process.browser) {
 }
 
 const errorHandler = require('../util/errorHandler');
+
+const path = require('path');
+
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
  * @description 设置群成员信息
  * @param {string} baseUrl      mirai-api-http server 的地址
@@ -27,7 +31,6 @@ const errorHandler = require('../util/errorHandler');
  * @param {string} specialTitle 要设置的群头衔
  * @returns {Object} 结构 { message, code }
  */
-
 
 module.exports = async ({
   baseUrl,
@@ -59,7 +62,7 @@ module.exports = async ({
         }
       } = responseData;
     } catch (error) {
-      throw new Error('core.setMemberInfo 请求返回格式出错，请检查 mirai-console');
+      throw new Error('请求返回格式出错，请检查 mirai-console');
     } // 抛出 mirai 的异常，到 catch 中处理后再抛出
 
 
@@ -72,6 +75,7 @@ module.exports = async ({
       code
     };
   } catch (error) {
+    console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
   }
 };

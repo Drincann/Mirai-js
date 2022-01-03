@@ -7,6 +7,8 @@ if (!process.browser) {
     URL = window.URL;
 }
 const errorHandler = require('../util/errorHandler');
+const path = require('path');
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 
 /**
  * @description 向 mirai-console 发送指令
@@ -28,7 +30,7 @@ module.exports = async ({ baseUrl, sessionKey, command }) => {
                 data: { msg: message, code },
             } = responseData;
         } catch (error) {
-            throw new Error('core.sendCommand 请求返回格式出错，请检查 mirai-console');
+            throw new Error(('请求返回格式出错，请检查 mirai-console'));
         }
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
         if (code in errCodeMap) {
@@ -36,6 +38,7 @@ module.exports = async ({ baseUrl, sessionKey, command }) => {
         }
         return { message, code };
     } catch (error) {
+        console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
     }
 

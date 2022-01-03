@@ -13,6 +13,10 @@ if (!process.browser) {
 }
 
 const errorHandler = require('../util/errorHandler');
+
+const path = require('path');
+
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
  * @description 开始侦听事件
  * @param {string}   baseUrl            mirai-api-http server 的地址
@@ -23,7 +27,6 @@ const errorHandler = require('../util/errorHandler');
  * @param {function} unexpectedResponse 回调函数
  * @returns {WebSocket} 建立连接的 WebSocket 实例
  */
-
 
 module.exports = async ({
   baseUrl,
@@ -92,6 +95,7 @@ module.exports = async ({
     });
     return ws;
   } catch (error) {
+    console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
   }
 };
