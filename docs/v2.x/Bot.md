@@ -685,6 +685,12 @@ const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 }
 
   要设置的群头衔
 
+- `permission: string` 可选
+  
+  2.3.0 开始支持
+  
+  要设置的权限，可以使用 Bot.groupPermission.ADMINISTRATOR 和 Bot.groupPermission.MEMBER，或 `'ADMINISTRATOR'` 和 `'MEMBER，或'`
+
 #### 返回值
 
 无
@@ -692,7 +698,7 @@ const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 }
 #### 示例
 
 ```js
-await setMemberInfo({ group: 123456789, qq: 1019933576, title: 'title' });
+await setMemberInfo({ group: 123456789, qq: 1019933576, title: 'title', permission: Bot.groupPermission.MEMBER });
 ```
 
 ## mute
