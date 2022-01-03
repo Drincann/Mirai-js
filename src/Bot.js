@@ -16,6 +16,7 @@ const _getGroupList = require('./core/getGroupList');
 const _getMemberList = require('./core/getMemberList');
 const _getMemberInfo = require('./core/getMemberInfo');
 const _setMemberInfo = require('./core/setMemberInfo');
+const _setMemberAdmin = require('./core/setMemberAdmin');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _muteAll = require('./core/muteAll');
@@ -726,9 +727,11 @@ class Bot extends BotConfigGetable {
      * @param {number} qq    必选，群成员的 qq 号
      * @param {string} name  可选，要设置的群名片
      * @param {string} title 可选，要设置的群头衔
+     * @param {boolean} permission 可选，要设置的权限，
+     * 使用枚举值：Bot.Permission.Admin, Bot.Permission.Member
      * @returns {void}
      */
-    async setMemberInfo({ group, qq, name, title }) {
+    async setMemberInfo({ group, qq, name, title, permission }) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('setMemberInfo 请先调用 open，建立一个会话');
@@ -740,13 +743,28 @@ class Bot extends BotConfigGetable {
                 group, qq
             })} 参数`);
         }
+        if (permission != undefined
+            && permission != Bot.groupPermission.ADMINISTRATOR
+            && permission != Bot.groupPermission.MEMBER) {
+            throw new Error('setMemberInfo admin 参数只能是 Bot.groupPermission.ADMINISTRATOR 或 Bot.groupPermission.Member');
+        }
 
-        // 获取列表
+        // setMemberInfo
         const { baseUrl, sessionKey } = this.config;
-        await _setMemberInfo({
-            baseUrl, sessionKey, target: group, memberId: qq,
-            name, specialTitle: title,
-        });
+        if (name != undefined || title != undefined) {
+            await _setMemberInfo({
+                baseUrl, sessionKey, target: group, memberId: qq,
+                name, specialTitle: title,
+            });
+        }
+
+        // setPermission
+        if (permission != undefined) {
+            await _setMemberAdmin({
+                baseUrl, sessionKey, target: group, memberId: qq,
+                assign: permission == Bot.groupPermission.ADMINISTRATOR ? true : false,
+            });
+        }
     }
 
     /**
