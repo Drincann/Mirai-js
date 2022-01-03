@@ -18,6 +18,10 @@ if (!process.browser) {
 
 const errorHandler = require('../util/errorHandler');
 
+const path = require('path');
+
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
+
 const FormData = require('form-data');
 /**
  * @description 上传文件至服务器并发送，返回文件 id
@@ -67,7 +71,7 @@ module.exports = async ({
         }
       } = responseData;
     } catch (error) {
-      throw new Error('core.uploadFileAndSend 请求返回格式出错，请检查 mirai-console');
+      throw new Error('请求返回格式出错，请检查 mirai-console');
     } // 抛出 mirai 的异常，到 catch 中处理后再抛出
 
 
@@ -77,6 +81,7 @@ module.exports = async ({
 
     return id;
   } catch (error) {
+    console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
   }
 };

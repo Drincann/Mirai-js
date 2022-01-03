@@ -17,6 +17,10 @@ if (!process.browser) {
 }
 
 const errorHandler = require('../util/errorHandler');
+
+const path = require('path');
+
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
  * @description 校验 sessionKey，将一个 session 绑定到指定的 qq 上
  * @param {string}  baseUrl    mirai-api-http server 的地址
@@ -25,7 +29,6 @@ const errorHandler = require('../util/errorHandler');
  * @param {boolean} throwable  是否抛出已知的 mah 异常，用来在发生异常时获得返回值中的 mah 状态码
  * @returns {Object} 结构 { message, code }
  */
-
 
 module.exports = async ({
   baseUrl,
@@ -50,7 +53,7 @@ module.exports = async ({
         }
       } = responseData;
     } catch (error) {
-      throw new Error('core.verify 请求返回格式出错，请检查 mirai-console');
+      throw new Error('请求返回格式出错，请检查 mirai-console');
     } // 抛出 mirai 的异常，到 catch 中处理后再抛出
 
 
@@ -63,6 +66,7 @@ module.exports = async ({
       code
     };
   } catch (error) {
+    console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
   }
 };

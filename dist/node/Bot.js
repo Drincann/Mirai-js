@@ -47,6 +47,8 @@ const _unmuteAll = require('./core/unmuteAll');
 
 const _removeMember = require('./core/removeMember');
 
+const _removeFriend = require('./core/removeFriend');
+
 const _quitGroup = require('./core/quitGroup');
 
 const _getGroupConfig = require('./core/getGroupConfig');
@@ -1171,6 +1173,36 @@ class Bot extends BotConfigGetable {
     });
   }
   /**
+   * @description 删除好友
+   * @param {*} qq 欲删除的好友 qq 号
+   */
+
+
+  async removeFriend({
+    qq
+  }) {
+    // 检查对象状态
+    if (!this.config) {
+      throw new Error('removeFriend 请先调用 open，建立一个会话');
+    } // 检查参数
+
+
+    if (!qq) {
+      throw new Error('removeFriend 缺少必要的 qq 参数');
+    }
+
+    const {
+      baseUrl,
+      sessionKey
+    } = this.config; // 删除好友
+
+    await _removeFriend({
+      baseUrl,
+      sessionKey,
+      target: qq
+    });
+  }
+  /**
    * @description 移除群成员
    * @param {number} group   必选，欲移除的成员所在群号
    * @returns {void}
@@ -1180,7 +1212,7 @@ class Bot extends BotConfigGetable {
   async quitGroup({
     group
   }) {
-    // 检查对象状态
+    // 检查对象状态 
     if (!this.config) {
       throw new Error('quitGroup 请先调用 open，建立一个会话');
     } // 检查参数

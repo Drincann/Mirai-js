@@ -1,11 +1,14 @@
 "use strict";
 
 const errorHandler = require('../util/errorHandler');
+
+const path = require('path');
+
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
  * @description 停止侦听事件
  * @param {WebSocket} 建立连接的 WebSocket 实例
  */
-
 
 module.exports = async wsConnection => {
   try {
@@ -27,6 +30,7 @@ module.exports = async wsConnection => {
       // do nothing
     }
   } catch (error) {
+    console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
   }
 };

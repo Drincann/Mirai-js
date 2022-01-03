@@ -22,35 +22,29 @@ const path = require('path');
 
 const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
- * @description 获取群文件列表
+ * @description 删除好友
  * @param {string} baseUrl    mirai-api-http server 的地址
  * @param {string} sessionKey 会话标识
- * @param {number} target     群号
- * @param {string} dir        可选，查询目录，默认为根目录
- * @returns {Object[]}   结构 array[...{ id, name, path, isFile }]
+ * @param {number} target   欲删除好友的 qq 号
+ * @returns {Object} 结构 { message, code }
  */
 
 module.exports = async ({
   baseUrl,
   sessionKey,
-  target,
-  dir
+  target
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/groupFileList', baseUrl).toString(); // 请求
+    const url = new URL('/deleteFriend', baseUrl).toString(); // 请求
 
-    const responseData = await axios.get(url, {
-      params: {
-        sessionKey,
-        target,
-        dir
-      }
+    const responseData = await axios.post(url, {
+      sessionKey,
+      target
     });
 
     try {
       var {
-        data,
         data: {
           msg: message,
           code
@@ -65,7 +59,10 @@ module.exports = async ({
       throw new Error(message);
     }
 
-    return data;
+    return {
+      message,
+      code
+    };
   } catch (error) {
     console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);

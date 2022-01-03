@@ -17,6 +17,10 @@ if (!process.browser) {
 }
 
 const errorHandler = require('../util/errorHandler');
+
+const path = require('path');
+
+const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
  * FIXME: mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
  * 该功能未经测试
@@ -30,7 +34,6 @@ const errorHandler = require('../util/errorHandler');
  * @param {string} message    回复的信息
  * @returns {void}
  */
-
 
 module.exports = async ({
   baseUrl,
@@ -62,7 +65,7 @@ module.exports = async ({
         }
       } = responseData;
     } catch (error) {
-      throw new Error('core.responseMember 请求返回格式出错，请检查 mirai-console');
+      throw new Error('请求返回格式出错，请检查 mirai-console');
     } // 抛出 mirai 的异常，到 catch 中处理后再抛出
 
 
@@ -70,6 +73,7 @@ module.exports = async ({
       throw new Error(serverMessage);
     }
   } catch (error) {
+    console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
   }
 };
