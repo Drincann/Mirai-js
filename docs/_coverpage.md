@@ -12,7 +12,7 @@
 - 图标来自画师 [DazeCake](https://github.com/DazeCake)
 
 [GitHub](https://github.com/drinkal/Mirai-js)
-[Get Started](Preparation.md)
+[Get Started](./v2.x/Preparation.md)
 
 <!-- 背景图片 -->
 
