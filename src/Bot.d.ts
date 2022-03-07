@@ -177,8 +177,7 @@ export class Bot implements BotConfigGetable {
 
     /**
      * @description 获取群成员信息
-     * @param {number} qq    必选，用户的 qq 号
-     * @returns {Object} 结构 { nickname, email, age, level, sign, sex }
+     * @param qq    必选，用户的 qq 号
      */
     getUserProfile({ qq }: Bot.GetUserProfileOptions): Promise<Bot.UserProfile>;
 
@@ -191,6 +190,28 @@ export class Bot implements BotConfigGetable {
      * @param permission 可选，要设置的群头衔
      */
     setMemberInfo({ group, qq, name, title, permission }: Bot.SetMemberInfoOptions): Promise<void>;
+
+    /**
+     * @description 获取群公告列表迭代器
+     * @param group 必选，群号
+     * @returns 迭代器
+     */
+    getAnnoIter({ group }: Bot.GetAnnoIterOptions): AsyncGenerator<Bot.AnnoInfo>;
+
+    /**
+     * @description 发布群公告
+     * @param group 必选，群号
+     * @param content 必选，公告内容
+     */
+    async publishAnno({ group, content, pinned }: Bot.PublishAnnoOptions): Promise<void>;
+
+    /**
+     * @description 删除群公告
+     * @param {number} group 必选，群号
+     * @param {string} fid 必选，公告 id
+     * @reaturns {void}
+     */
+    async deleteAnno({ group, fid }: Bot.DeleteAnnoOptions): Promise<void>;
 
     /**
      * @description 禁言群成员
@@ -415,6 +436,30 @@ declare namespace Bot {
         name?: string;
         title?: string;
         permission?: GroupPermission
+    }
+
+    interface GetAnnoIterOptions {
+        gourp: number;
+    }
+
+    interface PublishAnnoOptions {
+        group: number;
+        content: string;
+        pinned: boolean;
+    }
+
+    interface DeleteAnnoOptions {
+        group: number;
+        fid: string;
+    }
+    interface AnnoInfo {
+        group: { id: number; name: string; permission: GroupPermission; };
+        content: string;
+        senderId: number;
+        fid: string;
+        allConfirmed: boolean;
+        confirmedMembersCount: number;
+        publicationTime: number;
     }
 
     interface MuteOptions {

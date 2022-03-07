@@ -18,6 +18,9 @@ const _getMemberInfo = require('./core/getMemberInfo');
 const _getUserProfile = require('./core/getUserProfile');
 const _setMemberInfo = require('./core/setMemberInfo');
 const _setMemberAdmin = require('./core/setMemberAdmin');
+const _getAnnoList = require('./core/anno/getAnno');
+const _publishAnno = require('./core/anno/publishAnno');
+const _deleteAnno = require('./core/anno/deleteAnno');
 const _recall = require('./core/recall');
 const _mute = require('./core/mute');
 const _muteAll = require('./core/muteAll');
@@ -785,6 +788,87 @@ class Bot extends BotConfigGetable {
                 assign: permission == Bot.groupPermission.ADMINISTRATOR ? true : false,
             });
         }
+    }
+
+    /**
+     * @description 获取群公告列表迭代器
+     * @param {number} group 必选，群号
+     * @returns 迭代器
+     */
+    async *getAnnoIter({ group }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('getAnno 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group) {
+            throw new Error('getAnno 缺少必要的 group 参数');
+        }
+
+        // 获取列表
+        const { baseUrl, sessionKey } = this.config;
+        let offset = 0;
+        let annoList = await _getAnnoList({ baseUrl, sessionKey, id: group, offset, size: 10 });
+        while (annoList.length > 0) {
+            for (const anno of annoList) {
+                yield anno;
+            }
+
+            // 获取下一页
+            offset += 10;
+            annoList = await _getAnnoList({ baseUrl, sessionKey, id: group, offset, size: 10 });
+        }
+
+        return;
+    }
+
+    /**
+     * @description 发布群公告
+     * @param {number} group 必选，群号
+     * @param {string} content 必选，公告内容
+     * @returns {void}
+     */
+    async publishAnno({ group, content, pinned }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('publishAllo 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !content) {
+            throw new Error(`publishAllo 缺少必要的 ${getInvalidParamsString({
+                group, content
+            })} 参数`);
+        }
+
+        // 发布公告
+        const { baseUrl, sessionKey } = this.config;
+        await _publishAnno({ baseUrl, sessionKey, target: group, content, pinned });
+    }
+
+    /**
+     * @description 删除群公告
+     * @param {number} group 必选，群号
+     * @param {string} fid 必选，公告 id
+     * @reaturns {void}
+     */
+    async deleteAnno({ group, fid }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('deleteAnno 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!group || !fid) {
+            throw new Error(`deleteAnno 缺少必要的 ${getInvalidParamsString({
+                group, fid
+            })} 参数`);
+        }
+
+        // 发布公告
+        const { baseUrl, sessionKey } = this.config;
+        await _deleteAnno({ baseUrl, sessionKey, id: group, fid });
     }
 
     /**
