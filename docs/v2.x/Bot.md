@@ -653,19 +653,45 @@ const memberList = await bot.getMemberList();
 
 #### 返回值
 
-`{ name: string, title: string }`
+`{ id: number, joinTimestamp, lastSpeakTimestamp, memberName, nuteTimeRemaining, permission: GroupPermission, title }`
 
 分别代表群名片和群头衔
 
 #### 示例
 
 ```js
-const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 });
+const { memberName, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 });
+```
+
+## getUserProfile
+
+`getUserProfile` 方法用于获取任意 QQ 用户的信息。
+
+2.4.0 开始支持。
+
+#### 参数
+
+- `qq: number` 必选
+
+#### 返回值
+
+`{ nickname ,email ,age ,level ,sign ,sex: SEX }`
+
+```ts
+type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE'
+```
+
+#### 示例
+
+```js
+const profile = await bot.getUserProfile({ qq: 1019933576 });
 ```
 
 ## setMemberInfo
 
 `setMemberInfo` 方法用于设置指定群成员的名片和头衔信息。
+
+2.3.0 开始支持
 
 #### 参数
 
@@ -687,8 +713,6 @@ const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 }
 
 - `permission: string` 可选
   
-  2.3.0 开始支持
-  
   要设置的权限，可以使用 Bot.groupPermission.ADMINISTRATOR 和 Bot.groupPermission.MEMBER，或 `'ADMINISTRATOR'` 和 `'MEMBER，或'`
 
 #### 返回值
@@ -699,6 +723,104 @@ const { name, title } = await getMemberInfo({ group: 123456789, qq: 1019933576 }
 
 ```js
 await setMemberInfo({ group: 123456789, qq: 1019933576, title: 'title', permission: Bot.groupPermission.MEMBER });
+```
+
+## getAnnoIter
+
+`getAnnoIter` 方法用于获取群公告。
+
+2.4.0 开始支持
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+#### 返回值
+
+一个异步生成器 `AsyncGenerator<Bot.AnnoInfo>`。
+
+```ts
+interface AnnoInfo {
+  group: { id: number; name: string; permission: GroupPermission; };
+  content: string;
+  senderId: number;
+  fid: string;
+  allConfirmed: boolean;
+  confirmedMembersCount: number;
+  publicationTime: number;
+}
+```
+
+#### 示例
+
+```js
+for await (const anno of bot.getAnnoIter({ group: 829153782 })) {
+  console.log(anno);
+}
+```
+
+## publishAnno
+
+`publishAnno` 用于发布群公告。
+
+2.4.0 开始支持
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+- `content: string` 必选
+
+  公告内容
+
+- `pinned: boolean` 必选
+
+  是否置顶
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+await bot.publishAnno({ 
+  group: 829153782,
+  content: 'hello world',
+  pinned: true 
+});
+```
+
+## deleteAnno
+
+`deleteAnno` 用于删除群公告。
+
+2.4.0 开始支持
+
+#### 参数
+
+- `group: number` 必选
+
+  群号
+
+- `fid: string` 必选
+
+  公告 id
+
+#### 返回值
+
+无
+
+#### 示例
+
+```js
+for await (const anno of bot.getAnnoIter({ group: 829153782 })) {
+  await bot.deleteAnno({ group: 829153782, fid: anno.fid });
+}
 ```
 
 ## mute
