@@ -2,15 +2,9 @@
 
 const WebSocket = require('ws');
 
-let URL;
-
-if (!process.browser) {
-  ({
-    URL
-  } = require('url'));
-} else {
-  URL = window.URL;
-}
+const {
+  URL
+} = require('../polyfill/URL');
 
 const errorHandler = require('../util/errorHandler');
 

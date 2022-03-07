@@ -61,9 +61,10 @@ const _setGroupConfig = require('./core/setGroupConfig');
 
 const _setEssence = require('./core/setEssence');
 
-const _startListening = process.browser ? require('./core/startListeningBrowser') : require('./core/startListeningNode');
-
-const _stopListening = process.browser ? require('./core/stopListeningBrowser') : require('./core/stopListeningNode'); // 其他
+const {
+  wsStartListening: _startListening,
+  wsStopListening: _stopListening
+} = require('./polyfill/wsListener'); // 其他
 
 
 const random = require('./util/random')(0, 2E16);

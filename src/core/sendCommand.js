@@ -1,11 +1,6 @@
 const axios = require('axios').default;
 const { errCodeMap } = require('../util/errCode');
-let URL;
-if (!process.browser) {
-    ({ URL } = require('url'));
-} else {
-    URL = window.URL;
-}
+const { URL } = require('../polyfill/URL');
 const errorHandler = require('../util/errorHandler');
 const path = require('path');
 const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
