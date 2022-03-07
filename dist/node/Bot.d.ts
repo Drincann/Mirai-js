@@ -176,6 +176,13 @@ export class Bot implements BotConfigGetable {
     getMemberInfo(): Promise<Bot.MemberDetails>;
 
     /**
+     * @description 获取群成员信息
+     * @param {number} qq    必选，用户的 qq 号
+     * @returns {Object} 结构 { nickname, email, age, level, sign, sex }
+     */
+    getUserProfile({ qq }: Bot.GetUserProfileOptions): Promise<Bot.UserProfile>;
+
+    /**
      * @description 设置群成员信息
      * @param group 必选，群成员所在群号
      * @param qq    必选，群成员的 qq 号
@@ -378,6 +385,21 @@ declare namespace Bot {
     interface GetMemberListOptions {
         group: number;
     }
+
+    interface GetUserProfileOptions {
+        qq: number;
+    }
+
+    interface UserProfile {
+        nickname: string;
+        email: string;
+        age: number;
+        level: number;
+        sign: string;
+        sex: SEX;
+    }
+
+    type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE'
 
     interface SetMemberInfoOptions {
         group: number;

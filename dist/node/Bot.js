@@ -33,6 +33,8 @@ const _getMemberList = require('./core/getMemberList');
 
 const _getMemberInfo = require('./core/getMemberInfo');
 
+const _getUserProfile = require('./core/getUserProfile');
+
 const _setMemberInfo = require('./core/setMemberInfo');
 
 const _setMemberAdmin = require('./core/setMemberAdmin');
@@ -914,7 +916,7 @@ class Bot extends BotConfigGetable {
    * @description 获取群成员信息
    * @param {number} group 必选，群成员所在群号
    * @param {number} qq    必选，群成员的 qq 号
-   * @returns {Object[]} 结构 { name, title } 群名片和群头衔
+   * @returns {Object} 结构 { name, title } 群名片和群头衔
    */
 
 
@@ -950,6 +952,36 @@ class Bot extends BotConfigGetable {
     memberInfo.title = memberInfo.specialTitle;
     delete memberInfo.specialTitle;
     return memberInfo;
+  }
+  /**
+   * @description 获取群成员信息
+   * @param {number} qq    必选，用户的 qq 号
+   * @returns {Object} 结构 { nickname, email, age, level, sign, sex }
+   */
+
+
+  async getUserProfile({
+    qq
+  }) {
+    // 检查对象状态
+    if (!this.config) {
+      throw new Error('getUserProfile 请先调用 open，建立一个会话');
+    } // 检查参数
+
+
+    if (!qq) {
+      throw new Error('getUserProfile 缺少必要的 qq 参数');
+    }
+
+    const {
+      baseUrl,
+      sessionKey
+    } = this.config;
+    return await _getUserProfile({
+      baseUrl,
+      sessionKey,
+      target: qq
+    });
   }
   /**
    * @description 设置群成员信息
