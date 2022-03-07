@@ -1,6 +1,6 @@
 const { errCodeMap } = require('../../util/errCode');
 const axios = require('axios').default;
-const { URL } = require('../polyfill/URL');
+const { URL } = require('../../polyfill/URL');
 const errorHandler = require('../../util/errorHandler');
 const path = require('path');
 const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;

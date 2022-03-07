@@ -4,7 +4,7 @@ const {
   errCodeMap
 } = require('../../util/errCode');
 
-const axios = require('axios').default;
+const axios = require('axios');
 
 const {
   URL
@@ -16,41 +16,35 @@ const path = require('path');
 
 const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
 /**
- * @description 获取群公告 
+ * @description 删除群公告
  * @param {string}  baseUrl    mirai-api-http server 的地址
  * @param {string}  sessionKey 会话标识
- * @param {number}  id         群号
- * @param {number}  offset     分页
- * @param {number}  size       分页, 默认 10
- * @returns {Object[]}
+ * @param {number}  id     群号
+ * @param {string}  fid    公告 id
+ * @returns {Object} { code, msg }
  */
 
 module.exports = async ({
   baseUrl,
   sessionKey,
   id,
-  offset,
-  size = 10
+  fid
 }) => {
   try {
     // 拼接 url
-    const url = new URL('/anno/list', baseUrl).toString(); // 请求
+    const url = new URL('/anno/delete', baseUrl).toString(); // 请求
 
-    const responseData = await axios.get(url, {
-      params: {
-        sessionKey,
-        id,
-        offset,
-        size
-      }
+    const responseData = await axios.post(url, {
+      sessionKey,
+      id,
+      fid
     });
 
     try {
       var {
         data: {
           msg: message,
-          code,
-          data
+          code
         }
       } = responseData;
     } catch (error) {
@@ -62,7 +56,10 @@ module.exports = async ({
       throw new Error(message);
     }
 
-    return data;
+    return {
+      message,
+      code
+    };
   } catch (error) {
     console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
