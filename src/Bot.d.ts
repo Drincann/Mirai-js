@@ -173,7 +173,7 @@ export class Bot implements BotConfigGetable {
      * @param group 必选，群成员所在群号
      * @param qq    必选，群成员的 qq 号
      */
-    getMemberInfo(): Promise<Bot.MemberDetails>;
+    getMemberInfo({ group, qq }: Bot.GetMemberInfoOptions): Promise<Bot.MemberDetails>;
 
     /**
      * @description 获取群成员信息
@@ -377,8 +377,18 @@ declare namespace Bot {
         permission: GroupPermission;
     }
 
+    interface GetMemberInfoOptions {
+        group: number;
+        qq: number;
+    }
+
     interface MemberDetails {
-        name: string;
+        id: number;
+        joinTimestamp: number;
+        lastSpeakTimestamp: number;
+        memberName: string;
+        nuteTimeRemaining: number;
+        permission: GroupPermission;
         title: string;
     }
 

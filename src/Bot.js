@@ -694,7 +694,7 @@ class Bot extends BotConfigGetable {
      * @description 获取群成员信息
      * @param {number} group 必选，群成员所在群号
      * @param {number} qq    必选，群成员的 qq 号
-     * @returns {Object} 结构 { name, title } 群名片和群头衔
+     * @returns {Object}
      */
     async getMemberInfo({ group, qq }) {
         // 检查对象状态

@@ -16,7 +16,7 @@ const locationStr = `core.${path.basename(__filename, path.extname(__filename))}
  * @param {string} sessionKey 会话标识
  * @param {number} target     群成员所在群号
  * @param {number} memberId   群成员的 qq 号
- * @returns {Object} 结构 { name, specialTitle } 群名片和群头衔
+ * @returns {Object}
  */
 module.exports = async ({ baseUrl, sessionKey, target, memberId }) => {
     try {
@@ -27,7 +27,7 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId }) => {
         const responseData = await axios.get(url, { params: { sessionKey, target, memberId } });
         try {
             var {
-                data: { msg: message, code, name, specialTitle }
+                data, data: { msg: message, code }
             } = responseData;
         } catch (error) {
             throw new Error(('请求返回格式出错，请检查 mirai-console'));
@@ -36,7 +36,7 @@ module.exports = async ({ baseUrl, sessionKey, target, memberId }) => {
         if (code in errCodeMap) {
             throw new Error(message);
         }
-        return { name, specialTitle };
+        return data;
     } catch (error) {
         console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
