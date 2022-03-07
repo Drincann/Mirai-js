@@ -98,6 +98,9 @@ type GroupPermission =
     | 'ADMINISTRATOR'
     | 'MEMBER';
 
+// 性别
+type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE'
+
 // 消息处理器
 type Processor = (data: any) => Promise<any> | any;
 

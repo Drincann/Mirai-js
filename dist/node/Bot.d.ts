@@ -2,8 +2,8 @@ import {
     // 图片 id  语音 id  消息 id
     ImageId, VoiceId, MessageId,
 
-    // 事件类型    群成员权限
-    EventType, GroupPermission,
+    // 事件类型    群成员权限      性别
+    EventType, GroupPermission, SEX,
 
     // 接口               原始消息类型  事件处理器类型
     MessageChainGetable, BotConfigGetable, MessageType, Processor
@@ -408,8 +408,6 @@ declare namespace Bot {
         sign: string;
         sex: SEX;
     }
-
-    type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE'
 
     interface SetMemberInfoOptions {
         group: number;
