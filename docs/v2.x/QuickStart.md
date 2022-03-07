@@ -32,32 +32,13 @@ const { Bot, Message } = window.miraiJs;
 
 ## 登录
 
-!> 警告，不应将 `verifyKey`、`password` 暴露在可被公共访问的网络资源上
+在 **mirai-console** 中输入`/login qq password`。
 
-可以直接在 **mirai-console** 中输入`/login qq password`。
-
-若想要远程控制 **mirai-console** 登录，可通过 `Bot` 的类方法`sendCommend`发送命令：
-
-```js
-await Bot.sendCommand({
-    // mirai-api-http 服务的网络位置
-    baseUrl: 'http://example.com:8080',
-    // 在 mirai-api-http 的配置中设置的 verifyKey
-    verifyKey: 'verifyKey',
-    // 指令名
-    command: '/login',
-    // 指令参数列表，这条指令等价于 /login 1019933576 password
-    args: ['1019933576', 'password'],
-});
-```
-
-注意该方法的返回值，已知的问题：
-
-> 'Login failed: Mirai 无法完成滑块验证. 使用协议 ANDROID_PHONE 强制要求滑块验证, 请更换协议后重试. 另请参阅: <https://github.com/project-mirai/mirai-login-solver-selenium>'
-
-> 不要重复登录！
+> 若想要远程控制 **mirai-console** 登录，可通过 `bot` 的实例方法`sendCommend`发送命令，但在此之前应该首先通过 `open` 方法开启一个会话。
 
 ## 建立连接
+
+!> 警告，不应将 `verifyKey`、`password` 暴露在可被公共访问的网络资源上
 
 获得一个`Bot`实例，然后在实例上调用`open`方法连接到你的 **mirai-api-http** 服务：
 
