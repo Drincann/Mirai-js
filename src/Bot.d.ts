@@ -203,7 +203,7 @@ export class Bot implements BotConfigGetable {
      * @param group 必选，群号
      * @param content 必选，公告内容
      */
-    async publishAnno({ group, content, pinned }: Bot.PublishAnnoOptions): Promise<void>;
+    publishAnno({ group, content, pinned }: Bot.PublishAnnoOptions): Promise<void>;
 
     /**
      * @description 删除群公告
@@ -211,7 +211,7 @@ export class Bot implements BotConfigGetable {
      * @param {string} fid 必选，公告 id
      * @reaturns {void}
      */
-    async deleteAnno({ group, fid }: Bot.DeleteAnnoOptions): Promise<void>;
+    deleteAnno({ group, fid }: Bot.DeleteAnnoOptions): Promise<void>;
 
     /**
      * @description 禁言群成员
@@ -439,7 +439,7 @@ declare namespace Bot {
     }
 
     interface GetAnnoIterOptions {
-        gourp: number;
+        group: number;
     }
 
     interface PublishAnnoOptions {

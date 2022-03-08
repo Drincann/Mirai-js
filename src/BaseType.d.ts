@@ -115,8 +115,8 @@ export {
     // 图片 id  语音 id  消息 id
     ImageId, VoiceId, MessageId,
 
-    // 事件类型    群成员权限
-    EventType, GroupPermission,
+    // 事件类型    群成员权限      性别
+    EventType, GroupPermission, SEX,
 
     // 消息处理器
     Processor,
