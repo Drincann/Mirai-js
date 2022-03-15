@@ -142,6 +142,7 @@ class Bot extends BotConfigGetable {
    * @param {string} baseUrl 必选，mirai-api-http server 的地址
    * @param {string} verifyKey 必选，mirai-api-http server 设置的 verifyKey
    * @param {number} qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
+   * @param {boolean} singleMode 可选，mirai-api-http server 是否启用了 singleMode
    * @returns {void}
    */
 
@@ -149,7 +150,8 @@ class Bot extends BotConfigGetable {
   async open({
     baseUrl,
     qq,
-    verifyKey
+    verifyKey,
+    singleMode
   } = {}) {
     var _this$config$baseUrl, _this$config, _this$config$qq, _this$config2, _this$config$verifyKe, _this$config3, _this$config$sessionK, _this$config4, _this$eventProcessorM;
 
@@ -192,13 +194,13 @@ class Bot extends BotConfigGetable {
     const sessionKey = this.config.sessionKey = await _verify({
       baseUrl,
       verifyKey
-    }); // 绑定到一个 qq
+    }); // 绑定到一个 qq, 若开启了 singleMode 则需要跳过绑定
 
-    await _bind({
+    !singleMode && (await _bind({
       baseUrl,
       sessionKey,
       qq
-    }); // 配置服务端 websocket 状态
+    })); // 配置服务端 websocket 状态
     // await _setSessionConfig({ baseUrl, sessionKey, enableWebsocket: true });
     // 开始监听事件
 

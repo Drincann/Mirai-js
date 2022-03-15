@@ -43,7 +43,7 @@ export class Bot implements BotConfigGetable {
      * @param verifyKey 必选，mirai-api-http server 设置的 verifyKey
      * @param qq      必选，欲绑定的 qq 号，需要确保该 qq 号已在 mirai-console 登陆
      */
-    open({ baseUrl, verifyKey, qq }: Bot.OpenOptions): Promise<void>;
+    open({ baseUrl, verifyKey, qq, singleMode }: Bot.OpenOptions): Promise<void>;
 
     /**
      * @description 监听 ws 消息
@@ -326,6 +326,7 @@ declare namespace Bot {
         baseUrl?: string;
         verifyKey?: string;
         qq?: number;
+        singleMode: boolean;
     }
 
     interface CloseOptions {
