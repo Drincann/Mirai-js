@@ -190,6 +190,20 @@ await bot.sendMessage({
 
 
 
+## addFace
+
+`addFace` 会添加一个 QQ 表情。
+
+v2.5.0 开始支持
+
+#### 参数
+
+- `name: FaceType` 必选
+
+  FaceType 是多个 string 的联合类型，在 Editor/IDE 中将会有友好的提示。
+
+
+
 # 接口
 
 ## getMessageChain

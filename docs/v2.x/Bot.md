@@ -115,7 +115,7 @@ const isLoggedIn = await Bot.isBotLoggedIn({
 
 - `singleMode: boolean` 可选
   
-  在 v2.4.3 支持
+  在 v2.4.3 开始支持
   
   若在 mirai-api-http 开启了 singleMode, 则应该置该参数 true。
 
