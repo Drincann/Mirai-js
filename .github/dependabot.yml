@@ -11,4 +11,6 @@ updates:
       interval: "monthly"
     allow:
       - dependency-name: "*"
+    ignore:
+      - version-update: "semver-patch"
 
