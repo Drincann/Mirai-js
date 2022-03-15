@@ -9,7 +9,7 @@ const _bind = require('./core/verify');
 
 const _sendCommand = require('./core/sendCommand');
 
-const _sendFriendMessage = require('./core/sendFirendMessage');
+const _sendFriendMessage = require('./core/sendFriendMessage');
 
 const _sendGroupMessage = require('./core/sendGroupMessage');
 
