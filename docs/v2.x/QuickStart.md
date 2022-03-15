@@ -83,8 +83,8 @@ await bot.sendMessage({
     group: '123456789',
     // 是 http server 接口所需的原始格式，若提供则优先使用
     message: [
-     { type: 'Plain', text: 'hello world!'},
-        { type: 'Image', url:;'http://example/image.jpg'},
+     { type: 'Plain', text: 'hello world!' },
+        { type: 'Image', url: 'http://example/image.jpg' },
  ],
 });
 ```

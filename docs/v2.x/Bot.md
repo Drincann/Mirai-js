@@ -305,7 +305,7 @@ bot.on('FriendMessage', async data => {
       },
       {
           "type": "Plain",
-          "text": "Miral牛逼"
+          "text": "..."
       }
     ],
     "sender": {                // 发送者信息
