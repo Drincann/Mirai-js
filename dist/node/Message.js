@@ -172,7 +172,7 @@ class Face extends MessageType {
 
 }
 /**
- * @description 本框架抽象的消息类型，getMessageChainable
+ * @description 本框架抽象的消息类型
  */
 
 

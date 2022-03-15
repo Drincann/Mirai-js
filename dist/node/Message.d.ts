@@ -36,7 +36,7 @@ export class Message implements MessageChainGetable {
     // json
     addJson(json: string): Message;
 
-    // aoo
+    // app
     addApp(content: string): Message;
 
     // face
