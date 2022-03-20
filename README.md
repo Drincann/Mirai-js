@@ -35,6 +35,11 @@ QQ 群: 730757181
 
 [![Forkers repo roster for @Drincann/Mirai-js](https://reporoster.com/forks/Drincann/Mirai-js)](https://github.com/Drincann/Mirai-js/network/members)
 
+## 支持这个项目
+
+<a href="https://opencollective.com/mirai-js#sponsors" target="_blank"><img src="https://opencollective.com/mirai-js/sponsors.svg?width=890"></a>
+<a href="https://opencollective.com/mirai-js#backers" target="_blank"><img src="https://opencollective.com/mirai-js/backers.svg?width=890"></a>
+
 ## 感谢
 
 [<img width="200" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png"></img>](https://www.jetbrains.com/community/opensource/#support)
