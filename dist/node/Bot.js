@@ -98,7 +98,8 @@ const {
 
 const {
   MessageChainGetable,
-  BotConfigGetable
+  BotConfigGetable,
+  ForwardNodeGetable
 } = require('./interface');
 /**
  * @field config            包含 baseUrl verifyKey qq
@@ -455,6 +456,81 @@ class Bot extends BotConfigGetable {
         subject: friend,
         kind: 'Friend'
       });
+    }
+  }
+  /**
+   * @description 向 qq 好友 或 qq 群发送合并转发消息，若同时提供，则优先向好友发送
+   * @param temp      可选，是否是临时会话，默认为 false
+   * @param friend    二选一，好友 qq 号
+   * @param group     二选一，群号
+   * @param nodeList  必选，消息节点列表
+   */
+
+
+  async sendForward({
+    temp = false,
+    friend,
+    group,
+    nodeList
+  }) {
+    // 检查对象状态
+    if (!this.config) {
+      throw new Error('sendForward 请先调用 open，建立一个会话');
+    } // 检查参数
+
+
+    if (!friend && !group | !nodeList) {
+      throw new Error(`sendMessage 缺少必要的 ${getInvalidParamsString({
+        'friend 或 group': friend || group,
+        'message 或 messageChain': nodeList
+      })} 参数`);
+    } // 需要使用的参数
+
+
+    const {
+      baseUrl,
+      sessionKey
+    } = this.config;
+
+    if (nodeList instanceof ForwardNodeGetable) {
+      nodeList = nodeList.getForwardNode();
+    }
+
+    const message = [{
+      type: 'Forward',
+      nodeList: nodeList
+    }]; // 根据 temp、friend、group 参数的情况依次调用
+
+    if (temp) {
+      // 临时会话的接口，好友和群是在一起的，在内部做了参数判断并抛出异常
+      // 而正常的好友和群的发送消息接口是分开的，所以在外面做了参数判断并抛出异常，格式相同
+      return await _sendTempMessage({
+        baseUrl,
+        sessionKey,
+        qq: friend,
+        group,
+        messageChain: message
+      });
+    } else {
+      if (friend) {
+        return await _sendFriendMessage({
+          baseUrl,
+          sessionKey,
+          target: friend,
+          messageChain: message
+        });
+      } else if (group) {
+        return await _sendGroupMessage({
+          baseUrl,
+          sessionKey,
+          target: group,
+          messageChain: message
+        });
+      } else {
+        throw {
+          message: 'sendGroupMessage 缺少必要的 qq 或 group 参数'
+        };
+      }
     }
   }
   /**

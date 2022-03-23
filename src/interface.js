@@ -7,6 +7,14 @@ class MessageChainGetable {
 }
 
 /**
+ * @description Bot.sendForward 方法的扩展接口
+ * 重写该接口后可将子类实例直接传入 nodeList 参数
+ */
+class ForwardNodeGetable {
+    getForwardNode() { }
+}
+
+/**
  * @description Bot 实现的接口，其他类访问 bot.config
  * 的途径，避免其他类直接访问实现，用来解耦
  */
@@ -17,4 +25,4 @@ class BotConfigGetable {
     getSessionKey() { }
 }
 
-module.exports = { MessageChainGetable, BotConfigGetable };
+module.exports = { MessageChainGetable, BotConfigGetable, ForwardNodeGetable };

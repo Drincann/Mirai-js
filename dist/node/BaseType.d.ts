@@ -48,6 +48,21 @@ interface MessageChainGetable {
 }
 
 /**
+ * @description 合并转发类型Forward内消息节点的类型定义
+ */
+interface ForwardNodeType {
+    senderId: number;
+    time: number;
+    senderName: string;
+    messageChain: MessageType[];
+}
+
+// 用于 Bot 获取消息节点列表，ForwardNode 使用了该扩展
+interface ForwardNodeGetable {
+    getForwardNode(): ForwardNodeType[];
+}
+
+/**
  * @description Bot 实现的接口，其他类访问 bot.config
  * 的途径，避免其他类直接访问实现，用来解耦
  */
@@ -161,10 +176,10 @@ type FaceType =
 // 消息处理器类型
 export {
     // 接口
-    MessageChainGetable, BotConfigGetable,
+    MessageChainGetable, BotConfigGetable, ForwardNodeGetable,
 
-    // 消息类型
-    MessageType,
+    // 消息类型  转发消息节点
+    MessageType, ForwardNodeType,
 
     // 图片 id  语音 id  消息 id
     ImageId, VoiceId, MessageId,

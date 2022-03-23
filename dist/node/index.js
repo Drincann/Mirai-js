@@ -12,16 +12,22 @@ const {
   Middleware
 } = require('./Middleware');
 
+const {
+  ForwardNode
+} = require('./ForwardNode');
+
 if (process.browser) {
   window.miraiJs = {
     Bot,
     Message,
-    Middleware
+    Middleware,
+    ForwardNode
   };
 } else {
   module.exports = {
     Bot,
     Message,
-    Middleware
+    Middleware,
+    ForwardNode
   };
 }
