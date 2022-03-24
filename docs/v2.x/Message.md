@@ -19,6 +19,60 @@ await bot.sendMessage({
 
 
 
+# 静态方法
+
+## createForwardMessage
+
+在 v2.6.0 开始支持。
+
+该方法提供发送合并转发消息的能力。
+
+这是一个简单工厂，用来生成一个 `ForwardMessage` 实例，表示一条合并转发消息。
+
+你可以在该实例上调用 `addForwardNode` 来为这个合并转发消息添加一条消息记录。
+
+`addForwardNode` 方法有两个重载，接收 `ForwardNode` 或 `messageId` 两种参数。
+
+> ```ts
+> interface ForwardNode {
+>     senderId?: number;
+>     time?: number;
+>     senderName?: string;
+>     messageChain?: MessageType[] | Message;
+> }
+> 
+> type messageId = number;
+> ```
+
+下面是两个例子：
+
+```js
+await bot.sendMessage({
+    friend: 1019933576,
+    message: Message.createForwardMessage().addForwardNode({
+        senderId: 1019933576,
+        time: 0,
+        senderName: '高厉害',
+        messageChain: new Message().addText('text')
+    })
+});
+```
+
+```js
+const messageid = await bot.sendMessage({
+    friend: 1019933576,
+    message: new Message().addText('a')
+});
+
+await bot.sendMessage({
+    friend: 1019933576,
+    message: Message.createForwardMessage()
+            .addForwardNode(messageid)
+});
+```
+
+
+
 # 普通方法
 
 ## addText
