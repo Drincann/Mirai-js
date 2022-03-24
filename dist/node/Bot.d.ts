@@ -80,15 +80,6 @@ export class Bot implements BotConfigGetable {
     sendNudge({ friend, group, target }: Bot.SendNudgeOptions): Promise<void>;
 
     /**
-     * @description 向 qq 好友 或 qq 群发送合并转发消息，若同时提供，则优先向好友发送
-     * @param temp      可选，是否是临时会话，默认为 false
-     * @param friend    二选一，好友 qq 号
-     * @param group     二选一，群号
-     * @param nodeList  必选，消息节点列表
-     */
-    sendForward({ temp, friend, group, nodeList }: Bot.SendForwardOptions): Promise<MessageId>;
-
-    /**
      * @description 添加一个事件处理器
      * 框架维护的 WebSocket 实例会在 ws 的事件 message 下分发 Mirai http server 的消息
      * 回调函数 (data) => any，data 的结构取决于消息类型，详见 mirai-api-http 的文档
