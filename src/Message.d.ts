@@ -1,12 +1,11 @@
 // Message 通过实现 MessageChaingetable 与 Bot.sendMessage 通信
 // 消息链元素类型和图片 id 类型
-import { MessageChainGetable, MessageType, ForwardNodeType, ImageId, FaceType, MessageId } from './BaseType';
+import { MessageChainGetable, MessageType, ImageId, FaceType, MessageId, ForwardNode, } from './BaseType';
 
 // Bot.sendMessage 的 message 参数是一个 Message 类型的实例
 // 方法内部通过 getMessageChainable 接口的 getMessageChain 方法拿到消息链
 export class Message implements MessageChainGetable {
     private messageChain: MessageType[];
-    private isForward: boolean;
 
     // Plain
     addText(text: string): Message;
@@ -43,12 +42,24 @@ export class Message implements MessageChainGetable {
     // face
     addFace(name: FaceType): Message;
 
-    // create forward
-    createForward(): Message;
+    // implements MessageChainGetable
+    getMessageChain(): MessageType[];
 
-    // add forward node
-    addForwardDataNode(node: ForwardNodeType): Message;
-    addForwardIdNode(messageId: MessageId): Message;
+    // factory
+    static createForwardMessage(): ForwardMessage;
+}
+
+export class ForwardMessage implements MessageChainGetable {
+    constructor(nodeList: ForwardNode[]);
+    private messageChain: MessageType[];
+
+    addForwardNode({
+        senderId,
+        time,
+        senderName,
+        messageChain
+    }: ForwardNode): Message;
+    addForwardNode(messageId: MessageId): ForwardMessage;
 
     // implements MessageChainGetable
     getMessageChain(): MessageType[];

@@ -98,25 +98,10 @@ class App extends MessageType {
     }
 }
 
-class Forward extends MessageType {
-    constructor() {
+class ForwardNodeList extends MessageType {
+    constructor({ nodeList }) {
         super({ type: 'Forward' });
-        this.nodeList = [];
-    }
-}
-
-class ForwardDataType {
-    constructor({ senderId, time, senderName, messageChain }) {
-        this.senderId = senderId;
-        this.time = time;
-        this.senderName = senderName;
-        this.messageChain = messageChain;
-    }
-}
-
-class ForwardMessageIdType{
-    constructor({ messageId }) {
-        this.messageId = messageId;
+        this.nodeList = nodeList;
     }
 }
 
@@ -195,7 +180,6 @@ class Message extends MessageChainGetable {
     constructor() {
         super();
         this.messageChain = [];
-        this.isForward = false;
     }
 
     // 文本
@@ -289,46 +273,41 @@ class Message extends MessageChainGetable {
         return this;
     }
 
-    // create forward
-    createForward() {
-        if (this.messageChain.length > 0) {
-            console.log('warning: 调用 createForward 后，所有其他类型的消息将被忽略');
-        }
-        this.messageChain = [new Forward()];
-        this.isForward = true;
-        return this;
-    }
-
-    // add forward node
-    addForwardDataNode(node) {
-        if (!this.isForward) {
-            throw new Error('addForwardDataNode 需要在 createForward 之后调用');
-        }
-        if (node.messageChain instanceof MessageChainGetable) {
-            node.messageChain = node.messageChain.getMessageChain();
-        }
-        this.messageChain[0].nodeList.push(new ForwardDataType(node));
-        return this;
-    }
-
-    addForwardIdNode(messageId) {
-        if (!this.isForward) {
-            throw new Error('addForwardIdNode 需要在 createForward 之后调用');
-        }
-        this.messageChain[0].nodeList.push(new ForwardMessageIdType({ messageId }));
-        return this;
-    }
-
     // get 原接口格式的信息链
     getMessageChain() {
-        if (this.isForward && this.messageChain.length > 1) {
-            console.log('warning: 调用 createForward 后，所有其他类型的消息将被忽略');
-        }
-        if (this.isForward) {
-            return [this.messageChain[0]];
-        } else {
-            return this.messageChain;
-        }
+        return this.messageChain;
+    }
+
+    static createForwardMessage() {
+        return new ForwardMessage();
+    }
+}
+
+class ForwardMessage extends MessageChainGetable {
+    constructor() {
+        super();
+        this.messageChain = [];
+        this.nodeList = [];
+    }
+
+    addForwardNode(nodeOrId) {
+        if (typeof nodeOrId === 'number') {
+            this.nodeList.push({
+                messageId: nodeOrId
+            });
+        } else if (typeof nodeOrId == 'object') {
+            if (nodeOrId.messageChain instanceof MessageChainGetable) {
+                nodeOrId.messageChain = nodeOrId.messageChain.getMessageChain();
+            }
+            this.nodeList.push(nodeOrId);
+        } /* else ignore */
+        return this;
+    }
+
+    // implements MessageChainGetable
+    getMessageChain() {
+        this.messageChain.push(new ForwardNodeList({ nodeList: this.nodeList }));
+        return this.messageChain;
     }
 }
 
