@@ -56,7 +56,7 @@ interface ForwardNode {
     senderId?: number;
     time?: number;
     senderName?: string;
-    messageChain?: MessageType[] | Message;
+    messageChain?: MessageType[] | MessageChainGetable;
     messageId?: MessageId;
 }
 

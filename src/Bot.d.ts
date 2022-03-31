@@ -55,7 +55,7 @@ export class Bot implements BotConfigGetable {
      * @param keepProcessor 可选，是否保留事件处理器，默认值为 false，不保留
      * @param keepConfig    可选，是否保留 session baseUrl qq averifyKey，默认值为 false，不保留
      */
-    close({ keepProcessor, keepConfig }: Bot.CloseOptions): Promise<void>;
+    close({ keepProcessor, keepConfig }?: Bot.CloseOptions): Promise<void>;
 
     /**
      * ! messageChain 将在未来被移除
@@ -326,7 +326,7 @@ declare namespace Bot {
         baseUrl?: string;
         verifyKey?: string;
         qq?: number;
-        singleMode: boolean;
+        singleMode?: boolean;
     }
 
     interface CloseOptions {
