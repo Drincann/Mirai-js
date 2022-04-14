@@ -303,6 +303,16 @@ export class Bot implements BotConfigGetable {
      */
     static isBotLoggedIn({ baseUrl, verifyKey, qq }: Bot.IsBotLoggedInOptions): Promise<boolean>;
 
+    /**
+     * @description 响应好友请求
+     * @param {number} eventId    响应申请事件的标识
+     * @param {number} fromId     事件对应申请人QQ号
+     * @param {number} groupId    事件对应申请人的群号，可能为0
+     * @param {number} operate    响应的操作类型
+     * @param {string} message    回复的信息
+     */
+    responseFirendRequest({ eventId, fromId, groupId, operate, message }: Bot.ResponseFirendRquestOptions): Promise<void>;
+
 }
 
 // 类型
@@ -535,5 +545,13 @@ declare namespace Bot {
 
     interface MiraiConsoleMessage {
         message: string
+    }
+
+    interface ResponseFirendRquestOptions {
+        eventId: number
+        fromId: number
+        groupId?: number
+        operate?: number
+        message?: string
     }
 }

@@ -70,7 +70,9 @@ const _setEssence = require('./core/setEssence');
 const {
   wsStartListening: _startListening,
   wsStopListening: _stopListening
-} = require('./polyfill/wsListener'); // 其他
+} = require('./polyfill/wsListener');
+
+const _responseFirendRequest = require('./core/responseFirendRequest'); // 其他
 
 
 const random = require('./util/random')(0, 2E16);
@@ -1638,6 +1640,45 @@ class Bot extends BotConfigGetable {
 
       return true;
     }
+  }
+  /**
+   * @description 响应好友请求
+   * @param {number} eventId    响应申请事件的标识
+   * @param {number} fromId     事件对应申请人QQ号
+   * @param {number} groupId    事件对应申请人的群号，可能为0
+   * @param {number} operate    响应的操作类型
+   * @param {string} message    回复的信息
+   * @returns {void}
+   */
+
+
+  async responseFirendRequest({
+    eventId,
+    fromId,
+    groupId = 0,
+    operate = 0,
+    message = ''
+  }) {
+    if (!eventId || !fromId) {
+      throw new Error(`responseFirendRequest 缺少必要的 ${getInvalidParamsString({
+        eventId,
+        fromId
+      })} 参数`);
+    }
+
+    const {
+      baseUrl,
+      sessionKey
+    } = this.config;
+    return await _responseFirendRequest({
+      baseUrl,
+      sessionKey,
+      eventId,
+      fromId,
+      groupId,
+      operate,
+      message
+    });
   }
 
 } // 静态属性: 群成员的权限
