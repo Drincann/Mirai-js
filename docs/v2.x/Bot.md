@@ -968,7 +968,7 @@ v2.3.0 开始支持
 #### 示例
 
 ```js
-await removeMember({ qq: 1019933576 });
+await removeFriend({ qq: 1019933576 });
 ```
 
 ## quitGroup
