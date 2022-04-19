@@ -879,7 +879,7 @@ await muteAll({ group: 123456789 });
 
 ## unmute
 
-`mute` 方法用于j解除群成员禁言。
+`mute` 方法用于解除群成员禁言。
 
 #### 参数
 
@@ -901,9 +901,9 @@ await muteAll({ group: 123456789 });
 await unmute({ group: 123456789, qq: 1019933576 });
 ```
 
-## muteAll
+## unmuteAll
 
-`muteAll` 方法用于解除全员禁言。
+`unmuteAll` 方法用于解除全员禁言。
 
 #### 参数
 
@@ -953,7 +953,7 @@ await removeMember({ group: 123456789, qq: 1019933576, message: "message" });
 
 v2.3.0 开始支持
 
-`removeFriend` 方法用于移除群成员。
+`removeFriend` 方法用于移除好友。
 
 #### 参数
 

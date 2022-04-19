@@ -128,7 +128,7 @@ bot.on('FriendMessage', new Middleware()
 
 ```js
 bot.on('FriendMessage', new Middleware()
-       .textProcessor()
+       .messageIdProcessor()
        .done(async data => {
     console.log(data.messageId);
 }));
