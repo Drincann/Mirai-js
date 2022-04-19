@@ -18,4 +18,4 @@ const { message } = await bot.sendCommand({
 
 所有 `authKey` 符号都被更改为 `verifyKey`
 
-一个最明显的变化是，调用 `Bot` 实例的 `open` 方法传入的 `authKey` 现在必须改为 `authKey`。
+一个最明显的变化是，调用 `Bot` 实例的 `open` 方法传入的 `authKey` 现在必须改为 `verifyKey`。
