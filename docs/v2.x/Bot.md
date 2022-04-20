@@ -640,7 +640,7 @@ switch (permission) {
 #### 示例
 
 ```js
-const memberList = await bot.getMemberList();
+const memberList = await bot.getMemberList({ group: 123456789 });
 ```
 
 ## getMemberInfo
