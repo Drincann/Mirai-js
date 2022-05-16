@@ -1,6 +1,6 @@
 "use strict";
 
 module.exports = {
-  wsStartListening: process.browser ? require('../core/startListeningBrowser') : require('../core/startListeningNode'),
-  wsStopListening: process.browser ? require('../core/stopListeningBrowser') : require('../core/stopListeningNode')
+  wsStartListening: window !== undefined ? require('../core/startListeningBrowser') : require('../core/startListeningNode'),
+  wsStopListening: window !== undefined ? require('../core/stopListeningBrowser') : require('../core/stopListeningNode')
 };

@@ -14,7 +14,7 @@ const errorHandler = require('../util/errorHandler');
 
 const path = require('path');
 
-const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
+const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * @description 获取群成员信息
  * @param {string} baseUrl    mirai-api-http server 的地址

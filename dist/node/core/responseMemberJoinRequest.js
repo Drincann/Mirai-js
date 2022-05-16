@@ -14,7 +14,7 @@ const errorHandler = require('../util/errorHandler');
 
 const path = require('path');
 
-const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
+const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * FIXME: mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
  * 该功能未经测试
