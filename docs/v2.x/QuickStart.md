@@ -30,6 +30,21 @@ const { Bot, Message } = require('mirai-js');
 const { Bot, Message } = window.miraiJs;
 ```
 
+或者在支持 UMD 规范的框架中引入:
+
+!> mirai-js@2.7 中实现了 UMD 规范/协议，目前还不稳定。
+
+```sh
+npm i mirai-js@2.7.0-beta.1.0.0
+```
+
+```vue
+<script setup lang="ts">
+import { Bot, Message } from "mirai-js";
+const bot = new Bot();
+</script>
+```
+
 ## 登录
 
 在 **mirai-console** 中输入`/login qq password`。
