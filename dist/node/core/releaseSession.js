@@ -18,7 +18,7 @@ const {
   isBrowserEnv
 } = require('../util/isBrowserEnv');
 
-const locationStr = isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * @description 关闭一个会话
  * @param {string} baseUrl    mirai-api-http server 的主机地址

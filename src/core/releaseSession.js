@@ -4,7 +4,7 @@ const { URL } = require('../polyfill/URL');
 const errorHandler = require('../util/errorHandler');
 const path = require('path');
 const { isBrowserEnv } = require('../util/isBrowserEnv');
-const locationStr = isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 
 /**
  * @description 关闭一个会话
