@@ -1,6 +1,10 @@
 "use strict";
 
+const {
+  isBrowserEnv
+} = require('../util/isBrowserEnv');
+
 module.exports = {
-  wsStartListening: window !== undefined ? require('../core/startListeningBrowser') : require('../core/startListeningNode'),
-  wsStopListening: window !== undefined ? require('../core/stopListeningBrowser') : require('../core/stopListeningNode')
+  wsStartListening: isBrowserEnv() ? require('../core/startListeningBrowser') : require('../core/startListeningNode'),
+  wsStopListening: isBrowserEnv() ? require('../core/stopListeningBrowser') : require('../core/stopListeningNode')
 };
