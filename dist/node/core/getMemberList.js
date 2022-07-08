@@ -66,7 +66,11 @@ module.exports = async ({
       throw new Error(message);
     }
 
-    return data;
+    if (Array.isArray(data)) {
+      return data;
+    } else {
+      return data.data;
+    }
   } catch (error) {
     console.error(`mirai-js: error ${locationStr}`);
     errorHandler(error);
