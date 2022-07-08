@@ -1,3 +1,5 @@
+const { isBrowserEnv } = require('../util/isBrowserEnv');
+
 module.exports = {
-    URL: process.browser ? window.URL : require('url').URL
+    URL: isBrowserEnv() ? window.URL : require('url').URL
 };

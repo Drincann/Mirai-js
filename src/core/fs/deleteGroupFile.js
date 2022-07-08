@@ -3,7 +3,8 @@ const axios = require('axios');
 const { URL } = require('../../polyfill/URL');
 const errorHandler = require('../../util/errorHandler');
 const path = require('path');
-const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
+const { isBrowserEnv } = require('../../util/isBrowserEnv');
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 
 /**
  * @description 删除群文件

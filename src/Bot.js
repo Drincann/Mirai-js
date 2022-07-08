@@ -42,6 +42,7 @@ const { promisify } = require('util');
 const { Waiter } = require('./Waiter');
 const { FileManager } = require('./FileManager');
 const { errCodeEnum } = require('./util/errCode');
+const { isBrowserEnv } = require('./util/isBrowserEnv');
 
 
 // 扩展接口
@@ -571,13 +572,14 @@ class Bot extends BotConfigGetable {
      * @returns {Object} 结构 { imageId, url, path } 
      */
     async uploadImage({ type = 'group', img, filename }) {
+        if (isBrowserEnv()) { throw new Error('uploadImage 在浏览器环境下不可用'); }
         // 检查对象状态
         if (!this.config) {
             throw new Error('uploadImage 请先调用 open，建立一个会话');
         }
 
         // 检查参数
-        if (process.browser && filename) {
+        if (isBrowserEnv() && filename) {
             throw new Error('uploadImage 浏览器端不支持 filename 参数');
         }
         if (!img && !filename) {
@@ -604,13 +606,14 @@ class Bot extends BotConfigGetable {
      * @returns {Object} 结构 { voiceId, url, path } 
      */
     async uploadVoice({ type = 'group', voice, filename }) {
+        if (isBrowserEnv()) { throw new Error('uploadVoice 在浏览器环境下不可用'); }
         // 检查对象状态
         if (!this.config) {
             throw new Error('uploadVoice 请先调用 open，建立一个会话');
         }
 
         // 检查参数
-        if (process.browser && filename) {
+        if (isBrowserEnv() && filename) {
             throw new Error('uploadVoice 浏览器端不支持 filename 参数');
         }
         if (!voice && !filename) {

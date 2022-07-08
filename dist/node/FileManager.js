@@ -8,6 +8,10 @@ const {
   promisify
 } = require('util');
 
+const {
+  isBrowserEnv
+} = require('./util/isBrowserEnv');
+
 class FileManager {
   constructor({
     bot,
@@ -325,7 +329,7 @@ class FileManager {
         var _ref;
 
         // 检查参数
-        if (process.browser && filePath) {
+        if (isBrowserEnv && filePath) {
           throw new Error('Bot.FileManager.Directory.upload 浏览器端不支持 filePath 参数');
         }
 
@@ -397,7 +401,7 @@ class FileManager {
     filePath
   }) {
     // 检查参数
-    if (process.browser && filePath) {
+    if (isBrowserEnv() && filePath) {
       throw new Error('Bot.FileManager.uploadTo 浏览器端不支持 filePath 参数');
     }
 
