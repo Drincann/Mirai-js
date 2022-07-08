@@ -4,7 +4,11 @@ const errorHandler = require('../util/errorHandler');
 
 const path = require('path');
 
-const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const {
+  isBrowserEnv
+} = require('../util/isBrowserEnv');
+
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * @description 停止侦听事件
  * @param {WebSocket} 建立连接的 WebSocket 实例

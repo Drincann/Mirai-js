@@ -2,7 +2,8 @@ const WebSocket = window.WebSocket;
 const { URL } = require('../polyfill/URL');
 const errorHandler = require('../util/errorHandler');
 const path = require('path');
-const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const { isBrowserEnv } = require('../util/isBrowserEnv');
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 
 /**
  * @description 开始侦听事件

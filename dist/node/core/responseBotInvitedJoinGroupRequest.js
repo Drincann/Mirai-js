@@ -14,7 +14,11 @@ const errorHandler = require('../util/errorHandler');
 
 const path = require('path');
 
-const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const {
+  isBrowserEnv
+} = require('../util/isBrowserEnv');
+
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * ! 自动同意时，不会触发该事件
  * @description 响应机器人被邀请入群请求

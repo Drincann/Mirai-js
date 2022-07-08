@@ -3,7 +3,8 @@ const axios = require('axios');
 const { URL } = require('../polyfill/URL');
 const errorHandler = require('../util/errorHandler');
 const path = require('path');
-const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const { isBrowserEnv } = require('../util/isBrowserEnv');
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 
 /**
  * @description 校验 sessionKey，将一个 session 绑定到指定的 qq 上

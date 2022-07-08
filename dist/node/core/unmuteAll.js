@@ -14,7 +14,11 @@ const errorHandler = require('../util/errorHandler');
 
 const path = require('path');
 
-const locationStr = window === undefined ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
+const {
+  isBrowserEnv
+} = require('../util/isBrowserEnv');
+
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * @description 解除全员禁言
  * @param {string} baseUrl    mirai-api-http server 的主机地址
