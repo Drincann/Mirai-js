@@ -32,11 +32,7 @@ const { Bot, Message } = window.miraiJs;
 
 或者在支持 UMD 规范的框架中引入:
 
-!> mirai-js@2.7 中实现了 UMD 规范/协议，目前还不稳定。
-
-```sh
-npm i mirai-js@2.7.0-beta.1.0.0
-```
+!> 在 mirai-js@2.7 开始支持 UMD 规范/协议.
 
 ```vue
 <script setup lang="ts">
