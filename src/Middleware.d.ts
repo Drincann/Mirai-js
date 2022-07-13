@@ -42,14 +42,14 @@ export class Middleware {
      * @param groupArr 允许通过的群号数组
      * @param allow    允许通过还是禁止通过
      */
-    groupFilter(groupArr: number[], allow: boolean): Middleware;
+    groupFilter(groupArr: number[], allow?: boolean): Middleware;
 
     /**
      * @description 过滤指定的好友消息
      * @param friendArr 好友 qq 号数组
      * @param allow     允许通过还是禁止通过
      */
-    friendFilter(friendArr: number[], allow: boolean): Middleware;
+    friendFilter(friendArr: number[], allow?: boolean): Middleware;
 
     /**
      * @description 过滤指定群的群成员的消息
@@ -57,7 +57,7 @@ export class Middleware {
      * @param allow          允许通过还是禁止通过
      * 结构 { number => number[], } key 为允许通过的群号，value 为该群允许通过的成员 qq
      */
-    groupMemberFilter(groupMemberMap: Middleware.GroupMemberMap, allow: boolean): Middleware;
+    groupMemberFilter(groupMemberMap: Middleware.GroupMemberMap, allow?: boolean): Middleware;
 
     /**
      * @description 这是一个对话锁，保证群中同一成员不能在中途触发处理器
@@ -76,7 +76,7 @@ export class Middleware {
      * @param atArr 必选，qq 号数组
      * @param allow 可选，允许通过还是禁止通过
      */
-    atFilter(friendArr: number[], allow: boolean): Middleware;
+    atFilter(friendArr: number[], allow?: boolean): Middleware;
 
     /**
      * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
