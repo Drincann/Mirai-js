@@ -19,9 +19,9 @@ export class Bot implements BotConfigGetable {
 
     // 类属性
     public static groupPermission: {
-        OWNER: GroupPermission;
-        ADMINISTRATOR: GroupPermission;
-        MEMBER: GroupPermission;
+        OWNER: "OWNER";
+        ADMINISTRATOR: "ADMINISTRATOR";
+        MEMBER: "MEMBER";
     };
 
     // 一些私有的实例属性
