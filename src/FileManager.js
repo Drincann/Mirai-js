@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
+const { isBrowserEnv } = require('./util/isBrowserEnv');
 
 class FileManager {
     constructor({ bot, group }) {
@@ -194,7 +195,7 @@ class FileManager {
              */
             async upload({ file, filePath, filename }) {
                 // 检查参数
-                if (process.browser && filePath) {
+                if (isBrowserEnv && filePath) {
                     throw new Error('Bot.FileManager.Directory.upload 浏览器端不支持 filePath 参数');
                 }
                 if (!file && !filePath) {
@@ -250,7 +251,7 @@ class FileManager {
      */
     async uploadTo({ uploadPath, file, filePath }) {
         // 检查参数
-        if (process.browser && filePath) {
+        if (isBrowserEnv() && filePath) {
             throw new Error('Bot.FileManager.uploadTo 浏览器端不支持 filePath 参数');
         }
         if (!file && !filePath) {

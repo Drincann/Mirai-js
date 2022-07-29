@@ -27,14 +27,6 @@ QQ 群: 730757181
 
 如果觉得这个项目还不错的话，就动动小手给个 star 吧！
 
-## Star
-
-[![Stargazers repo roster for @Drincann/Mirai-js](https://reporoster.com/stars/Drincann/Mirai-js)](https://github.com/Drincann/Mirai-js/stargazers)
-
-## Fork
-
-[![Forkers repo roster for @Drincann/Mirai-js](https://reporoster.com/forks/Drincann/Mirai-js)](https://github.com/Drincann/Mirai-js/network/members)
-
 ## 支持这个项目
 
 <a href="https://opencollective.com/mirai-js#sponsors" target="_blank"><img src="https://opencollective.com/mirai-js/sponsors.svg?width=890"></a>

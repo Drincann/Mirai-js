@@ -3,7 +3,8 @@ const axios = require('axios').default;
 const { URL } = require('../polyfill/URL');
 const errorHandler = require('../util/errorHandler');
 const path = require('path');
-const locationStr = `core.${path.basename(__filename, path.extname(__filename))}`;
+const { isBrowserEnv } = require('../util/isBrowserEnv');
+const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 
 /**
  * @description 获取指定群的成员列表
@@ -35,7 +36,12 @@ module.exports = async ({ baseUrl, sessionKey, target }) => {
         if (code in errCodeMap) {
             throw new Error(message);
         }
-        return data;
+
+        if (Array.isArray(data)) {
+            return data;
+        } else {
+            return data.data;
+        }
     } catch (error) {
         console.error(`mirai-js: error ${locationStr}`);
         errorHandler(error);
