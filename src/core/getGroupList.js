@@ -20,14 +20,14 @@ module.exports = async ({ baseUrl, sessionKey }) => {
         // 请求
         const responseData = await axios.get(url, { params: { sessionKey } });
         try {
-            var { data: { msg: message, code } } = responseData;
+            var { data } = responseData;
         } catch (error) {
             throw new Error(('请求返回格式出错，请检查 mirai-console'));
         }
 
         // 抛出 mirai 的异常，到 catch 中处理后再抛出
-        if (code in errCodeMap) {
-            throw new Error(message);
+        if (data.code in errCodeMap) {
+            throw new Error(data.msg);
         }
         return data;
     } catch (error) {
