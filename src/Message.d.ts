@@ -58,8 +58,8 @@ export class ForwardMessage implements MessageChainGetable {
         time,
         senderName,
         messageChain
-    }: ForwardNode): Message;
-    addForwardNode(messageId: MessageId): ForwardMessage;
+    }: ForwardNode): this;
+    addForwardNode(messageId: MessageId): this;
 
     // implements MessageChainGetable
     getMessageChain(): MessageType[];
