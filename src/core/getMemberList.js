@@ -27,7 +27,7 @@ module.exports = async ({ baseUrl, sessionKey, target }) => {
         // 请求
         const responseData = await axios.get(url, { params: { sessionKey, target } });
         try {
-            var { data, data: { msg: message, code } } = responseData;
+            var { data: { msg: message, code } } = responseData;
         } catch (error) {
             throw new Error(('请求返回格式出错，请检查 mirai-console'));
         }
