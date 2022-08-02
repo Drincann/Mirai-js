@@ -3,10 +3,13 @@ import {
     ImageId, VoiceId, MessageId,
 
     // 事件类型    群成员权限      性别
-    EventType, GroupPermission, SEX,
+    EventType, EventTypes, GroupPermission, SEX,
 
     // 接口               原始消息类型  事件处理器类型
-    MessageChainGetable, BotConfigGetable, MessageType, Processor
+    MessageChainGetable, BotConfigGetable, MessageType,
+
+    Awaitable,
+    
 } from './BaseType';
 
 // 等待器
@@ -19,9 +22,9 @@ export class Bot implements BotConfigGetable {
 
     // 类属性
     public static groupPermission: {
-        OWNER: GroupPermission;
-        ADMINISTRATOR: GroupPermission;
-        MEMBER: GroupPermission;
+        OWNER: "OWNER";
+        ADMINISTRATOR: "ADMINISTRATOR";
+        MEMBER: "MEMBER";
     };
 
     // 一些私有的实例属性
@@ -91,7 +94,7 @@ export class Bot implements BotConfigGetable {
      * @param callback  必选，回调函数
      * @returns handle 事件处理器的标识，用于移除该处理器
      */
-    on(eventType: EventType | EventType[], processor: Processor): number | number[];
+    on<U extends keyof EventTypes>(eventType: keyof EventTypes, callback: (data: EventTypes[U]) => Awaitable<void | any>): number | number[];
 
     /**
      * @description 添加一个一次性事件处理器，回调一次后自动移除
@@ -101,7 +104,7 @@ export class Bot implements BotConfigGetable {
      *                  当为 true 时，只有开发者的处理器结束后才会移除该处理器
      *                  当为 false 时，即使消息被拦截，也会移除该处理器
      */
-    one(eventType: EventType | EventType[], processor: Processor, strict: boolean,): void;
+    one<U extends keyof EventTypes>(eventType: keyof EventTypes, callback: (data: EventTypes[U]) => Awaitable<void | any>, strict: boolean): void;
 
     /**
      * @description 移除一个事件处理器
@@ -109,13 +112,13 @@ export class Bot implements BotConfigGetable {
      * @param handle    可选，事件处理器标识(或数组)，由 on 方法
      *                  返回，未提供时将移除该事件下的所有处理器
      */
-    off(eventType: EventType, handle?: number | number[]): void;
+    off(eventType: keyof EventTypes, handle?: number | number[]): void;
 
     /**
      * @description 移除所有事件处理器
      * @param eventType 可选，事件类型(或数组)
      */
-    offAll(eventType?: EventType | EventType[]): void;
+    offAll(eventType?: keyof EventTypes | EventType[]): void;
 
     /**
      * @description 获取 config
@@ -314,11 +317,12 @@ declare namespace Bot {
         verifyKey: string;
         sessionKey: string;
     }
+    
     // An index signature parameter type cannot be a union type. Consider using a mapped object type instead.
-    interface EventProcessorMap {
+    type EventProcessorMap = {
         // 索引不能使用联合类型
-        [eventType: string /* EventType */]: {
-            [handle: number]: Processor;
+        [eventType in EventType]: {
+            [handler: number]: (data: EventTypes[eventType]) => Awaitable<void | any>;
         };
     }
 
