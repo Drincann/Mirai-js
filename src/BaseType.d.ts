@@ -171,7 +171,7 @@ interface EventTypes {
 	} & BaseType &
 		MessageExtendType,
 	FriendMessage: {
-		type: "FriendMessage"; // 消息类型：GroupMessage或FriendMessage或TempMessage或各类Event
+		type: "FriendMessage"; 
 		messageChain: MessageType[];
 		sender: Friend
 	} & BaseType &
