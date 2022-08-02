@@ -242,13 +242,19 @@ interface EventTypes {
 		operator: Member;
 	} & BaseType;
 	GroupAllowAnonymousChatEvent: {
-        "type": "GroupAllowAnonymousChatEvent",
-        "origin": boolean,
-        "current": boolean,
-        "group": GroupSenderType,
-        "operator": Member
+        type: "GroupAllowAnonymousChatEvent",
+        origin: boolean,
+        current: boolean,
+        group: GroupSenderType,
+        operator: Member
     } & BaseType;
-	GroupAllowConfessTalkEvent: BaseType;
+	GroupAllowConfessTalkEvent: {
+        type: "GroupAllowAnonymousChatEvent",
+        origin: boolean,
+        current: boolean,
+        group: GroupSenderType,
+        isByBot: boolean
+    } & BaseType;
 	GroupAllowMemberInviteEvent: BaseType;
 	MemberJoinEvent: BaseType;
 	MemberLeaveEventKick: BaseType;

@@ -118,7 +118,7 @@ export class Bot implements BotConfigGetable {
      * @description 移除所有事件处理器
      * @param eventType 可选，事件类型(或数组)
      */
-    offAll(eventType?: keyof EventTypes | EventType[]): void;
+    offAll(eventType?: EventType | EventType[]): void;
 
     /**
      * @description 获取 config
