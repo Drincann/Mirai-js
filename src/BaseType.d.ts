@@ -7,59 +7,59 @@ import { Bot } from "./Bot";
  * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/MessageType.md
  */
 interface MessageType {
-	type: MessageChainTypes;
+    type: MessageChainElementTypes;
 
-	// Quote
-	id?: number;
-	groupId?: number;
-	senderId?: number;
-	targetId?: number;
-	origin?: MessageType[];
+    // Quote
+    id?: number;
+    groupId?: number;
+    senderId?: number;
+    targetId?: number;
+    origin?: MessageType[];
 
-	// At
-	target?: number;
-	display?: string;
+    // At
+    target?: number;
+    display?: string;
 
-	// Face Poke
-	faceId?: number;
-	name?: string;
+    // Face Poke
+    faceId?: number;
+    name?: string;
 
-	// Plain
-	text?: string;
+    // Plain
+    text?: string;
 
-	// Image FlashImage Voice
-	imageId?: ImageId;
-	voiceId?: VoiceId;
-	url?: string;
-	path?: string;
+    // Image FlashImage Voice
+    imageId?: ImageId;
+    voiceId?: VoiceId;
+    url?: string;
+    path?: string;
 
-	// Xml
-	xml?: string;
+    // Xml
+    xml?: string;
 
-	// Json
-	json?: string;
+    // Json
+    json?: string;
 
-	// App
-	content?: string;
+    // App
+    content?: string;
 
-	// Forward
-	nodeList?: ForwardNode[];
+    // Forward
+    nodeList?: ForwardNode[];
 }
 
 // 用于 Bot 获得消息链，Message 使用了该扩展
 interface MessageChainGetable {
-	getMessageChain(): MessageType[];
+    getMessageChain(): MessageType[];
 }
 
 /**
  * @description 合并转发类型Forward内消息节点的类型定义
  */
 interface ForwardNode {
-	senderId?: number;
-	time?: number;
-	senderName?: string;
-	messageChain?: MessageType[] | MessageChainGetable;
-	messageId?: MessageId;
+    senderId?: number;
+    time?: number;
+    senderName?: string;
+    messageChain?: MessageType[] | MessageChainGetable;
+    messageId?: MessageId;
 }
 
 /**
@@ -67,10 +67,10 @@ interface ForwardNode {
  * 的途径，避免其他类直接访问实现，用来解耦
  */
 interface BotConfigGetable {
-	getBaseUrl(): string;
-	getQQ(): number;
-	getVerifyKey(): string;
-	getSessionKey(): string;
+    getBaseUrl(): string;
+    getQQ(): number;
+    getVerifyKey(): string;
+    getSessionKey(): string;
 }
 
 // 图片 id
@@ -86,49 +86,50 @@ type MessageId = number;
  * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md
 */
 
-type MessageChainTypes =
-	| "Source"
-	| "Quote"
-	| "At"
-	| "AtAll"
-	| "Face"
-	| "Plain"
-	| "Image"
-	| "FlashImage"
-	| "Voice"
-	| "Xml"
-	| "Json"
-	| "App"
-	| "Poke"
-	| "Dice"
-	| "MarketFace"
-	| "MusicShare"
-	| "ForwardMessage"
-	| "File"
-	| "MiraiCode";
+type MessageChainElementTypes =
+    | "Source"
+    | "Quote"
+    | "At"
+    | "AtAll"
+    | "Face"
+    | "Plain"
+    | "Image"
+    | "FlashImage"
+    | "Voice"
+    | "Xml"
+    | "Json"
+    | "App"
+    | "Poke"
+    | "Dice"
+    | "MarketFace"
+    | "MusicShare"
+    | "ForwardMessage"
+    | "File"
+    | "MiraiCode";
 
 interface EventBaseType {
-	bot: Bot;
+    bot: Bot;
 }
 
 // Middleware
 interface MessageExtendType {
-	text?: string;
-	classified?: {
-		[key in MessageChainTypes]?: any[];
-	};
-	messageId?: number;
-	waitFor?: any
-	unlock?: () => void;
+    text?: string;
+    classified?: {
+        [key in MessageChainElementTypes]?: any[];
+    };
+    messageId?: number;
+    waitFor?: any
+    unlock?: () => void;
 }
 type RequestEventMethods =
-	| "agree"
-	| "refuse"
-	| "ignore"
-	| "refuseAndAddBlacklist"
-	| "ignoreAndAddBlacklist";
+    | "agree"
+    | "refuse"
+    | "ignore"
+    | "refuseAndAddBlacklist"
+    | "ignoreAndAddBlacklist";
+
 type RequestEventExtendType = {
-	[key in RequestEventMethods]?: () => void;
+    [key in RequestEventMethods]?: () => void;
 };
 
 interface Member {
@@ -154,203 +155,203 @@ interface Friend {
 }
 
 interface EventTypes {
-	error: {
-		code: number;
-	} & EventBaseType,
-	close: {
-		reason: string;
-	} & EventBaseType,
-	"unexpected-response": {
-		reason: string;
-	} & EventBaseType,
-	GroupMessage: {
+    error: {
+        code: number;
+    } & EventBaseType,
+    close: {
+        reason: string;
+    } & EventBaseType,
+    "unexpected-response": {
+        reason: string;
+    } & EventBaseType,
+    GroupMessage: {
         type: "GroupMessage";
         sender: Member & {group: GroupSenderType},
         messageChain: MessageType[];
-	} & EventBaseType &
-		MessageExtendType,
-	FriendMessage: {
-		type: "FriendMessage"; 
-		messageChain: MessageType[];
-		sender: Friend
-	} & EventBaseType &
+    } & EventBaseType &
         MessageExtendType,
-	BotOnlineEvent: {
-		type: "BotOnlineEvent",
-		qq: number
-	} & EventBaseType,
-	BotOfflineEventActive: {
-		type: "BotOfflineEventActive",
-		qq: number
-	} & EventBaseType,
-	BotOfflineEventForce: {
-		type: "BotOfflineEventForce",
-		qq: number
-	} & EventBaseType,
-	BotOfflineEventDropped: {
-		type: "BotOfflineEventDropped",
-		qq: number
-	} & EventBaseType,
-	BotReloginEvent: {
-		type: "BotReloginEvent",
-		qq: number
-	} & EventBaseType,
-	BotGroupPermissionChangeEvent: {
-		type: "BotGroupPermissionChangeEvent";
-		origin: Exclude<GroupPermission, "OWNER">;
-		current: GroupPermission;
-		group: GroupSenderType;
-	} & EventBaseType,
-	BotMuteEvent: {
-		type: "BotMuteEvent",
-		durationSeconds: number,
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType,
-	BotUnmuteEvent: {
-		type: "BotUnmuteEvent",
-		durationSeconds: number,
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType,
-	BotJoinGroupEvent: {
-		type: "BotJoinGroupEvent",
+    FriendMessage: {
+        type: "FriendMessage"; 
+        messageChain: MessageType[];
+        sender: Friend
+    } & EventBaseType &
+        MessageExtendType,
+    BotOnlineEvent: {
+        type: "BotOnlineEvent",
+        qq: number
+    } & EventBaseType,
+    BotOfflineEventActive: {
+        type: "BotOfflineEventActive",
+        qq: number
+    } & EventBaseType,
+    BotOfflineEventForce: {
+        type: "BotOfflineEventForce",
+        qq: number
+    } & EventBaseType,
+    BotOfflineEventDropped: {
+        type: "BotOfflineEventDropped",
+        qq: number
+    } & EventBaseType,
+    BotReloginEvent: {
+        type: "BotReloginEvent",
+        qq: number
+    } & EventBaseType,
+    BotGroupPermissionChangeEvent: {
+        type: "BotGroupPermissionChangeEvent";
+        origin: Exclude<GroupPermission, "OWNER">;
+        current: GroupPermission;
+        group: GroupSenderType;
+    } & EventBaseType,
+    BotMuteEvent: {
+        type: "BotMuteEvent",
+        durationSeconds: number,
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType,
+    BotUnmuteEvent: {
+        type: "BotUnmuteEvent",
+        durationSeconds: number,
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType,
+    BotJoinGroupEvent: {
+        type: "BotJoinGroupEvent",
         group: GroupSenderType
-		operator?: null | Member & {group: GroupSenderType};
+        operator?: null | Member & {group: GroupSenderType};
     } ;
-	BotLeaveEventActive: {
-		type: "BotLeaveEventActive",
+    BotLeaveEventActive: {
+        type: "BotLeaveEventActive",
         group: GroupSenderType
     };
-	BotLeaveEventKick: {
-		type: "BotLeaveEventKick",
+    BotLeaveEventKick: {
+        type: "BotLeaveEventKick",
         group: GroupSenderType
-		operator: Member & {group: GroupSenderType};
+        operator: Member & {group: GroupSenderType};
     } & EventBaseType;
-	GroupRecallEvent: {
+    GroupRecallEvent: {
         type: "GroupRecallEvent"
         authorId: number,
         messageId: number,
         time: number,
         group: GroupSenderType
-		operator: Member & {group: GroupSenderType};
+        operator: Member & {group: GroupSenderType};
     } & EventBaseType;
-	FriendRecallEvent: {
+    FriendRecallEvent: {
         type: "GroupRecallEvent"
         authorId: number,
         messageId: number,
         time: number,
         operator: number
     } & EventBaseType;
-	GroupNameChangeEvent: {
-		type: "GroupNameChangeEvent",
-		origin: string,
-		current: string,
-		group: GroupSenderType;
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	GroupEntranceAnnouncementChangeEvent: {
-		type: "GroupEntranceAnnouncementChangeEvent",
-		origin: string,
-		current: string,
-		group: GroupSenderType;
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	GroupMuteAllEvent: {
-		type: "GroupMuteAllEvent",
-		origin: boolean,
-		current: boolean,
-		group: GroupSenderType;
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	GroupAllowAnonymousChatEvent: {
+    GroupNameChangeEvent: {
+        type: "GroupNameChangeEvent",
+        origin: string,
+        current: string,
+        group: GroupSenderType;
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    GroupEntranceAnnouncementChangeEvent: {
+        type: "GroupEntranceAnnouncementChangeEvent",
+        origin: string,
+        current: string,
+        group: GroupSenderType;
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    GroupMuteAllEvent: {
+        type: "GroupMuteAllEvent",
+        origin: boolean,
+        current: boolean,
+        group: GroupSenderType;
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    GroupAllowAnonymousChatEvent: {
         type: "GroupAllowAnonymousChatEvent",
         origin: boolean,
         current: boolean,
         group: GroupSenderType,
         operator: Member & {group: GroupSenderType};
     } & EventBaseType;
-	GroupAllowConfessTalkEvent: {
+    GroupAllowConfessTalkEvent: {
         type: "GroupAllowAnonymousChatEvent",
         origin: boolean,
         current: boolean,
         group: GroupSenderType,
         isByBot: boolean
     } & EventBaseType;
-	GroupAllowMemberInviteEvent: EventBaseType;
-	MemberJoinEvent: {
+    GroupAllowMemberInviteEvent: EventBaseType;
+    MemberJoinEvent: {
         type: "MemberJoinEvent",
-		member: Member & {group: GroupSenderType},
-		invitor: Member;
+        member: Member & {group: GroupSenderType},
+        invitor: Member;
     } & EventBaseType;
-	MemberLeaveEventKick: {
+    MemberLeaveEventKick: {
         type: "MemberLeaveEventKick",
-		member: Member & {group: GroupSenderType},
-		operator: Member & {group: GroupSenderType},
+        member: Member & {group: GroupSenderType},
+        operator: Member & {group: GroupSenderType},
     } & EventBaseType;
-	MemberLeaveEventQuit: {
+    MemberLeaveEventQuit: {
         type: "MemberLeaveEventQuit",
-		member: Member & {group: GroupSenderType},
+        member: Member & {group: GroupSenderType},
     } & EventBaseType;
-	MemberCardChangeEvent: {
-		type: "MemberCardChangeEvent",
-		origin: string,
-		current: string,
-		member: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	MemberSpecialTitleChangeEvent: {
-		type: "MemberSpecialTitleChangeEvent",
-		origin: string,
-		current: string,
-		member: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	MemberPermissionChangeEvent: {
-		type: "MemberPermissionChangeEvent",
-		origin: string,
-		current: string,
-		member: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	MemberMuteEvent: {
-		type: "MemberMuteEvent",
-		durationSeconds: number,
-		member: Member & {group: GroupSenderType};
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	MemberUnmuteEvent: {
-		type: "MemberUnmuteEvent",
-		member: Member & {group: GroupSenderType};
-		operator: Member & {group: GroupSenderType};
-	} & EventBaseType;
-	MemberHonorChangeEvent: {
-		type: "MemberHonorChangeEvent",
-		member: Member & {group: GroupSenderType}
-		action: "achieve" | "lose",
-		honor: string;
-	}
-	NewFriendRequestEvent: {
-		type: "NewFriendRequestEvent",
-		eventId: number,
-		fromId: number,
-		groupId: number,
-		nick: string,
-		message: string
-	} & RequestEventExtendType & EventBaseType;
-	MemberJoinRequestEvent: {
-		type: "MemberJoinRequestEvent",
-		eventId: number,
-		fromId: number,
-		groupId: number,
-		groupName: string,
-		nick: string,
-		message: string
-	} & RequestEventExtendType & EventBaseType;
-	BotInvitedJoinGroupRequestEvent: {
-		type: "MemberJoinRequestEvent",
-		eventId: number,
-		fromId: number,
-		groupId: number,
-		groupName: string,
-		nick: string,
-		message: string
-	} & RequestEventExtendType & EventBaseType;
+    MemberCardChangeEvent: {
+        type: "MemberCardChangeEvent",
+        origin: string,
+        current: string,
+        member: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    MemberSpecialTitleChangeEvent: {
+        type: "MemberSpecialTitleChangeEvent",
+        origin: string,
+        current: string,
+        member: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    MemberPermissionChangeEvent: {
+        type: "MemberPermissionChangeEvent",
+        origin: string,
+        current: string,
+        member: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    MemberMuteEvent: {
+        type: "MemberMuteEvent",
+        durationSeconds: number,
+        member: Member & {group: GroupSenderType};
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    MemberUnmuteEvent: {
+        type: "MemberUnmuteEvent",
+        member: Member & {group: GroupSenderType};
+        operator: Member & {group: GroupSenderType};
+    } & EventBaseType;
+    MemberHonorChangeEvent: {
+        type: "MemberHonorChangeEvent",
+        member: Member & {group: GroupSenderType}
+        action: "achieve" | "lose",
+        honor: string;
+    }
+    NewFriendRequestEvent: {
+        type: "NewFriendRequestEvent",
+        eventId: number,
+        fromId: number,
+        groupId: number,
+        nick: string,
+        message: string
+    } & RequestEventExtendType & EventBaseType;
+    MemberJoinRequestEvent: {
+        type: "MemberJoinRequestEvent",
+        eventId: number,
+        fromId: number,
+        groupId: number,
+        groupName: string,
+        nick: string,
+        message: string
+    } & RequestEventExtendType & EventBaseType;
+    BotInvitedJoinGroupRequestEvent: {
+        type: "MemberJoinRequestEvent",
+        eventId: number,
+        fromId: number,
+        groupId: number,
+        groupName: string,
+        nick: string,
+        message: string
+    } & RequestEventExtendType & EventBaseType;
 }
 
 type EventType = keyof EventTypes;
@@ -419,23 +420,17 @@ type FaceType =
 
 // 消息处理器类型
 export {
-	// 接口
-	MessageChainGetable,
-	BotConfigGetable,
-	// 消息类型
-	MessageType,
-	// MessageType.nodeList 的元素类型
-	ForwardNode,
-	// 图片 id  语音 id  消息 id
-	ImageId,
-	VoiceId,
-	MessageId,
-	// 事件类型    群成员权限      性别
-	EventType,
-	EventTypes,
-	GroupPermission,
-	SEX,
-	// QQ 自带表情
-	FaceType,
-	Awaitable,
+    // 接口
+    MessageChainGetable, BotConfigGetable,
+    // 消息类型
+    MessageType,
+    // MessageType.nodeList 的元素类型
+    ForwardNode,
+    // 图片 id  语音 id  消息 id
+    ImageId,    VoiceId, MessageId,
+    // 事件类型            群成员权限        性别
+    EventType, EventTypes, GroupPermission, SEX,
+    // QQ 自带表情
+    FaceType,
+    Awaitable
 };
