@@ -107,7 +107,7 @@ type MessageChainTypes =
 	| "File"
 	| "MiraiCode";
 
-interface BaseType {
+interface EventBaseType {
 	bot: Bot;
 }
 
@@ -156,61 +156,61 @@ interface Friend {
 interface EventTypes {
 	error: {
 		code: number;
-	} & BaseType,
+	} & EventBaseType,
 	close: {
 		reason: string;
-	} & BaseType,
+	} & EventBaseType,
 	"unexpected-response": {
 		reason: string;
-	} & BaseType,
+	} & EventBaseType,
 	GroupMessage: {
         type: "GroupMessage";
         sender: Member & {group: GroupSenderType},
         messageChain: MessageType[];
-	} & BaseType &
+	} & EventBaseType &
 		MessageExtendType,
 	FriendMessage: {
 		type: "FriendMessage"; 
 		messageChain: MessageType[];
 		sender: Friend
-	} & BaseType &
+	} & EventBaseType &
         MessageExtendType,
 	BotOnlineEvent: {
 		type: "BotOnlineEvent",
 		qq: number
-	} & BaseType,
+	} & EventBaseType,
 	BotOfflineEventActive: {
 		type: "BotOfflineEventActive",
 		qq: number
-	} & BaseType,
+	} & EventBaseType,
 	BotOfflineEventForce: {
 		type: "BotOfflineEventForce",
 		qq: number
-	} & BaseType,
+	} & EventBaseType,
 	BotOfflineEventDropped: {
 		type: "BotOfflineEventDropped",
 		qq: number
-	} & BaseType,
+	} & EventBaseType,
 	BotReloginEvent: {
 		type: "BotReloginEvent",
 		qq: number
-	} & BaseType,
+	} & EventBaseType,
 	BotGroupPermissionChangeEvent: {
 		type: "BotGroupPermissionChangeEvent";
 		origin: Exclude<GroupPermission, "OWNER">;
 		current: GroupPermission;
 		group: GroupSenderType;
-	} & BaseType,
+	} & EventBaseType,
 	BotMuteEvent: {
 		type: "BotMuteEvent",
 		durationSeconds: number,
 		operator: Member & {group: GroupSenderType};
-	} & BaseType,
+	} & EventBaseType,
 	BotUnmuteEvent: {
 		type: "BotUnmuteEvent",
 		durationSeconds: number,
 		operator: Member & {group: GroupSenderType};
-	} & BaseType,
+	} & EventBaseType,
 	BotJoinGroupEvent: {
 		type: "BotJoinGroupEvent",
         group: GroupSenderType
@@ -224,7 +224,7 @@ interface EventTypes {
 		type: "BotLeaveEventKick",
         group: GroupSenderType
 		operator: Member & {group: GroupSenderType};
-    } & BaseType;
+    } & EventBaseType;
 	GroupRecallEvent: {
         type: "GroupRecallEvent"
         authorId: number,
@@ -232,93 +232,93 @@ interface EventTypes {
         time: number,
         group: GroupSenderType
 		operator: Member & {group: GroupSenderType};
-    } & BaseType;
+    } & EventBaseType;
 	FriendRecallEvent: {
         type: "GroupRecallEvent"
         authorId: number,
         messageId: number,
         time: number,
         operator: number
-    } & BaseType;
+    } & EventBaseType;
 	GroupNameChangeEvent: {
 		type: "GroupNameChangeEvent",
 		origin: string,
 		current: string,
 		group: GroupSenderType;
 		operator: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	GroupEntranceAnnouncementChangeEvent: {
 		type: "GroupEntranceAnnouncementChangeEvent",
 		origin: string,
 		current: string,
 		group: GroupSenderType;
 		operator: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	GroupMuteAllEvent: {
 		type: "GroupMuteAllEvent",
 		origin: boolean,
 		current: boolean,
 		group: GroupSenderType;
 		operator: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	GroupAllowAnonymousChatEvent: {
         type: "GroupAllowAnonymousChatEvent",
         origin: boolean,
         current: boolean,
         group: GroupSenderType,
         operator: Member & {group: GroupSenderType};
-    } & BaseType;
+    } & EventBaseType;
 	GroupAllowConfessTalkEvent: {
         type: "GroupAllowAnonymousChatEvent",
         origin: boolean,
         current: boolean,
         group: GroupSenderType,
         isByBot: boolean
-    } & BaseType;
-	GroupAllowMemberInviteEvent: BaseType;
+    } & EventBaseType;
+	GroupAllowMemberInviteEvent: EventBaseType;
 	MemberJoinEvent: {
         type: "MemberJoinEvent",
 		member: Member & {group: GroupSenderType},
 		invitor: Member;
-    } & BaseType;
+    } & EventBaseType;
 	MemberLeaveEventKick: {
         type: "MemberLeaveEventKick",
 		member: Member & {group: GroupSenderType},
 		operator: Member & {group: GroupSenderType},
-    } & BaseType;
+    } & EventBaseType;
 	MemberLeaveEventQuit: {
         type: "MemberLeaveEventQuit",
 		member: Member & {group: GroupSenderType},
-    } & BaseType;
+    } & EventBaseType;
 	MemberCardChangeEvent: {
 		type: "MemberCardChangeEvent",
 		origin: string,
 		current: string,
 		member: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	MemberSpecialTitleChangeEvent: {
 		type: "MemberSpecialTitleChangeEvent",
 		origin: string,
 		current: string,
 		member: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	MemberPermissionChangeEvent: {
 		type: "MemberPermissionChangeEvent",
 		origin: string,
 		current: string,
 		member: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	MemberMuteEvent: {
 		type: "MemberMuteEvent",
 		durationSeconds: number,
 		member: Member & {group: GroupSenderType};
 		operator: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	MemberUnmuteEvent: {
 		type: "MemberUnmuteEvent",
 		member: Member & {group: GroupSenderType};
 		operator: Member & {group: GroupSenderType};
-	} & BaseType;
+	} & EventBaseType;
 	MemberHonorChangeEvent: {
 		type: "MemberHonorChangeEvent",
 		member: Member & {group: GroupSenderType}
@@ -332,7 +332,7 @@ interface EventTypes {
 		groupId: number,
 		nick: string,
 		message: string
-	} & RequestEventExtendType & BaseType;
+	} & RequestEventExtendType & EventBaseType;
 	MemberJoinRequestEvent: {
 		type: "MemberJoinRequestEvent",
 		eventId: number,
@@ -341,7 +341,7 @@ interface EventTypes {
 		groupName: string,
 		nick: string,
 		message: string
-	} & RequestEventExtendType & BaseType;
+	} & RequestEventExtendType & EventBaseType;
 	BotInvitedJoinGroupRequestEvent: {
 		type: "MemberJoinRequestEvent",
 		eventId: number,
@@ -350,7 +350,7 @@ interface EventTypes {
 		groupName: string,
 		nick: string,
 		message: string
-	} & RequestEventExtendType & BaseType;
+	} & RequestEventExtendType & EventBaseType;
 }
 
 type EventType = keyof EventTypes;
