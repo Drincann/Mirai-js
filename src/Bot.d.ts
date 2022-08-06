@@ -9,7 +9,7 @@ import {
     MessageChainGetable, BotConfigGetable, MessageType,
 
     Awaitable,
-    
+
 } from './BaseType';
 
 // 等待器
@@ -317,7 +317,7 @@ declare namespace Bot {
         verifyKey: string;
         sessionKey: string;
     }
-    
+
     // An index signature parameter type cannot be a union type. Consider using a mapped object type instead.
     type EventProcessorMap = {
         // 索引不能使用联合类型
