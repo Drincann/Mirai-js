@@ -352,6 +352,7 @@ interface EventTypes {
         nick: string,
         message: string
     } & RequestEventExtendType & EventBaseType;
+    AnyEvent: EventBaseType;
 }
 
 type EventType = keyof EventTypes;
@@ -363,6 +364,9 @@ type GroupPermission = 'OWNER' | 'ADMINISTRATOR' | 'MEMBER';
 
 // 性别
 type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE';
+
+// 消息处理器
+type Processor<U extends keyof EventTypes> = (data: EventTypes[U]) => Awaitable<void | any>
 
 // QQ 自带表情
 type FaceType =
@@ -432,5 +436,6 @@ export {
     EventType, EventTypes, GroupPermission, SEX,
     // QQ 自带表情
     FaceType,
-    Awaitable
+    Processor,
+    Awaitable,
 };

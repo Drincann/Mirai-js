@@ -1,17 +1,19 @@
+import { Bot } from './Bot';
+
 /**
  * 消息链的元素，是 mirai-api-http 接口需要的原始类型
  * 有多种消息类型实现了该接口，已经全部列出
- * 
+ *
  * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/MessageType.md
  */
 interface MessageType {
-    type: string;
+    type: MessageChainElementTypes;
 
     // Quote
-    id?: number,
-    groupId?: number,
-    senderId?: number,
-    targetId?: number,
+    id?: number;
+    groupId?: number;
+    senderId?: number;
+    targetId?: number;
     origin?: MessageType[];
 
     // At
@@ -71,7 +73,6 @@ interface BotConfigGetable {
     getSessionKey(): string;
 }
 
-
 // 图片 id
 type ImageId = string;
 // 语音 id
@@ -81,41 +82,291 @@ type MessageId = number;
 
 /**
  * 消息类型
- * 
+ *
  * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md
- */
-type EventType =
-    // WebSocket 事件
-    | 'error' | 'close' | 'unexpected-response'
-    // mirai 事件
-    | 'GroupMessage' | 'FriendMessage'
-    | 'BotOnlineEvent' | 'BotOfflineEventActive'
-    | 'BotOfflineEventForce' | 'BotOfflineEventDropped'
-    | 'BotReloginEvent' | 'BotGroupPermissionChangeEvent'
-    | 'BotMuteEvent' | 'BotUnmuteEvent'
-    | 'BotJoinGroupEvent' | 'BotLeaveEventActive'
-    | 'BotLeaveEventKick' | 'GroupRecallEvent'
-    | 'FriendRecallEvent' | 'GroupNameChangeEvent'
-    | 'GroupEntranceAnnouncementChangeEvent' | 'GroupMuteAllEvent'
-    | 'GroupAllowAnonymousChatEvent' | 'GroupAllowConfessTalkEvent'
-    | 'GroupAllowMemberInviteEvent' | 'MemberJoinEvent'
-    | 'MemberLeaveEventKick' | 'MemberLeaveEventQuit'
-    | 'MemberCardChangeEvent' | 'MemberSpecialTitleChangeEvent'
-    | 'MemberPermissionChangeEvent' | 'MemberMuteEvent'
-    | 'MemberUnmuteEvent' | 'NewFriendRequestEvent'
-    | 'MemberJoinRequestEvent' | 'BotInvitedJoinGroupRequestEvent';
+*/
+
+type MessageChainElementTypes =
+    | 'Source'
+    | 'Quote'
+    | 'At'
+    | 'AtAll'
+    | 'Face'
+    | 'Plain'
+    | 'Image'
+    | 'FlashImage'
+    | 'Voice'
+    | 'Xml'
+    | 'Json'
+    | 'App'
+    | 'Poke'
+    | 'Dice'
+    | 'MarketFace'
+    | 'MusicShare'
+    | 'ForwardMessage'
+    | 'File'
+    | 'MiraiCode';
+
+interface EventBaseType {
+    bot: Bot;
+}
+
+// Middleware
+interface MessageExtendType {
+    text?: string;
+    classified?: {
+        [key in MessageChainElementTypes]?: any[];
+    };
+    messageId?: number;
+    waitFor?: any
+    unlock?: () => void;
+}
+type RequestEventMethods =
+    | 'agree'
+    | 'refuse'
+    | 'ignore'
+    | 'refuseAndAddBlacklist'
+    | 'ignoreAndAddBlacklist';
+
+type RequestEventExtendType = {
+    [key in RequestEventMethods]?: () => void;
+};
+
+interface Member {
+    id: number;
+    memberName: string;
+    specialTitle: string;
+    permission: GroupPermission;
+    joinTimestamp: number;
+    lastSpeakTimestamp: number;
+    muteTimeRemaining: number;
+}
+
+interface GroupSenderType {
+    id: number;
+    name: string;
+    permission: GroupPermission;
+}
+
+interface Friend {
+    id: number,
+    nickname: string,
+    remark: string;
+}
+
+interface EventTypes {
+    error: {
+        code: number;
+    } & EventBaseType,
+    close: {
+        reason: string;
+    } & EventBaseType,
+    'unexpected-response': {
+        reason: string;
+    } & EventBaseType,
+    GroupMessage: {
+        type: 'GroupMessage';
+        sender: Member & { group: GroupSenderType },
+        messageChain: MessageType[];
+    } & EventBaseType &
+    MessageExtendType,
+    FriendMessage: {
+        type: 'FriendMessage';
+        messageChain: MessageType[];
+        sender: Friend
+    } & EventBaseType &
+    MessageExtendType,
+    BotOnlineEvent: {
+        type: 'BotOnlineEvent',
+        qq: number
+    } & EventBaseType,
+    BotOfflineEventActive: {
+        type: 'BotOfflineEventActive',
+        qq: number
+    } & EventBaseType,
+    BotOfflineEventForce: {
+        type: 'BotOfflineEventForce',
+        qq: number
+    } & EventBaseType,
+    BotOfflineEventDropped: {
+        type: 'BotOfflineEventDropped',
+        qq: number
+    } & EventBaseType,
+    BotReloginEvent: {
+        type: 'BotReloginEvent',
+        qq: number
+    } & EventBaseType,
+    BotGroupPermissionChangeEvent: {
+        type: 'BotGroupPermissionChangeEvent';
+        origin: Exclude<GroupPermission, 'OWNER'>;
+        current: GroupPermission;
+        group: GroupSenderType;
+    } & EventBaseType,
+    BotMuteEvent: {
+        type: 'BotMuteEvent',
+        durationSeconds: number,
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType,
+    BotUnmuteEvent: {
+        type: 'BotUnmuteEvent',
+        durationSeconds: number,
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType,
+    BotJoinGroupEvent: {
+        type: 'BotJoinGroupEvent',
+        group: GroupSenderType
+        operator?: null | Member & { group: GroupSenderType };
+    };
+    BotLeaveEventActive: {
+        type: 'BotLeaveEventActive',
+        group: GroupSenderType
+    };
+    BotLeaveEventKick: {
+        type: 'BotLeaveEventKick',
+        group: GroupSenderType
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    GroupRecallEvent: {
+        type: 'GroupRecallEvent'
+        authorId: number,
+        messageId: number,
+        time: number,
+        group: GroupSenderType
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    FriendRecallEvent: {
+        type: 'GroupRecallEvent'
+        authorId: number,
+        messageId: number,
+        time: number,
+        operator: number
+    } & EventBaseType;
+    GroupNameChangeEvent: {
+        type: 'GroupNameChangeEvent',
+        origin: string,
+        current: string,
+        group: GroupSenderType;
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    GroupEntranceAnnouncementChangeEvent: {
+        type: 'GroupEntranceAnnouncementChangeEvent',
+        origin: string,
+        current: string,
+        group: GroupSenderType;
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    GroupMuteAllEvent: {
+        type: 'GroupMuteAllEvent',
+        origin: boolean,
+        current: boolean,
+        group: GroupSenderType;
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    GroupAllowAnonymousChatEvent: {
+        type: 'GroupAllowAnonymousChatEvent',
+        origin: boolean,
+        current: boolean,
+        group: GroupSenderType,
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    GroupAllowConfessTalkEvent: {
+        type: 'GroupAllowAnonymousChatEvent',
+        origin: boolean,
+        current: boolean,
+        group: GroupSenderType,
+        isByBot: boolean
+    } & EventBaseType;
+    GroupAllowMemberInviteEvent: EventBaseType;
+    MemberJoinEvent: {
+        type: 'MemberJoinEvent',
+        member: Member & { group: GroupSenderType },
+        invitor: Member;
+    } & EventBaseType;
+    MemberLeaveEventKick: {
+        type: 'MemberLeaveEventKick',
+        member: Member & { group: GroupSenderType },
+        operator: Member & { group: GroupSenderType },
+    } & EventBaseType;
+    MemberLeaveEventQuit: {
+        type: 'MemberLeaveEventQuit',
+        member: Member & { group: GroupSenderType },
+    } & EventBaseType;
+    MemberCardChangeEvent: {
+        type: 'MemberCardChangeEvent',
+        origin: string,
+        current: string,
+        member: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    MemberSpecialTitleChangeEvent: {
+        type: 'MemberSpecialTitleChangeEvent',
+        origin: string,
+        current: string,
+        member: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    MemberPermissionChangeEvent: {
+        type: 'MemberPermissionChangeEvent',
+        origin: string,
+        current: string,
+        member: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    MemberMuteEvent: {
+        type: 'MemberMuteEvent',
+        durationSeconds: number,
+        member: Member & { group: GroupSenderType };
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    MemberUnmuteEvent: {
+        type: 'MemberUnmuteEvent',
+        member: Member & { group: GroupSenderType };
+        operator: Member & { group: GroupSenderType };
+    } & EventBaseType;
+    MemberHonorChangeEvent: {
+        type: 'MemberHonorChangeEvent',
+        member: Member & { group: GroupSenderType }
+        action: 'achieve' | 'lose',
+        honor: string;
+    }
+    NewFriendRequestEvent: {
+        type: 'NewFriendRequestEvent',
+        eventId: number,
+        fromId: number,
+        groupId: number,
+        nick: string,
+        message: string
+    } & RequestEventExtendType & EventBaseType;
+    MemberJoinRequestEvent: {
+        type: 'MemberJoinRequestEvent',
+        eventId: number,
+        fromId: number,
+        groupId: number,
+        groupName: string,
+        nick: string,
+        message: string
+    } & RequestEventExtendType & EventBaseType;
+    BotInvitedJoinGroupRequestEvent: {
+        type: 'MemberJoinRequestEvent',
+        eventId: number,
+        fromId: number,
+        groupId: number,
+        groupName: string,
+        nick: string,
+        message: string
+    } & RequestEventExtendType & EventBaseType;
+    AnyEvent: EventBaseType;
+}
+
+type EventType = keyof EventTypes;
+
+type Awaitable<T> = T | PromiseLike<T>;
 
 // 群成员权限
-type GroupPermission =
-    | 'OWNER'
-    | 'ADMINISTRATOR'
-    | 'MEMBER';
+type GroupPermission = 'OWNER' | 'ADMINISTRATOR' | 'MEMBER';
 
 // 性别
-type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE'
+type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE';
 
 // 消息处理器
-type Processor = (data: any) => Promise<any> | any;
+type Processor<U extends keyof EventTypes> = (data: EventTypes[U]) => Awaitable<void | any>
 
 // QQ 自带表情
 type FaceType =
@@ -175,22 +426,16 @@ type FaceType =
 export {
     // 接口
     MessageChainGetable, BotConfigGetable,
-
     // 消息类型
     MessageType,
-
     // MessageType.nodeList 的元素类型
     ForwardNode,
-
     // 图片 id  语音 id  消息 id
     ImageId, VoiceId, MessageId,
-
-    // 事件类型    群成员权限      性别
-    EventType, GroupPermission, SEX,
-
-    // 消息处理器
-    Processor,
-
+    // 事件类型            群成员权限        性别
+    EventType, EventTypes, GroupPermission, SEX,
     // QQ 自带表情
-    FaceType
+    FaceType,
+    Processor,
+    Awaitable,
 };

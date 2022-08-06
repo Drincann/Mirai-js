@@ -9,6 +9,7 @@ import {
     MessageChainGetable, BotConfigGetable, MessageType,
 
     Awaitable,
+    Processor,
 
 } from './BaseType';
 
@@ -92,8 +93,8 @@ export class Bot implements BotConfigGetable {
      * @param callback  必选，回调函数
      * @returns handle 事件处理器的标识，用于移除该处理器
      */
-    on<U extends keyof EventTypes>(eventType: U, callback: (data: EventTypes[U]) => Awaitable<void | any>): number;
-    on<U extends (keyof EventTypes)[]>(eventType: U, callback: (data: EventTypes[U[number]]) => Awaitable<void | any>): number[];
+    on<U extends keyof EventTypes>(eventType: U, callback: Processor<U>): number;
+    on<U extends (keyof EventTypes)[]>(eventType: U, callback: Processor<U[number]>): number[];
 
     /**
      * @description 添加一个一次性事件处理器，回调一次后自动移除
@@ -103,8 +104,8 @@ export class Bot implements BotConfigGetable {
      *                  当为 true 时，只有开发者的处理器结束后才会移除该处理器
      *                  当为 false 时，即使消息被拦截，也会移除该处理器
      */
-    one<U extends keyof EventTypes>(eventType: U, callback: (data: EventTypes[U]) => Awaitable<void | any>, strict: boolean): void;
-    one<U extends (keyof EventTypes)[]>(eventType: U, callback: (data: EventTypes[U[number]]) => Awaitable<void | any>, strict: boolean): void;
+    one<U extends keyof EventTypes>(eventType: U, callback: Processor<U>, strict: boolean): void;
+    one<U extends (keyof EventTypes)[]>(eventType: U, callback: Processor<U[number]>, strict: boolean): void;
 
     /**
      * @description 移除一个事件处理器
