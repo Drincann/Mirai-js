@@ -128,12 +128,12 @@ export class Middleware {
      * @description 生成一个带有中间件的事件处理器
      * @param callback 事件处理器
      */
-    done(callback: Processor<'AnyEvent'>): Processor<'AnyEvent'>;
+    done(callback: Processor): Processor;
 
 }
 
 declare namespace Middleware {
-    type NextMiddlewareCaller = () => NextMiddlewareCaller | Processor<'AnyEvent'>;
+    type NextMiddlewareCaller = () => NextMiddlewareCaller | Processor;
 
     interface GroupMemberMap {
         [group: number]: number[];

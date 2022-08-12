@@ -1,4 +1,5 @@
 import { Bot } from './Bot';
+import { ArrayToValuesUnion } from './typeHelpers';
 
 /**
  * 消息链的元素，是 mirai-api-http 接口需要的原始类型
@@ -154,7 +155,7 @@ interface Friend {
     remark: string;
 }
 
-interface EventTypes {
+interface EventEntityMap {
     error: {
         code: number;
     } & EventBaseType,
@@ -352,10 +353,9 @@ interface EventTypes {
         nick: string,
         message: string
     } & RequestEventExtendType & EventBaseType;
-    AnyEvent: EventBaseType;
 }
 
-type EventType = keyof EventTypes;
+type EventType = keyof EventEntityMap;
 
 type Awaitable<T> = T | PromiseLike<T>;
 
@@ -366,7 +366,8 @@ type GroupPermission = 'OWNER' | 'ADMINISTRATOR' | 'MEMBER';
 type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE';
 
 // 消息处理器
-type Processor<U extends keyof EventTypes> = (data: EventTypes[U]) => Awaitable<void | any>
+type Processor<U extends EventType[] | 'UnknownEventType' = 'UnknownEventType'> =
+    (data: U extends 'UnknownEventType' ? EventBaseType : EventEntityMap[ArrayToValuesUnion<U extends 'UnknownEventType' ? never : U>]) => Awaitable<void | any>;
 
 // QQ 自带表情
 type FaceType =
@@ -433,7 +434,7 @@ export {
     // 图片 id  语音 id  消息 id
     ImageId, VoiceId, MessageId,
     // 事件类型            群成员权限        性别
-    EventType, EventTypes, GroupPermission, SEX,
+    EventType, EventEntityMap, GroupPermission, SEX,
     // QQ 自带表情
     FaceType,
     Processor,

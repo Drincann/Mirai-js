@@ -9,5 +9,5 @@ export class Waiter {
      * @param eventType 事件类型
      * @param callback  处理器，其返回值将被 resolve，传递到外部
      */
-    wait(eventType: EventType, callback: Processor<'AnyEvent'>): Promise<any>;
+    wait(eventType: EventType, callback: Processor): Promise<any>;
 }
