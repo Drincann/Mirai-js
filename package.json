@@ -5,7 +5,7 @@
     "main": "dist/node/index.js",
     "scripts": {
         "lint": "eslint --fix .",
-        "build": "tsc --noEmit src/*.d.ts && webpack && babel src --out-dir dist/node --copy-files",
+        "build": "rm -rf dist && tsc --noEmit src/*.d.ts && webpack && babel src --out-dir dist/node --copy-files",
         "prepare": "husky install"
     },
     "lint-staged": {
