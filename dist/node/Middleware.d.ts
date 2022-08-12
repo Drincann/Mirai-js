@@ -1,4 +1,4 @@
-import { Processor } from './BaseType';
+import { Processor, EventType } from './BaseType';
 import { Bot } from './Bot';
 
 export class Middleware {
@@ -128,7 +128,7 @@ export class Middleware {
      * @description 生成一个带有中间件的事件处理器
      * @param callback 事件处理器
      */
-    done(callback: Processor): Processor;
+    done<E extends EventType[] | EventType>(callback: Processor<E extends EventType ? [E] : E>): Processor<E extends EventType ? [E] : E>;
 
 }
 
