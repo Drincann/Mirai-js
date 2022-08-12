@@ -43,7 +43,7 @@ const { errCodeEnum } = require('./util/errCode');
 const { isBrowserEnv } = require('./util/isBrowserEnv');
 
 const fs = isBrowserEnv() ? null : require('fs');
-const { promisify } = isBrowserEnv() ? null : require('util');
+const { promisify } = isBrowserEnv() ? { promisify: null } : require('util');
 
 // 扩展接口
 const { MessageChainGetable, BotConfigGetable } = require('./interface');

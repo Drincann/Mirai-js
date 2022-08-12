@@ -1,8 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const { promisify } = require('util');
 const { isBrowserEnv } = require('./util/isBrowserEnv');
-
+const fs = isBrowserEnv() ? null : require('fs');
+const path = isBrowserEnv() ? null : require('path');
+const { promisify } = isBrowserEnv() ? { promisify: null } : require('util');
 class FileManager {
     constructor({ bot, group }) {
         const baseUrl = bot.getBaseUrl();

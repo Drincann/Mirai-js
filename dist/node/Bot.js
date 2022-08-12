@@ -96,7 +96,9 @@ const {
 const fs = isBrowserEnv() ? null : require('fs');
 const {
   promisify
-} = isBrowserEnv() ? null : require('util'); // 扩展接口
+} = isBrowserEnv() ? {
+  promisify: null
+} : require('util'); // 扩展接口
 
 const {
   MessageChainGetable,
