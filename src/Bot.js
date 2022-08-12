@@ -37,13 +37,13 @@ const { wsStartListening: _startListening, wsStopListening: _stopListening } = r
 // 其他
 const random = require('./util/random')(0, 2E16);
 const getInvalidParamsString = require('./util/getInvalidParamsString');
-const fs = require('fs');
-const { promisify } = require('util');
 const { Waiter } = require('./Waiter');
 const { FileManager } = require('./FileManager');
 const { errCodeEnum } = require('./util/errCode');
 const { isBrowserEnv } = require('./util/isBrowserEnv');
 
+const fs = isBrowserEnv() ? null : require('fs');
+const { promisify } = isBrowserEnv() ? { promisify: null } : require('util');
 
 // 扩展接口
 const { MessageChainGetable, BotConfigGetable } = require('./interface');
