@@ -26,7 +26,7 @@ export class Middleware<CTX = { [key: string]: any }> {
      *              message 数组为 value，置于 data.classified
      * @param typeArr message 的类型，例如 Plain Image Voice
      */
-    messageProcessor<U extends MessageChainElementTypes[]>(typeArr: U): Middleware<CTX & { clashsified: { [type in ArrayToValuesUnion<U>]: any[] } }>;
+    messageProcessor<U extends MessageChainElementTypes[]>(typeArr: U): Middleware<CTX & { classified: { [type in ArrayToValuesUnion<U>]: any[] } }>;
 
     /**
      * @description 过滤出字符串类型的 message，并拼接在一起，置于 data.text
