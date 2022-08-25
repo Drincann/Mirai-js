@@ -83,7 +83,7 @@ export class Middleware<CTX = { [key: string]: any }> {
      * @description 用于 NewFriendRequestEvent 的中间件，经过该中间件后，将在 data 下放置三个方法
      * agree、refuse、refuseAndAddBlacklist，调用后将分别进行好友请求的 同意、拒绝和拒绝并加入黑名单
      */
-    friendRequestProcessor(): Middleware<CTX>;
+    friendRequestProcessor(): Middleware<CTX & { agree: () => void, refuse: () => void, refuseAndAddBlacklist: () => void }>;
 
     /**
      * ! mirai-core 的问题，有时候收不到 MemberJoinRequestEvent 事件
