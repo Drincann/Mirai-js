@@ -113,23 +113,6 @@ interface EventBaseType {
 }
 
 // Middleware
-interface MessageExtendType {
-    text?: string;
-    messageId?: number;
-    waitFor?: any
-    unlock?: () => void;
-}
-type RequestEventMethods =
-    | 'agree'
-    | 'refuse'
-    | 'ignore'
-    | 'refuseAndAddBlacklist'
-    | 'ignoreAndAddBlacklist';
-
-type RequestEventExtendType = {
-    [key in RequestEventMethods]?: () => void;
-};
-
 interface Member {
     id: number;
     memberName: string;
@@ -166,14 +149,12 @@ interface EventEntityMap {
         type: 'GroupMessage';
         sender: Member & { group: GroupSenderType },
         messageChain: MessageType[];
-    } & EventBaseType &
-    MessageExtendType,
+    } & EventBaseType,
     FriendMessage: {
         type: 'FriendMessage';
         messageChain: MessageType[];
         sender: Friend
-    } & EventBaseType &
-    MessageExtendType,
+    } & EventBaseType,
     BotOnlineEvent: {
         type: 'BotOnlineEvent',
         qq: number
@@ -331,7 +312,7 @@ interface EventEntityMap {
         groupId: number,
         nick: string,
         message: string
-    } & RequestEventExtendType & EventBaseType;
+    } & EventBaseType;
     MemberJoinRequestEvent: {
         type: 'MemberJoinRequestEvent',
         eventId: number,
@@ -340,7 +321,7 @@ interface EventEntityMap {
         groupName: string,
         nick: string,
         message: string
-    } & RequestEventExtendType & EventBaseType;
+    } & EventBaseType;
     BotInvitedJoinGroupRequestEvent: {
         type: 'MemberJoinRequestEvent',
         eventId: number,
@@ -349,7 +330,7 @@ interface EventEntityMap {
         groupName: string,
         nick: string,
         message: string
-    } & RequestEventExtendType & EventBaseType;
+    } & EventBaseType;
 }
 
 type EventType = keyof EventEntityMap;
