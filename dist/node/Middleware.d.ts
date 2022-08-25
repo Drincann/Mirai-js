@@ -1,7 +1,8 @@
-import { Processor, EventType } from './BaseType';
+import { Processor, EventType, MessageChainElementTypes } from './BaseType';
 import { Bot } from './Bot';
+import { ArrayToValuesUnion } from './typeHelpers';
 
-export class Middleware {
+export class Middleware<CTX = { [key: string]: any }> {
     private middleware: ((data: any, next: Middleware.NextMiddlewareCaller) => any)[];
     private catcher: (error: any) => any;
 
@@ -25,7 +26,7 @@ export class Middleware {
      *              message 数组为 value，置于 data.classified
      * @param typeArr message 的类型，例如 Plain Image Voice
      */
-    messageProcessor(typeArr: string[]): Middleware;
+    messageProcessor<U extends MessageChainElementTypes[]>(typeArr: U): Middleware<CTX & { clashsified: { [type in ArrayToValuesUnion<U>]: any[] } }>;
 
     /**
      * @description 过滤出字符串类型的 message，并拼接在一起，置于 data.text
@@ -128,7 +129,7 @@ export class Middleware {
      * @description 生成一个带有中间件的事件处理器
      * @param callback 事件处理器
      */
-    done<E extends EventType[] | EventType>(callback: Processor<E extends EventType ? [E] : E>): Processor<E extends EventType ? [E] : E>;
+    done<E extends EventType[]>(callback: Processor<E, CTX>): Processor<E, CTX>;
 
 }
 

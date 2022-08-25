@@ -87,7 +87,7 @@ type MessageId = number;
  * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md
 */
 
-type MessageChainElementTypes =
+export type MessageChainElementTypes =
     | 'Source'
     | 'Quote'
     | 'At'
@@ -115,9 +115,6 @@ interface EventBaseType {
 // Middleware
 interface MessageExtendType {
     text?: string;
-    classified?: {
-        [key in MessageChainElementTypes]?: any[];
-    };
     messageId?: number;
     waitFor?: any
     unlock?: () => void;
@@ -366,8 +363,7 @@ type GroupPermission = 'OWNER' | 'ADMINISTRATOR' | 'MEMBER';
 type SEX = 'UNKNOWN' | 'MALE' | 'FEMALE';
 
 // 消息处理器
-type Processor<U extends EventType[] | 'UnknownEventType' = 'UnknownEventType'> =
-    (data: U extends 'UnknownEventType' ? EventBaseType : EventEntityMap[ArrayToValuesUnion<U extends 'UnknownEventType' ? never : U>]) => Awaitable<void | any>;
+type Processor<U extends EventType[] = [], Extend = { [key: string]: any }> = (data: EventEntityMap[ArrayToValuesUnion<U>] & Extend) => Awaitable<void | any>;
 
 // QQ 自带表情
 type FaceType =

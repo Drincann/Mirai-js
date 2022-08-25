@@ -93,8 +93,8 @@ export class Bot implements BotConfigGetable {
      * @param callback  必选，回调函数
      * @returns handle 事件处理器的标识，用于移除该处理器
      */
-    on<U extends EventType>(eventType: U, callback: Processor<[U]>): number;
-    on<U extends EventType[]>(eventType: U, callback: Processor<U>): number[];
+    on<U extends EventType, E>(eventType: U, callback: Processor<[U], E>): number;
+    on<U extends EventType[], E>(eventType: U, callback: Processor<U, E>): number[];
 
     /**
      * @description 添加一个一次性事件处理器，回调一次后自动移除
