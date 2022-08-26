@@ -27,6 +27,11 @@ QQ 群: 730757181
 
 如果觉得这个项目还不错的话，就动动小手给个 star 吧！
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/Drincann/Mirai-js.svg)](https://starchart.cc/Drincann/Mirai-js)
+
+
 ## 支持这个项目
 
 <a href="https://opencollective.com/mirai-js#sponsors" target="_blank"><img src="https://opencollective.com/mirai-js/sponsors.svg?width=890"></a>
