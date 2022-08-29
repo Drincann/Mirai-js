@@ -1115,6 +1115,44 @@ const { message } = await bot.sendCommand({
 });
 ```
 
+## getMessageById
+
+`getMessageById` 通过 `messageId` 获取消息实体
+
+#### 参数
+
+- `target: number` 可选
+
+  群号或者 qq 号，在 mirai-api-http v2.6.0+ 下，该参数必选。
+
+- `messageId: number` 必选
+  
+  消息 id
+
+#### 返回值
+
+```ts
+interface MessageFromMessageId {
+    type: 'FriendMessage' | 'GroupMessage' | 'TempMessage';
+    messageChain: MessageType[];
+    sender: {
+        id?: number;
+        nickname?: string;
+        remark?: string;
+    }
+}
+```
+
+#### 示例
+
+```js
+bot.on('FriendRecallEvent', async ctx => {
+    const msg = await bot.getMessageById({ messageId: ctx.messageId, target: ctx.authorId });
+    // repeat the msg recalled just now
+    bot.sendMessage({ friend: msg.sender.id, message: msg.messageChain, });
+})
+```
+
 # 错误处理
 
 ## Bot 实例的方法
