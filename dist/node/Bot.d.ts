@@ -298,6 +298,14 @@ export class Bot implements BotConfigGetable {
      */
     sendCommand({ command }: Bot.SendCommandOptions): Promise<Bot.MiraiConsoleMessage>;
 
+    /**
+     * @description 通过 messageId 获取消息
+     * @param {number} target    可选, 目标 qq 号/群号, mah v2.6.0+ 新增该参数
+     * @param {number} messageId 必选, 消息 id
+     * @returns 
+     */
+    getMessageById({ messageId, target }: Bot.GetMessageByIdOptions): Promise<Bot.MessageFromMessageId>
+
     // 类方法
     /**
      * @description 检测该账号是否已经在 mirai-console 登录
@@ -530,6 +538,21 @@ declare namespace Bot {
 
     interface SendCommandOptions {
         command: string[];
+    }
+
+    interface GetMessageByIdOptions {
+        messageId: number;
+        target?: number;
+    }
+
+    interface MessageFromMessageId {
+        type: 'FriendMessage' | 'GroupMessage' | 'TempMessage';
+        messageChain: MessageType[];
+        sender: {
+            id?: number;
+            nickname?: string;
+            remark?: string;
+        }
     }
 
     interface IsBotLoggedInOptions {

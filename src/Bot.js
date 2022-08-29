@@ -32,6 +32,7 @@ const _quitGroup = require('./core/quitGroup');
 const _getGroupConfig = require('./core/getGroupConfig');
 const _setGroupConfig = require('./core/setGroupConfig');
 const _setEssence = require('./core/setEssence');
+const _messageFromId = require('./core/messageFromId');
 const { wsStartListening: _startListening, wsStopListening: _stopListening } = require('./polyfill/wsListener');
 
 // 其他
@@ -1141,6 +1142,27 @@ class Bot extends BotConfigGetable {
                 .reduce((acc, cur) => acc.addText(cur), new Message)
                 .messageChain
         });
+    }
+
+    /**
+     * @description 通过 messageId 获取消息
+     * @param {number} target    可选, 目标 qq 号/群号, mah v2.6.0+ 新增该参数
+     * @param {number} messageId 必选, 消息 id
+     * @returns {Object} 结构 { type, messageChain, sender }
+     */
+    async getMessageById({ messageId, target }) {
+        // 检查对象状态
+        if (!this.config) {
+            throw new Error('getMessageById 请先调用 open，建立一个会话');
+        }
+
+        // 检查参数
+        if (!messageId) {
+            throw new Error('getMessageById 缺少必要的 messageId 参数');
+        }
+
+        const { baseUrl, sessionKey } = this.config;
+        return await _messageFromId({ baseUrl, sessionKey, target, messageId });
     }
 
     /**
