@@ -27,7 +27,7 @@ module.exports = async ({ baseUrl, sessionKey, type, voice }) => {
         const form = new FormData();
         form.append('sessionKey', sessionKey);
         form.append('type', type);
-        form.append('voice', voice, { filename: 'voice.mp3' });
+        form.append('voice', voice, { filename: 'voice.slk' });
 
         // 请求
         const responseData = await axios.post(targetUrl, form, {

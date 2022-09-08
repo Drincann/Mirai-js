@@ -47,7 +47,7 @@ module.exports = async ({
     form.append('sessionKey', sessionKey);
     form.append('type', type);
     form.append('voice', voice, {
-      filename: 'voice.mp3'
+      filename: 'voice.slk'
     }); // 请求
 
     const responseData = await axios.post(targetUrl, form, {
