@@ -1,12 +1,15 @@
-type Permissions = 'MEMBER' | 'ADMINISTRATOR' | 'OWNER'
-
-type MessageTypes = 'FriendMessage' | 'GroupMessage'
-
-interface MessageItem { type: MessageTypes }
-
+/* Message */
+type MessageTypes = 'Plain' | 'Text'
+interface MessageItem { type: MessageTypes, [key: string]: any }
 export type MessageChain = Array<MessageItem>
 
-export interface FriendMessage extends MessageItem {
+/* Event */
+type Permissions = 'MEMBER' | 'ADMINISTRATOR' | 'OWNER'
+type EventTypes = 'FriendMessage' | 'GroupMessage'
+export interface Event {
+    type: EventTypes
+}
+export interface FriendMessageEvent extends Event {
     type: 'FriendMessage'
     sender: {
         id: number
@@ -16,7 +19,7 @@ export interface FriendMessage extends MessageItem {
     messageChain: MessageChain
 }
 
-export interface GroupMessage extends MessageItem {
+export interface GroupMessageEvent extends Event {
     type: 'GroupMessage'
     sender: {
         id: number
