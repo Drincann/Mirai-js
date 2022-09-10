@@ -1,5 +1,5 @@
 import WebSocket from "ws"
-import { MiraiVerifiedWebSocketResponse, MiraiWebSocketResponse } from "../types";
+import { MiraiVerifiedWebSocketResponse, MiraiWebSocketResponse } from "../types"
 
 interface MiraiWebSocketSyncContext {
     syncId: number
@@ -8,7 +8,7 @@ interface MiraiWebSocketSyncContext {
 
 /* 下层 websocket adaptor 的简单封装 */
 export class WebSocketAdapter {
-    private socket: WebSocket;
+    private socket: WebSocket
     private verifiedPromise: Promise<any> | null = null
     private syncContextMap: Map<number, MiraiWebSocketSyncContext> = new Map
     private _sessionKey: string | null = null
@@ -49,7 +49,7 @@ export class WebSocketAdapter {
         }
     }
 
-    public async verified(): Promise<void> {
+    public async verify(): Promise<void> {
         await this.verifiedPromise
     }
 
@@ -73,7 +73,7 @@ export class WebSocketAdapter {
                 this.syncContextMap.delete(syncId)
                 resolve(data)
             }
-        }).get(syncId) as MiraiWebSocketSyncContext;
+        }).get(syncId) as MiraiWebSocketSyncContext
     }
 
     public async sendCommand({ command, subCommand, content }: {
