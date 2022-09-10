@@ -7,7 +7,7 @@ interface MiraiWebSocketSyncContext {
 }
 
 /* 下层 websocket adaptor 的简单封装 */
-export class WebsocketAdapter {
+export class WebSocketAdapter {
     private socket: WebSocket;
     private verifiedPromise: Promise<any> | null = null
     private syncContextMap: Map<number, MiraiWebSocketSyncContext> = new Map
