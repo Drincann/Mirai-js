@@ -77,7 +77,7 @@ export class WebsocketAdapter {
     }
 
     public async sendCommand({ command, subCommand, content }: {
-        command: string, subCommand: string | null, content: any
+        command: string, subCommand?: string | null, content: any
     }): Promise<MiraiWebSocketResponse> {
         await this.verifiedPromise
         return new Promise((resolve, reject) => {
