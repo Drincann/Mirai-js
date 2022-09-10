@@ -9,7 +9,7 @@ interface MiraiWebSocketSyncContext {
 /* 下层 websocket adaptor 的简单封装 */
 export class WebsocketAdapter {
     private socket: WebSocket;
-    private verifiedPromise: Promise<void> | null = null
+    private verifiedPromise: Promise<any> | null = null
     private syncContextMap: Map<number, MiraiWebSocketSyncContext> = new Map
     private _sessionKey: string | null = null
     public get sessionKey(): string | null { return this._sessionKey }
@@ -17,7 +17,7 @@ export class WebsocketAdapter {
     public constructor(private connectionString: string) {
         this.socket = new WebSocket(this.connectionString)
         this.verifiedPromise = new Promise((resolve, reject) => {
-            this.socket.onerror = err => reject(err)
+            this.socket.onerror = err => reject(new Error(err?.message ?? err))
             this.socket.onmessage = websocketMsg => {
                 let verifiedMessage: MiraiVerifiedWebSocketResponse | null = null
                 try { verifiedMessage = JSON.parse(websocketMsg.data?.toString()) }
@@ -33,7 +33,7 @@ export class WebsocketAdapter {
                 this.socket.onerror = null
                 this.startToReceiveMessage()
             }
-        })
+        }).catch(err => console.error(err))
     }
 
     private startToReceiveMessage(): void {
