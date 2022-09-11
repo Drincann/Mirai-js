@@ -1,6 +1,5 @@
 import { __2_6_0_SERVICE_API_DEFINITION__ } from "./_2_6_0_"
 
-
 export interface ServiceInterfaceDefMap {
     ['2.6.0']: __2_6_0_SERVICE_API_DEFINITION__,
 }

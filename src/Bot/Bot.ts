@@ -4,7 +4,15 @@ import { MiraiServiceFactory } from "../services";
 import { MessageChain } from "../types";
 
 
-export class Bot/* Factory */ {
+export class Bot /* Factory */ {
+    /**
+     * 泛型 Version 用来约束开发时的类型
+     * 传入的 opts.version 用来约束运行时的行为, 兼容接口
+     * 
+     * 为什么不使用构造器: 
+     * - 构造器无法影响返回实例的泛型参数, 
+     * - 使用构造器的泛型时, 无法传入在运行时使用的版本参数.
+     */
     public static create<Version extends keyof BotInterfaceDefMap = '2.6.0'>({
         url, verifyKey, qq, version
     }: {
