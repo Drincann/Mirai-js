@@ -1,3 +1,4 @@
+import { EventEmitter } from "events"
 import WebSocket from "ws"
 import { MiraiVerifiedWebSocketResponse, MiraiWebSocketResponse } from "../types"
 
@@ -6,15 +7,28 @@ interface MiraiWebSocketSyncContext {
     resolveContext: (data: MiraiWebSocketResponse) => void
 }
 
-/* 下层 websocket adaptor 的简单封装 */
-export class WebSocketAdapter {
+/**
+ * Events: [ // all of it are from underlaying websocket
+ *   'unexpected-response',
+ *   'message',
+ *   'ping',
+ *   'open',
+ *   'message',
+ *   'upgrade',
+ *   'error', // WebSocketAdaptor & websocket
+ *   'close',
+ *   'miraiEvent',
+ * ]
+ */
+export class WebSocketAdapter extends EventEmitter {
     private socket: WebSocket
     private verifiedPromise: Promise<any> | null = null
     private syncContextMap: Map<number, MiraiWebSocketSyncContext> = new Map
     private _sessionKey: string | null = null
     public get sessionKey(): string | null { return this._sessionKey }
 
-    public constructor(private connectionString: string) {
+    public constructor(private connectionString: string, private syncId: number = -1) {
+        super()
         this.socket = new WebSocket(this.connectionString)
         this.verifiedPromise = new Promise((resolve, reject) => {
             this.socket.onerror = err => reject(new Error(err?.message ?? err))
@@ -31,6 +45,11 @@ export class WebSocketAdapter {
                 }
                 this.socket.onmessage = null
                 this.socket.onerror = null
+                    ;
+                ['unexpected-response', 'message', 'ping', 'open', 'message', 'upgrade', 'error', 'close']
+                    .forEach(eventName => {
+                        this.socket.on(eventName, (...args) => this.emit(eventName, ...args))
+                    });
                 this.startToReceiveMessage()
             }
         }).catch(err => console.error(err))
@@ -40,12 +59,19 @@ export class WebSocketAdapter {
         this.socket.onmessage = websocketMsg => {
             let miraiMessage: MiraiWebSocketResponse | null = null
             try { miraiMessage = JSON.parse(websocketMsg.data?.toString()) }
-            catch (e) { this.socket.emit('error', e) }
+            catch (e) { this.emit('error', e) }
 
             const syncId = Number(miraiMessage?.syncId)
-            if (typeof syncId === 'number' && this.syncContextMap.has(syncId)) {
-                this.syncContextMap.get(syncId)?.resolveContext(miraiMessage as MiraiWebSocketResponse)
+            if (typeof syncId === 'number') {
+                if (syncId === this.syncId) {
+                    // mriai event like FriendMessage
+                    return this.emit('miraiEvent', miraiMessage)
+                }
+                if (this.syncContextMap.has(syncId)) {
+                    this.syncContextMap.get(syncId)?.resolveContext(miraiMessage as MiraiWebSocketResponse)
+                }
             }
+
         }
     }
 
@@ -62,7 +88,7 @@ export class WebSocketAdapter {
      * @returns 该上下文 entity
      */
     private generateSyncContext(resolve: (data: MiraiWebSocketResponse) => void): MiraiWebSocketSyncContext {
-        let syncId = Math.floor(Math.random() * 1E9)
+        let syncId = Math.floor(Math.random() * 1E9 /* assert concurrency < 1E9 */)
         while (this.syncContextMap.has(syncId)) {
             syncId = Math.floor(Math.random() * 1E9)
         }
@@ -90,12 +116,5 @@ export class WebSocketAdapter {
                 }))
             } catch (e) { reject(e) }
         })
-    }
-
-    public on(
-        event: Parameters<typeof this.socket.on>[0],
-        listener: Parameters<typeof this.socket.on>[1]
-    ): ReturnType<typeof this.socket.on> {
-        return this.socket.on(event, listener)
     }
 }
