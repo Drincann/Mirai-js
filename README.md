@@ -1,5 +1,7 @@
 # Mirai-js
 
+> Mirai-js v3 正在开发中, [code](https://github.com/Drincann/Mirai-js/tree/v3.x) and [review](https://github.com/Drincann/Mirai-js/pull/224/files)
+
 [![CodeFactor](https://www.codefactor.io/repository/github/drincann/mirai-js/badge)](https://www.codefactor.io/repository/github/drincann/mirai-js)
 [![HitCount](https://hits.dwyl.com/drincann/drincann/Mirai-js.svg?style=flat-square)](http://hits.dwyl.com/drincann/drincann/Mirai-js)
 
