@@ -1,8 +1,7 @@
 import { BotInterfaceDefMap, Versions, __BOT_API_DEFINITION__ } from "./apidef";
-import { ServiceInterfaceDefMap } from '../services'
-import { MiraiServiceFactory } from "../services";
-import { MessageChain } from "../types";
-
+import { MiraiServiceFactory, ServiceInterfaceDefMap } from '../services'
+import { MessageChain } from "../types"
+import { EventEmitter } from 'events'
 
 export class Bot /* Factory */ {
     /**
@@ -15,11 +14,12 @@ export class Bot /* Factory */ {
      */
     private static versions: Set<keyof BotInterfaceDefMap> = new Set(['2.6.0'])
     public static create<Version extends keyof BotInterfaceDefMap = '2.6.0'>({
-        url, verifyKey, qq, version
+        url, verifyKey, qq, syncId = -1, version
     }: {
         url: string
         verifyKey: string
         qq: number
+        syncId?: number
         version?: Version
     }): BotInterfaceDefMap[Version] {
         /**
@@ -29,18 +29,47 @@ export class Bot /* Factory */ {
          */
         version = (version ?? '2.6.0') as Version
         if (!Bot.versions.has(version)) throw new Error(`Unsupported version: ${version}`)
-        return new BotImpl({ url, verifyKey, qq, version })
+        return new BotImpl({ url, verifyKey, qq, syncId, version })
     }
 }
 
-export class BotImpl {
+/**
+ * Events: [
+ *   'error', // Bot & MiraiService & underlying websocket
+ *   'FriendMessage', // from service(mirai-api-http impl)
+ *    ... mirai events
+ * ]
+ */
+export class BotImpl extends EventEmitter {
     private service: ServiceInterfaceDefMap[Versions]
     private _version: Versions
     public get version() { return this._version }
 
-    constructor({ url, verifyKey, qq, version = '2.6.0' }: { url: string, verifyKey: string, qq: number, version?: Versions }) {
-        this.service = MiraiServiceFactory.create({ url, verifyKey, qq, version })
+    constructor({ url, verifyKey, qq, syncId = -1, version = '2.6.0' }: { url: string, verifyKey: string, qq: number, syncId?: number, version?: Versions }) {
+        super()
+        this.service = MiraiServiceFactory.create({ url, verifyKey, qq, syncId, version })
         this._version = version
+        this.startListen()
+    }
+
+    private async startListen() {
+        /**
+         * 2022-09-11
+         * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/api/MessageType.md
+         * @see https://github.com/project-mirai/mirai-api-http/blob/master/docs/api/EventType.md
+         * interface GenericEvent {
+         *   syncId: number, // default to -1
+         *   data: {
+         *     type: string,
+         *     ...any
+         *   }
+         * }
+         */
+        this.service.on('miraiEvent', data => this.emit(data?.data?.type, data?.data))
+    }
+
+    public on(event: 'FriendMessage', listener: () => void): this {
+        return super.on(event, listener)
     }
 
     public async sendMessage({
@@ -51,6 +80,4 @@ export class BotImpl {
         if (group !== undefined) return (await this.service.sendGroupMessage({ target: group, messageChain })).messageId;
         throw new Error('qq or group must be specified')
     }
-
-
 }
