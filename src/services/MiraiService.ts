@@ -1,15 +1,15 @@
 import { MessageChain } from "../types"
 import { WebSocketAdapter } from "../adaptors"
 import { ServiceInterfaceDefMap, Versions } from "./apidef"
-
+import { EventEmitter } from "events"
 
 interface MiraiServiceConstructorParams {
     url: string
     verifyKey: string
     qq: number
+    syncId?: number
     version?: Versions
 }
-
 
 export abstract class MiraiServiceFactory {
     constructor() { }
@@ -20,13 +20,19 @@ export abstract class MiraiServiceFactory {
     }
 }
 
-
-class MiraiService {
+/**
+ * Events: [
+ *   'mriaiEvent', // from underlaying adaptor(websocket)
+ *   'error', // adaptor & websocket
+ * ]
+ */
+class MiraiService extends EventEmitter {
     private adaptor: WebSocketAdapter
     private _version: Versions
     public get version() { return this._version }
 
-    constructor({ url, verifyKey, qq, version = '2.6.0' }: MiraiServiceConstructorParams) {
+    constructor({ url, verifyKey, qq, syncId = -1, version = '2.6.0' }: MiraiServiceConstructorParams) {
+        super()
         const urlStructured = new URL(url)
         /**
          * 2022.09.10
@@ -39,8 +45,11 @@ class MiraiService {
         urlStructured.pathname = '/all'
         urlStructured.searchParams.append('verifyKey', verifyKey)
         urlStructured.searchParams.append('qq', qq.toString())
-        this.adaptor = new WebSocketAdapter(urlStructured.toString())
+        this.adaptor = new WebSocketAdapter(urlStructured.toString(), syncId)
         this._version = version;
+        // expose adaptor events
+        this.adaptor.on('miraiEvent', (...args) => this.emit('miraiEvent', ...args))
+        this.adaptor.on('error', (...args) => this.emit('error', ...args))
     }
 
     public async verify(): Promise<void> { await this.adaptor.verify() }
@@ -58,10 +67,4 @@ class MiraiService {
             content: { target, messageChain },
         }))?.data
     }
-
-    public onMessage(listener: (...args: any[]) => void): this {
-        this.adaptor.on('message', listener)
-        return this
-    }
 }
-
