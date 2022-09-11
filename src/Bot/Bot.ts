@@ -13,14 +13,22 @@ export class Bot /* Factory */ {
      * - 构造器无法影响返回实例的泛型参数, 
      * - 使用构造器的泛型时, 无法传入在运行时使用的版本参数.
      */
+    private static versions: Set<keyof BotInterfaceDefMap> = new Set(['2.6.0'])
     public static create<Version extends keyof BotInterfaceDefMap = '2.6.0'>({
         url, verifyKey, qq, version
     }: {
         url: string
         verifyKey: string
         qq: number
-        version: Version
+        version?: Version
     }): BotInterfaceDefMap[Version] {
+        /**
+         * FIXME: 指定 version 默认参数时, 该参数会被 ts 
+         * 解释为 Versions 的 subtype, 同一个 type的不同
+         * subtype 不相容 ts(2322)
+         */
+        version = (version ?? '2.6.0') as Version
+        if (!Bot.versions.has(version)) throw new Error(`Unsupported version: ${version}`)
         return new BotImpl({ url, verifyKey, qq, version })
     }
 }
@@ -43,5 +51,6 @@ export class BotImpl {
         if (group !== undefined) return (await this.service.sendGroupMessage({ target: group, messageChain })).messageId;
         throw new Error('qq or group must be specified')
     }
+
 
 }
