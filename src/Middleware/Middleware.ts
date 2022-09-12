@@ -14,7 +14,7 @@ export class Middleware<EventName extends keyof EventMap, Context extends EventM
         return this
     }
 
-    public textProcessor(): Middleware<EventName, EventMap[EventName]> {
+    public textProcessor(): Middleware<EventName, EventMap[EventName] & { text: string }> {
         this.middleware.push(async (ctx, next) => {
             if (isFriendMessageEventOrGroupMessage(ctx)) {
                 ctx['text'] = ctx.messageChain
@@ -24,7 +24,7 @@ export class Middleware<EventName extends keyof EventMap, Context extends EventM
             ctx['text'] = ctx['text'] ?? ''
             await next()
         })
-        return this as any as Middleware<EventName, EventMap[EventName]>
+        return this as any
     }
 
     public getEntry(): MiddlewareEntry<Context> {
