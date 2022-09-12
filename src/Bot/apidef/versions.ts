@@ -1,4 +1,7 @@
 import { EventEmitter } from "stream"
+import { Middleware } from "../../Middleware"
+import { EventMap } from "../../types"
+import { BotImpl } from "../Bot"
 import { __2_6_0_BOT_API_DEFINITION__ } from "./_2_6_0_"
 
 export interface BotInterfaceDefMap {
@@ -11,7 +14,7 @@ export function isBotV2_6_0(bot: BotInterfaceDefMap[Versions]): bot is BotInterf
     return bot.version === '2.6.0'
 }
 
-export interface __BOT_API_DEFINITION__ extends EventEmitter {
+export interface __BOT_API_DEFINITION__ {
     version: Versions
-    on(event: 'FriendMessage', listener: (...args: any[]) => void): this
+    on: InstanceType<typeof BotImpl>['on']
 }

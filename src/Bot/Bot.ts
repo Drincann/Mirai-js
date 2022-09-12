@@ -1,7 +1,8 @@
 import { BotInterfaceDefMap, Versions, __BOT_API_DEFINITION__ } from "./apidef";
 import { MiraiServiceFactory, ServiceInterfaceDefMap } from '../services'
-import { MessageChain } from "../types"
+import { EventMap, MessageChain } from "../types"
 import { EventEmitter } from 'events'
+import { Middleware } from "../Middleware"
 
 export class Bot /* Factory */ {
     /**
@@ -40,13 +41,13 @@ export class Bot /* Factory */ {
  *    ... mirai events
  * ]
  */
-export class BotImpl extends EventEmitter {
+export class BotImpl {
     private service: ServiceInterfaceDefMap[Versions]
     private _version: Versions
+    private emitter: EventEmitter = new EventEmitter()
     public get version() { return this._version }
 
     constructor({ url, verifyKey, qq, syncId = -1, version = '2.6.0' }: { url: string, verifyKey: string, qq: number, syncId?: number, version?: Versions }) {
-        super()
         this.service = MiraiServiceFactory.create({ url, verifyKey, qq, syncId, version })
         this._version = version
         this.startListen()
@@ -65,11 +66,18 @@ export class BotImpl extends EventEmitter {
          *   }
          * }
          */
-        this.service.on('miraiEvent', data => this.emit(data?.data?.type, data?.data))
+        this.service.on('miraiEvent', data => this.emitter.emit(data?.data?.type, data?.data))
     }
 
-    public on(event: 'FriendMessage', listener: () => void): this {
-        return super.on(event, listener)
+    public on<EventName extends keyof EventMap>(
+        event: EventName,
+        listener: ((ctx?: EventMap[EventName]) => Promise<any> | any) | Middleware<EventName>
+    ): this {
+        if (listener instanceof Middleware) {
+            listener = listener.getEntry();
+        }
+        this.emitter.on(event, listener)
+        return this
     }
 
     public async sendMessage({
