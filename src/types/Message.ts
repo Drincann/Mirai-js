@@ -5,10 +5,16 @@ export type MessageChain = Array<MessageItem>
 
 /* Event */
 type Permissions = 'MEMBER' | 'ADMINISTRATOR' | 'OWNER'
-type EventTypes = 'FriendMessage' | 'GroupMessage'
-export interface Event {
-    type: EventTypes
+
+export interface EventMap {
+    'FriendMessage': FriendMessageEvent
+    'GroupMessage': GroupMessageEvent
 }
+
+export interface Event {
+    type: keyof EventMap
+}
+
 export interface FriendMessageEvent extends Event {
     type: 'FriendMessage'
     sender: {
