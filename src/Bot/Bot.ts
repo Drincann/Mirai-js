@@ -36,7 +36,7 @@ export class Bot /* Factory */ {
 
 /**
  * Events: [
- *   'error', // Bot & MiraiService & underlying websocket
+ *   'error', // provided by Bot.onError: Bot & MiraiService & underlying websocket
  *   'FriendMessage', // from service(mirai-api-http impl)
  *    ... mirai events
  * ]
@@ -67,6 +67,12 @@ export class BotImpl {
          * }
          */
         this.service.on('miraiEvent', data => this.emitter.emit(data?.data?.type, data?.data))
+        this.service.on('error', err => this.emitter.emit('error', err))
+    }
+
+    public onError(listener: (err: Error) => any): this {
+        this.emitter.on('error', listener)
+        return this
     }
 
     public on<EventName extends keyof EventMap>(
