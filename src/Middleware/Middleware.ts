@@ -1,4 +1,4 @@
-import { EventMap, isFriendMessageEventOrGroupMessage } from "../types"
+import { EventMap, isFriendMessageEventOrGroupMessage, textPropContext } from "../types"
 
 type NextFunc = () => Promise<any>
 type MiddlewareFunc<Context> = (ctx: Context, next: NextFunc) => Promise<any> | any
@@ -16,12 +16,13 @@ export class Middleware<EventName extends keyof EventMap, Context extends EventM
 
     public textProcessor(): Middleware<EventName, EventMap[EventName] & { text: string }> {
         this.middleware.push(async (ctx, next) => {
+            if (!textPropContext(ctx)) return
             if (isFriendMessageEventOrGroupMessage(ctx)) {
-                ctx['text'] = ctx.messageChain
+                ctx.text = ctx.messageChain
                     ?.filter(messageChainItem => messageChainItem.type === 'Plain')
                     ?.map(messageChainItem => messageChainItem.text).join('') ?? ''
             }
-            ctx['text'] = ctx['text'] ?? ''
+            ctx.text = ctx.text ?? ''
             await next()
         })
         return this as any
