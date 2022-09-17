@@ -55,16 +55,20 @@ class MiraiService extends EventEmitter {
     public async verify(): Promise<void> { await this.adaptor.verify() }
 
     public async sendFriendMessage({ target, messageChain }: { target: number, messageChain: MessageChain }): Promise<any> {
-        return (await this.adaptor.sendCommand({
+        const res = (await this.adaptor.sendCommand({
             command: 'sendFriendMessage',
             content: { target, messageChain },
-        }))?.data
+        }))
+        if (res.data.code !== 0) throw new Error(res.data.msg)
+        return res?.data
     }
 
     public async sendGroupMessage({ target, messageChain }: { target: number, messageChain: MessageChain }): Promise<any> {
-        return (await this.adaptor.sendCommand({
+        const res = await this.adaptor.sendCommand({
             command: 'sendGroupMessage',
             content: { target, messageChain },
-        }))?.data
+        })
+        if (res.data.code !== 0) throw new Error(res.data.msg)
+        return res?.data
     }
 }
