@@ -16,6 +16,9 @@ export interface Event {
     type: keyof EventMap
 }
 
+/**
+ * 好友消息
+ */
 export interface FriendMessageEvent extends Event {
     type: 'FriendMessage'
     sender: {
@@ -26,6 +29,9 @@ export interface FriendMessageEvent extends Event {
     messageChain: MessageChain
 }
 
+/**
+ * 群消息
+ */
 export interface GroupMessageEvent extends Event {
     type: 'GroupMessage'
     sender: {
