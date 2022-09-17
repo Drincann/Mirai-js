@@ -9,6 +9,7 @@ type Permissions = 'MEMBER' | 'ADMINISTRATOR' | 'OWNER'
 export interface EventMap {
     'FriendMessage': FriendMessageEvent
     'GroupMessage': GroupMessageEvent
+    'FriendInputStatusChangedEvent': FriendInputStatusChangedEvent
 }
 
 export interface Event {
@@ -41,4 +42,17 @@ export interface GroupMessageEvent extends Event {
         }
     }
     messageChain: MessageChain
+}
+
+/**
+ * 好友输入状态改变
+ */
+export interface FriendInputStatusChangedEvent extends Event {
+    type: 'FriendInputStatusChangedEvent'
+    friend: {
+        id: number
+        nickname: string
+        remark: string
+    },
+    inputting: boolean
 }
