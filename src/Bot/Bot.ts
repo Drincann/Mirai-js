@@ -51,6 +51,15 @@ export class BotImpl {
         this.service = MiraiServiceFactory.create({ url, verifyKey, qq, syncId, version })
         this._version = version
         this.startListen()
+        this.getAbout().then(({ version }) => {
+            const currVersions = this._version.split('.').slice(0, 2);
+            if (version.split('.').slice(0, 2)
+                .some((v, i) => v !== currVersions[i])) {
+                console.warn(`[WARN] mirai-api-http version mismatch: ${this._version}(mirai-js) vs ${version}(mirai-api-http)`)
+            }
+        }, err => {
+            console.error(`[ERROR] mirai-api-http version check failed: ${err}`)
+        });
     }
 
     private async startListen() {
