@@ -71,4 +71,12 @@ class MiraiService extends EventEmitter {
         if (res.data.code !== 0) throw new Error(res.data.msg)
         return res?.data
     }
+
+    public async getAbout(): Promise<any> {
+        const res = await this.adaptor.sendCommand({
+            command: 'about',
+        })
+        if (res.data.code !== 0) throw new Error(res.data.msg)
+        return res?.data
+    }
 }

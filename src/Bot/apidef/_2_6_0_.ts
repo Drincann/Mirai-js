@@ -10,6 +10,9 @@ interface SendMessageParams {
 
 type SendMessageReturnValue = number /* messageId */ | undefined;
 
+type getAboutReturnValue = { version: string };
+
 export interface __2_6_0_BOT_API_DEFINITION__ extends __BOT_API_DEFINITION__ {
     sendMessage(opts: SendMessageParams): Promise<SendMessageReturnValue>
+    getAbout(): Promise<getAboutReturnValue>
 }

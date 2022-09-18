@@ -94,4 +94,8 @@ export class BotImpl {
         if (group !== undefined) return (await this.service.sendGroupMessage({ target: group, messageChain })).messageId;
         throw new Error('qq or group must be specified')
     }
+
+    public async getAbout() {
+        return (await this.service.getAbout()).data
+    }
 }
