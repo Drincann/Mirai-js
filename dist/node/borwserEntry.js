@@ -13,7 +13,7 @@ const {
 } = require('./Middleware');
 
 module.exports = {
-  MiraiJs: {
+  miraiJs: {
     Bot,
     Message,
     Middleware
