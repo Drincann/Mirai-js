@@ -137,7 +137,7 @@ export class Bot implements BotConfigGetable {
      * @description 撤回由 messageId 确定的消息
      * @param messageId 欲撤回消息的 messageId
      */
-    recall({ messageId }: Bot.RecallOptions): Promise<void>;
+    recall({ messageId, target }: Bot.RecallOptions): Promise<void>;
 
     /**
      * @description 上传图片至服务器，返回指定 type 的 imageId，url，及 path
@@ -368,6 +368,7 @@ declare namespace Bot {
 
     interface RecallOptions {
         messageId: MessageId;
+        target?: number;
     }
 
     interface UploadImageOptions {

@@ -23,13 +23,15 @@ const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.ext
  * @description 撤回由 messageId 确定的消息
  * @param {string} baseUrl    mirai-api-http server 的主机地址
  * @param {string} sessionKey 会话标识
- * @param {number} target     欲撤回消息的 messageId
+ * @param {number} messageId  欲撤回消息的 messageId
+ * @param {number} target     目标好友或群组 ID
  * @returns {Object} 结构 { message, code }
  */
 
 module.exports = async ({
   baseUrl,
   sessionKey,
+  messageId,
   target
 }) => {
   try {
@@ -38,6 +40,7 @@ module.exports = async ({
 
     const responseData = await axios.post(url, {
       sessionKey,
+      messageId,
       target
     });
 

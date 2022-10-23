@@ -720,7 +720,8 @@ class Bot extends BotConfigGetable {
 
 
   async recall({
-    messageId
+    messageId,
+    target
   }) {
     // 检查对象状态
     if (!this.config) {
@@ -732,6 +733,10 @@ class Bot extends BotConfigGetable {
       throw new Error('recall 缺少必要的 messageId 参数');
     }
 
+    if (!target) {
+      throw new Error('recall 缺少必要的 target 参数');
+    }
+
     const {
       baseUrl,
       sessionKey
@@ -740,7 +745,8 @@ class Bot extends BotConfigGetable {
     await _recall({
       baseUrl,
       sessionKey,
-      target: messageId
+      messageId,
+      target
     });
   }
   /**
