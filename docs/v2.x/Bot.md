@@ -467,6 +467,12 @@ bot.offAll(['FriendMessage', 'GroupMessage']);
 - `messageId: number` 必选
 
   欲撤回消息的标识
+  
+- `target?: number` 必选
+
+  !> mirai-api-http v2.6.0 后新增必选参数
+
+  目标群/ QQ 号
 
 #### 返回值
 
