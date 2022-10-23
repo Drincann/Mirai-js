@@ -715,12 +715,14 @@ class Bot extends BotConfigGetable {
   /**
    * @description 撤回由 messageId 确定的消息
    * @param {number} messageId 欲撤回消息的 messageId
+   * @param {number} target    目标群/ qq 号
    * @returns {void}
    */
 
 
   async recall({
-    messageId
+    messageId,
+    target
   }) {
     // 检查对象状态
     if (!this.config) {
@@ -729,6 +731,7 @@ class Bot extends BotConfigGetable {
 
 
     if (!messageId) {
+      // target 参数在 mirai-api-http v2.6.0 后变更
       throw new Error('recall 缺少必要的 messageId 参数');
     }
 
@@ -737,11 +740,22 @@ class Bot extends BotConfigGetable {
       sessionKey
     } = this.config; // 撤回消息
 
-    await _recall({
-      baseUrl,
-      sessionKey,
-      target: messageId
-    });
+    if (target === undefined) {
+      // 兼容 mirai-api-http v2.6.0 前的接口
+      await _recall({
+        baseUrl,
+        sessionKey,
+        target: messageId
+      });
+    } else {
+      // mirai-api-http v2.6.0+
+      await _recall({
+        baseUrl,
+        sessionKey,
+        messageId,
+        target
+      });
+    }
   }
   /**
    * FIXME: type 指定为 'friend' 或 'temp' 时发送的图片显示红色感叹号，无法加载，group 则正常

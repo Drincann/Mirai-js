@@ -8,18 +8,22 @@ const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.ext
 
 /**
  * @description 撤回由 messageId 确定的消息
+ * mirai-api-http v2.6.0 后该接口由 { target } 变更到 { messageId, target }, 原
+ * target 为 messageId, 在新接口中变更为 messageId, 新增 target 为目标群/ qq 号，
+ * @see https://github.com/project-mirai/mirai-api-http/blob/v2.6.0/docs/api/API.md#%E6%92%A4%E5%9B%9E%E6%B6%88%E6%81%AF
  * @param {string} baseUrl    mirai-api-http server 的主机地址
  * @param {string} sessionKey 会话标识
- * @param {number} target     欲撤回消息的 messageId
+ * @param {number} messageId  欲撤回消息的 messageId
+ * @param {number} target     目标群/ qq 号
  * @returns {Object} 结构 { message, code }
  */
-module.exports = async ({ baseUrl, sessionKey, target }) => {
+module.exports = async ({ baseUrl, sessionKey, messageId, target }) => {
     try {
         // 拼接 URL
         const url = new URL('/recall', baseUrl).toString();
 
         // 请求
-        const responseData = await axios.post(url, { sessionKey, target });
+        const responseData = await axios.post(url, { sessionKey, messageId, target });
         try {
             var {
                 data: { code, msg: message }

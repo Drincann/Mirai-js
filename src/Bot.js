@@ -546,22 +546,29 @@ class Bot extends BotConfigGetable {
     /**
      * @description 撤回由 messageId 确定的消息
      * @param {number} messageId 欲撤回消息的 messageId
+     * @param {number} target    目标群/ qq 号
      * @returns {void}
      */
-    async recall({ messageId }) {
+    async recall({ messageId, target }) {
         // 检查对象状态
         if (!this.config) {
             throw new Error('recall 请先调用 open，建立一个会话');
         }
 
         // 检查参数
-        if (!messageId) {
+        if (!messageId) { // target 参数在 mirai-api-http v2.6.0 后变更
             throw new Error('recall 缺少必要的 messageId 参数');
         }
 
         const { baseUrl, sessionKey } = this.config;
         // 撤回消息
-        await _recall({ baseUrl, sessionKey, target: messageId });
+        if (target === undefined) {
+            // 兼容 mirai-api-http v2.6.0 前的接口
+            await _recall({ baseUrl, sessionKey, target: messageId });
+        } else {
+            // mirai-api-http v2.6.0+
+            await _recall({ baseUrl, sessionKey, messageId, target });
+        }
     }
 
     /**
