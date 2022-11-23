@@ -554,6 +554,17 @@ declare namespace Bot {
             id?: number;
             nickname?: string;
             remark?: string;
+            memberName?: string;
+            specialTitle?: string;
+            permission?: GroupPermission;
+            joinTimestamp?: number;
+            lastSpeakTimestamp?: number;
+            muteTimeRemaining?: number;
+            group?: {
+                id: number;
+                name: string;
+                permission: GroupPermission;
+            }
         }
     }
 
