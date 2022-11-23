@@ -21,15 +21,19 @@ const {
 const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.extname(__filename))}` : 'borwser';
 /**
  * @description 设置群精华消息
+ * mirai-api-http v2.6.0 后该接口由 { target } 变更到 { messageId, target }, 原
+ * target 为 messageId, 在新接口中变更为 messageId, 新增 target 为目标群号，
  * @param {string}  baseUrl    mirai-api-http server 的地址
  * @param {string}  sessionKey 会话标识
- * @param {string}  target	   消息 id
+ * @param {number}  messageId  消息 id
+ * @param {number}  target	   目标群号
  * @returns {Object} 结构 { message, code }
  */
 
 module.exports = async ({
   baseUrl,
   sessionKey,
+  messageId,
   target
 }) => {
   try {
@@ -38,6 +42,7 @@ module.exports = async ({
 
     const responseData = await axios.post(url, {
       sessionKey,
+      messageId,
       target
     });
 

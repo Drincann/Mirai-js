@@ -1550,12 +1550,14 @@ class Bot extends BotConfigGetable {
   /**
    * @description 设置群精华消息
    * @param {number} messageId 必选，消息 id
+   * @param {number} target    可选(mahv2.6+)，目标群号
    * @returns {void}
    */
 
 
   async setEssence({
-    messageId
+    messageId,
+    target
   }) {
     // 检查对象状态
     if (!this.config) {
@@ -1571,11 +1573,23 @@ class Bot extends BotConfigGetable {
       baseUrl,
       sessionKey
     } = this.config;
-    await _setEssence({
-      baseUrl,
-      sessionKey,
-      target: messageId
-    });
+
+    if (target === undefined) {
+      // 兼容 mirai-api-http v2.6.0 前的接口
+      await _setEssence({
+        baseUrl,
+        sessionKey,
+        target: messageId
+      });
+    } else {
+      // mirai-api-http v2.6.0+
+      await _setEssence({
+        baseUrl,
+        sessionKey,
+        target,
+        messageId
+      });
+    }
   }
   /**
    * @description 向 mirai-console 发送指令

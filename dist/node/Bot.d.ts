@@ -535,6 +535,7 @@ declare namespace Bot {
 
     interface SetEssenceOptions {
         messageId: number;
+        target?: number;
     }
 
     interface SendCommandOptions {

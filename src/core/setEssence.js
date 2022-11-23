@@ -9,13 +9,16 @@ const locationStr = !isBrowserEnv() ? `core.${path.basename(__filename, path.ext
 
 /**
  * @description 设置群精华消息
+ * mirai-api-http v2.6.0 后该接口由 { target } 变更到 { messageId, target }, 原
+ * target 为 messageId, 在新接口中变更为 messageId, 新增 target 为目标群号，
  * @param {string}  baseUrl    mirai-api-http server 的地址
  * @param {string}  sessionKey 会话标识
- * @param {string}  target	   消息 id
+ * @param {number}  messageId  消息 id
+ * @param {number}  target	   目标群号
  * @returns {Object} 结构 { message, code }
  */
 module.exports = async ({
-    baseUrl, sessionKey, target
+    baseUrl, sessionKey, messageId, target,
 }) => {
     try {
         // 拼接 url
@@ -23,7 +26,7 @@ module.exports = async ({
 
         // 请求
         const responseData = await axios.post(url, {
-            sessionKey, target,
+            sessionKey, messageId, target,
         });
         try {
             var {
