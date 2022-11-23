@@ -27,9 +27,9 @@
    ~~.\mcl --update-package net.mamoe:mirai-api-http --channel stable --type plugin~~
 
    ~~然后在命令行中执行 `.\mcl` 以启动 **MCL**，同时会自动安装刚才指定的 mirai-api-http 服务。~~
-   
+
    划掉部分为 `mcl` 提供的安装方式，这种方式在之前是可以用的，而且非常方便，只不过目前会有奇奇怪怪的问题。
-   
+
    推荐自行下载插件放入**plugins** 文件夹：
 
    在命令行中执行 `.\mcl` 以生成 **plugins** 文件夹。
@@ -43,39 +43,39 @@
    编辑 `config/MiraiApiHttp/setting.yml`。
 
     ```yml
-    adapters: 
-    - http
-    - ws
-    debug: false
+    ## 启用的 adapter, 内置有 http, ws, reverse-ws, webhook
+    adapters:
+      - http
+      - ws
+
+    ## 是否开启认证流程, 若为 true 则建立连接时需要验证 verifyKey
+    ## 建议公网连接时开启
     enableVerify: true
-    verifyKey: INITKEYpff86IGV
+    verifyKey: 123456
+    
+    ## 是否开启单 session 模式, 若为 true，则自动创建 session 绑定 console 中登录的 bot
+    ## 开启后，接口中任何 sessionKey 不需要传递参数
+    ## 若 console 中有多个 bot 登录，则行为未定义
+    ## 确保 console 中只有一个 bot 登陆时启用
     singleMode: false
+    
+    ## 历史消息的缓存大小
+    ## 同时，也是 http adapter 的消息队列容量
     cacheSize: 4096
-    adapterSettings: 
-        http:
-            ## http server 监听的本地地址
-            ## 一般为 localhost 即可, 如果多网卡等情况，自定设置
-            host: localhost
-
-            ## http server 监听的端口
-            ## 与 websocket server 可以重复, 由于协议与路径不同, 不会产生冲突
-            port: 8080
-
-            ## 配置跨域, 默认允许来自所有域名
-            cors: [*]
-        ws:
-            ## websocket server 监听的本地地址
-            ## 一般为 localhost 即可, 如果多网卡等情况，自定设置
-            host: localhost
-
-            ## websocket server 监听的端口
-            ## 与 http server 可以重复, 由于协议与路径不同, 不会产生冲突
-            port: 8080
-
-            ## websocket 用于消息同步的字段为 syncId, 一般值为请求时的原值，用于同步一次请求与响应
-            ## 对于由 websocket server 主动发出的通知, 固定使用一个 syncId, 默认为 ”-1“
-            reservedSyncId: -1
-
+    
+    ## adapter 的单独配置，键名与 adapters 项配置相同
+    adapterSettings:
+      ## 详情看 http adapter 使用说明 配置
+      http:
+         host: 0.0.0.0
+         port: 8080
+         cors: [*]
+      
+      ## 详情看 websocket adapter 使用说明 配置
+      ws:
+         host: 0.0.0.0
+         port: 8080
+         reservedSyncId: -1
     ```
 
    按照自身需求编辑 `port`，它将指定该服务将开放在哪个端口。
