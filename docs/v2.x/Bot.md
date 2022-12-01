@@ -1094,6 +1094,12 @@ await quitGroup({ group: 123456789 })
 - `messageId: number` 必选
 
   消息 id
+  
+- `target?: number` 必选
+
+  !> mirai-api-http v2.6.0 后新增必选参数
+
+  目标群号
 
 #### 返回值
 
