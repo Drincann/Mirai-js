@@ -19,11 +19,13 @@ export class Message implements MessageChainGetable {
     addImageId(imageId: ImageId): Message;
     addImageUrl(url: string): Message;
     addImagePath(path: string): Message;
+    addImageBase64(base64: string): Message;
 
     // FlashImage
     addFlashImageId(imageId: ImageId): Message;
     addFlashImageUrl(url: string): Message;
     addFlashImagePath(path: string): Message;
+    addFlashImageBase64(base64: string): Message;
 
     // Voice
     addVoiceId(imageId: ImageId): Message;
