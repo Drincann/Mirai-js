@@ -23,13 +23,7 @@ export class Bot /* Factory */ {
         syncId?: number
         version?: Version
     }): BotInterfaceDefMap[Version] {
-        /**
-         * FIXME: 指定 version 默认参数时, 该参数会被 ts 
-         * 解释为 Versions 的 subtype, 同一个 type的不同
-         * subtype 不相容 ts(2322)
-         */
-        version = (version ?? '2.6.0') as Version
-        if (!Bot.versions.has(version)) throw new Error(`Unsupported version: ${version}`)
+        if (!Bot.versions.has(version ?? '2.6.0')) throw new Error(`Unsupported version: ${version}`)
         return new BotImpl({ url, verifyKey, qq, syncId, version })
     }
 }
