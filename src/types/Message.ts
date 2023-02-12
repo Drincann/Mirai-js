@@ -6,20 +6,20 @@ export type MessageChain = Array<MessageItem>
 /* Event */
 type Permissions = 'MEMBER' | 'ADMINISTRATOR' | 'OWNER'
 
-export interface EventMap {
+export interface MiraiEventMap {
     'FriendMessage': FriendMessageEvent
     'GroupMessage': GroupMessageEvent
     'FriendInputStatusChangedEvent': FriendInputStatusChangedEvent
 }
 
-export interface Event {
-    type: keyof EventMap
+export interface MiraiEvent {
+    type: keyof MiraiEventMap
 }
 
 /**
  * 好友消息
  */
-export interface FriendMessageEvent extends Event {
+export interface FriendMessageEvent extends MiraiEvent {
     type: 'FriendMessage'
     sender: {
         id: number
@@ -32,7 +32,7 @@ export interface FriendMessageEvent extends Event {
 /**
  * 群消息
  */
-export interface GroupMessageEvent extends Event {
+export interface GroupMessageEvent extends MiraiEvent {
     type: 'GroupMessage'
     sender: {
         id: number
@@ -53,7 +53,7 @@ export interface GroupMessageEvent extends Event {
 /**
  * 好友输入状态改变
  */
-export interface FriendInputStatusChangedEvent extends Event {
+export interface FriendInputStatusChangedEvent extends MiraiEvent {
     type: 'FriendInputStatusChangedEvent'
     friend: {
         id: number
