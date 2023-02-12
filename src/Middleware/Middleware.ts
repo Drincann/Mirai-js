@@ -30,7 +30,7 @@ export class Middlewares {
 }
 
 export class ProcessChain<Context extends Record<PropertyKey, any> = {}, InitContext extends Record<PropertyKey, any> = Context> {
-    private chain: (MiddlewareFunc<Context> | ProcessChain<any>)[] = []
+    private chain: (MiddlewareFunc<any> | ProcessChain<any>)[] = []
 
     public constructor(initFunc?: MiddlewareFunc<Context>) { if (initFunc instanceof Function) this.chain.push(initFunc) }
 
@@ -55,7 +55,7 @@ export class ProcessChain<Context extends Record<PropertyKey, any> = {}, InitCon
         if (pipeable instanceof MiddlewareWrapper) {
             this.chain.push(pipeable.getEntry())
         } else if (pipeable instanceof ProcessChain || pipeable instanceof Function) {
-            this.chain.push(pipeable as any)
+            this.chain.push(pipeable)
         } else {
             throw new Error('Invalid pipeable, should be a middleware function or a middleware wrapper instance or a process chain instance')
         }
