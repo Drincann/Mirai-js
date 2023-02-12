@@ -1,8 +1,9 @@
-import { BotInterfaceDefMap, Versions, __BOT_API_DEFINITION__ } from "./apidef";
-import { MiraiServiceFactory, ServiceInterfaceDefMap } from '../services'
-import { EventMap, MessageChain } from "../types"
+import { BotInterfaceDefMap, Versions } from "../api";
+import { ServiceInterfaceDefMap } from '../api'
+import { MiraiServiceFactory } from "../services"
+import { MiraiEventMap, MessageChain } from "../types"
 import { EventEmitter } from 'events'
-import { Middleware } from "../Middleware"
+import { MiddlewareFunc, ProcessChain } from "../Middleware"
 
 export class Bot /* Factory */ {
     /**
@@ -78,15 +79,15 @@ export class BotImpl {
         return this
     }
 
-    public on<EventName extends keyof EventMap>(
+    public on<EventName extends keyof MiraiEventMap>(
         event: EventName,
-        listener: ((ctx?: EventMap[EventName]) => Promise<any> | any) | Middleware<EventName>
-    ): this {
-        if (listener instanceof Middleware) {
-            listener = listener.getEntry();
-        }
-        this.emitter.on(event, listener)
-        return this
+        listener?: MiddlewareFunc<MiraiEventMap[EventName]>
+    ): ProcessChain<MiraiEventMap[EventName]> {
+        const chain = new ProcessChain<MiraiEventMap[EventName]>();
+        if (listener instanceof Function) chain.pipe(listener)
+
+        this.emitter.on(event, chain.run.bind(chain))
+        return chain
     }
 
     public async sendMessage({
