@@ -1,6 +1,6 @@
 import { MessageChain } from "../types"
 import { WebSocketAdapter } from "../adaptors"
-import { ServiceInterfaceDefMap, Versions } from "./apidef"
+import { ServiceInterfaceDefMap, Versions } from "../api"
 import { EventEmitter } from "events"
 
 interface MiraiServiceConstructorParams {

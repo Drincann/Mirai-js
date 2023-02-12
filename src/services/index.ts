@@ -1,2 +1,2 @@
-export * from './apidef'
+export * from '../api'
 export * from './MiraiService'
