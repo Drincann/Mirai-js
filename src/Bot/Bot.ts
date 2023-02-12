@@ -85,7 +85,6 @@ export class BotImpl {
     ): ProcessChain<MiraiEventMap[EventName]> {
         const chain = new ProcessChain<MiraiEventMap[EventName]>();
         if (listener instanceof Function) chain.pipe(listener)
-
         this.emitter.on(event, chain.run.bind(chain))
         return chain
     }
