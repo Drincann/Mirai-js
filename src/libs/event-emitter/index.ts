@@ -1,4 +1,4 @@
-type EventsMap = { [_: PropertyKey]: [] }
+type EventsMap = { [_: PropertyKey]: [] | any[] }
 export class EventEmitter<EventDefinition extends EventsMap> {
   private events: { [eventName in keyof EventDefinition]?: ((...args: [...EventDefinition[eventName]]) => unknown)[] } = {}
 
