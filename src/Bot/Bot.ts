@@ -2,7 +2,7 @@ import { BotInterfaceDefMap, Versions } from "../api";
 import { ServiceInterfaceDefMap } from '../api'
 import { MiraiServiceFactory } from "../services"
 import { MiraiEventMap, MessageChain } from "../types"
-import { EventEmitter } from 'events'
+import { EventEmitter } from '../libs/event-emitter'
 import { MiddlewareFunc, ProcessChain } from "../Middleware"
 
 export class Bot /* Factory */ {
@@ -39,7 +39,9 @@ export class Bot /* Factory */ {
 export class BotImpl {
     private service: ServiceInterfaceDefMap[Versions]
     private _version: Versions
-    private emitter: EventEmitter = new EventEmitter()
+    private emitter: EventEmitter<{
+        [event in keyof MiraiEventMap]: [MiraiEventMap[event]]
+    } & { 'error': [Error] }> = new EventEmitter()
     public get version() { return this._version }
 
     constructor({ url, verifyKey, qq, syncId = -1, version = '2.6.0' }: { url: string, verifyKey: string, qq: number, syncId?: number, version?: Versions }) {
@@ -74,18 +76,17 @@ export class BotImpl {
         this.service.on('error', err => this.emitter.emit('error', err))
     }
 
-    public onError(listener: (err: Error) => any): this {
-        this.emitter.on('error', listener)
-        return this
-    }
-
-    public on<EventName extends keyof MiraiEventMap>(
+    public on<
+        EventName extends 'error' | (keyof MiraiEventMap),
+        EventMap extends Record<EventName, any> = { 'error': Error } & {
+            [key in keyof MiraiEventMap]: MiraiEventMap[key]
+        }
+    >(
         event: EventName,
-        listener?: MiddlewareFunc<MiraiEventMap[EventName]>
-    ): ProcessChain<MiraiEventMap[EventName]> {
-        const chain = new ProcessChain<MiraiEventMap[EventName]>();
-        if (listener instanceof Function) chain.pipe(listener)
-        this.emitter.on(event, chain.run.bind(chain))
+        listener?: MiddlewareFunc<EventMap[EventName]>
+    ): ProcessChain<EventMap[EventName]> {
+        const chain = new ProcessChain<EventMap[EventName]>(listener instanceof Function ? listener : undefined)
+        this.emitter.on(event, ctx => chain.run(ctx as EventMap[EventName]))
         return chain
     }
 
