@@ -6,17 +6,17 @@
 
 Mirai-js v3，一个运行在 Node.js、浏览器下的，简单的 QQ 机器人开发框架。
 
-使用一目了然的异步 api，以及强大的中间件机制来实现你的应用。
+使用一目了然的异步 api，优良的类型提示，以及强大的中间件机制来实现你的应用。
 
 ```js
 bot.on('FriendMessage', async (ctx, next) => {
-  await next();
-  console.log(ctx.text);
+  await next()
+  console.log(`receive message from ${ctx.sender.id}`)
 })
-  .pipe(Middlewares.textProcessor())
+  .pipe(Middlewares.textProcessor()) // parse the plain text to ctx.text
   .pipe(async (ctx, next) => {
     await bot.sendMessage({
-      qq: data.sender.id,
+      qq: ctx.sender.id,
       message: ctx.text,
     });
   });
