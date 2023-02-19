@@ -1,7 +1,7 @@
-import { MessageChain } from "../types"
+import { MessageChain, MiraiWebSocketResponse } from "../types"
 import { WebSocketAdapter } from "../adaptors"
 import { ServiceInterfaceDefMap, Versions } from "../api"
-import { EventEmitter } from "events"
+import { EventEmitter } from "./../libs/event-emitter"
 
 interface MiraiServiceConstructorParams {
     url: string
@@ -21,12 +21,12 @@ export abstract class MiraiServiceFactory {
 }
 
 /**
- * Events: [
- *   'mriaiEvent', // from underlaying adaptor(websocket)
- *   'error', // adaptor & websocket
- * ]
+ * The core functions of mirai-api-http
  */
-class MiraiService extends EventEmitter {
+class MiraiService extends EventEmitter<{
+    'miraiEvent': [MiraiWebSocketResponse] // from underlaying adaptor(websocket)
+    'error': [Error] // adaptor & websocket
+}> {
     private adaptor: WebSocketAdapter
     private _version: Versions
     public get version() { return this._version }
