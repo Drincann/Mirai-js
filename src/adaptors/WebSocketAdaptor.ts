@@ -1,6 +1,6 @@
-import { EventEmitter } from "events"
-import WebSocket from "ws"
+import { EventEmitter } from "../libs/event-emitter"
 import { MiraiVerifiedWebSocketResponse, MiraiWebSocketResponse } from "../types"
+import { WebSocketCompatibilityLayer } from "../libs/polyfill/ws"
 
 interface MiraiWebSocketSyncContext {
     syncId: number
@@ -8,20 +8,18 @@ interface MiraiWebSocketSyncContext {
 }
 
 /**
- * Events: [ // all of it are from underlaying websocket
- *   'unexpected-response',
- *   'message',
- *   'ping',
- *   'open',
- *   'message',
- *   'upgrade',
- *   'error', // WebSocketAdaptor & websocket
- *   'close',
- *   'miraiEvent',
- * ]
+ * WebSocket Adapter for mirai-api-http
  */
-export class WebSocketAdapter extends EventEmitter {
-    private socket: WebSocket
+export class WebSocketAdapter extends EventEmitter<{
+    // from websocket compatibility layer
+    'message': [/* message */ string | ArrayBuffer]
+    'error': [/* reason */ Error]
+    'close': [/* code */ number, /* reason */ string]
+    'open': []
+    // from mirai
+    'miraiEvent': [/* event */ MiraiWebSocketResponse]
+}> {
+    private socket: WebSocketCompatibilityLayer
     private verifiedPromise: Promise<any> | null = null
     private syncContextMap: Map<number, MiraiWebSocketSyncContext> = new Map
     private _sessionKey: string | null = null
@@ -29,50 +27,53 @@ export class WebSocketAdapter extends EventEmitter {
 
     public constructor(private connectionString: string, private syncId: number = -1) {
         super()
-        this.socket = new WebSocket(this.connectionString)
+        this.socket = new WebSocketCompatibilityLayer(this.connectionString)
         this.verifiedPromise = new Promise((resolve, reject) => {
-            this.socket.onerror = err => reject(new Error(err?.message ?? err))
-            this.socket.onmessage = websocketMsg => {
+            const errorHandler = this.socket.on('error', reason => reject(new Error(reason)))
+            const messageHandler = this.socket.on('message', message => {
+                if (!(typeof message === 'string')) throw new Error('Verification message is not valid')
                 let verifiedMessage: MiraiVerifiedWebSocketResponse | null = null
-                try { verifiedMessage = JSON.parse(websocketMsg.data?.toString()) }
-                catch (e) { reject(e) }
-
+                try { verifiedMessage = JSON.parse(message) } catch (e) { reject(e) }
                 if (verifiedMessage?.data?.code === 0) {
                     this._sessionKey = verifiedMessage.data.session
                     resolve(undefined)
                 } else {
                     return reject(new Error(`Verification failed ${JSON.stringify(verifiedMessage)}`))
                 }
-                this.socket.onmessage = null
-                this.socket.onerror = null
-                    ;
-                ['unexpected-response', 'message', 'ping', 'open', 'message', 'upgrade', 'error', 'close']
-                    .forEach(eventName => {
-                        this.socket.on(eventName, (...args) => this.emit(eventName, ...args))
-                    });
+                // remove event listeners for verification
+                this.socket.off('error', errorHandler)
+                this.socket.off('message', messageHandler)
+                // expose websocket events
+                this.socket.on('message', message => this.emit('message', message));
+                this.socket.on('open', () => this.emit('open'));
+                this.socket.on('error', reason => this.emit('error', new Error(reason)));
+                this.socket.on('close', (code, reason) => this.emit('close', code, reason))
+                // start to receive message
                 this.startToReceiveMessage()
-            }
+            })
         }).catch(err => console.error(err))
     }
 
     private startToReceiveMessage(): void {
-        this.socket.onmessage = websocketMsg => {
+        this.socket.on('message', websocketMsg => {
             let miraiMessage: MiraiWebSocketResponse | null = null
-            try { miraiMessage = JSON.parse(websocketMsg.data?.toString()) }
-            catch (e) { this.emit('error', e) }
+            try {
+                miraiMessage = JSON.parse(websocketMsg?.toString())
+            } catch (e) {
+                return this.emit('error', e instanceof Error ? e : typeof e === 'string' ? new Error(e) : new Error('unknown error', { cause: e }))
+            }
 
             const syncId = Number(miraiMessage?.syncId)
             if (typeof syncId === 'number') {
-                if (syncId === this.syncId) {
-                    // mriai event like FriendMessage
+                if (syncId === this.syncId && miraiMessage !== null) {
+                    // mriai events like 'FriendMessage'
                     return this.emit('miraiEvent', miraiMessage)
                 }
                 if (this.syncContextMap.has(syncId)) {
                     this.syncContextMap.get(syncId)?.resolveContext(miraiMessage as MiraiWebSocketResponse)
                 }
             }
-
-        }
+        })
     }
 
     public async verify(): Promise<void> {
