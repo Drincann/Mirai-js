@@ -16,7 +16,7 @@ export class WebSocketAdapter extends EventEmitter<{
     'error': [/* reason */ Error]
     'close': [/* code */ number, /* reason */ string]
     'open': []
-    // from mirai
+    // abstracted by WebSocketAdapter from websocket compatibility layer
     'miraiEvent': [/* event */ MiraiWebSocketResponse]
 }> {
     private socket: WebSocketCompatibilityLayer
