@@ -524,11 +524,20 @@ bot.on('GroupMessage',
 
 #### 参数
 
-- `callback` 必选
+- `callbackOrMiddleware` 必选
 
-  `(data: Object, next: function) => void`
-
-  处理完成后根据情况选择是否调用`next`，以将控制权转移到下一个中间件。
+  一个中间件函数，或中间件实例
+  
+  ```ts
+  Middleware 
+  | (
+    ctx: EventEntityMap[keyof EventEntityMap],
+    next: () => Promise<unknown>
+  ) => void
+  
+  ```
+  
+  处理完成后根据情况选择是否调用 `next`，以将控制权转移到下一个中间件。
 
 #### 示例
 
