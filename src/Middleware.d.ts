@@ -1,8 +1,9 @@
 import { Processor, EventType, MessageChainElementTypes, MessageType } from './BaseType';
 import { Bot } from './Bot';
 import { ArrayToValuesUnion } from './typeHelpers';
+import { Cover } from './typeUtils';
 
-export class Middleware<CTX = { [key: string]: any }> {
+export class Middleware<CTX> {
     private middleware: ((data: any, next: Middleware.NextMiddlewareCaller) => any)[];
     private catcher: (error: any) => any;
 
@@ -134,7 +135,13 @@ export class Middleware<CTX = { [key: string]: any }> {
      * @description 添加一个自定义中间件
      * @param callback (data, next) => void
      */
-    use(callback: (data: CTX, next: Middleware.NextMiddlewareCaller) => any): Middleware<CTX>;
+    use<CommingCtx>(callback: (data: Cover<CTX, Partial<CommingCtx>>, next: Middleware.NextMiddlewareCaller) => any): Middleware<Cover<CTX, CommingCtx>>;
+
+    /**
+     * @description 接入一个中间件
+     * @param middleware 中间件实例
+     */
+    use<CommingCtx>(middleware: Middleware<CommingCtx>): Middleware<Cover<CTX, CommingCtx>>;
 
     /**
      * @description 使用错误处理器

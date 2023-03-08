@@ -748,23 +748,28 @@ class Middleware {
   }
   /**
    * @description 添加一个自定义中间件
-   * @param {function} callback (data, next) => void
+   * @param {function} callbackOrMiddleware (data, next) => void | Middleware
    */
 
 
-  use(callback) {
-    this.middleware.push(async (data, next) => {
-      // 捕获错误
-      try {
-        await callback(data, next);
-      } catch (error) {
-        if (this.catcher) {
-          this.catcher(error);
-        } else {
-          throw error;
+  use(callbackOrMiddleware) {
+    if (callbackOrMiddleware instanceof Middleware) {
+      this.middleware.push(...callbackOrMiddleware.middleware);
+    } else {
+      this.middleware.push(async (data, next) => {
+        // 捕获错误
+        try {
+          await callbackOrMiddleware(data, next);
+        } catch (error) {
+          if (this.catcher) {
+            this.catcher(error);
+          } else {
+            throw error;
+          }
         }
-      }
-    });
+      });
+    }
+
     return this;
   }
   /**
