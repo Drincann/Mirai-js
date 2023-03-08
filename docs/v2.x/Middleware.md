@@ -26,7 +26,10 @@ bot.on('FriendMessage', new Middleware
 
 其他方法都是预定义的中间件，如 `textProcessor`，经过该中间件处理后，传入事件处理器的 `data` 将拥有一个 `text` 属性，该属性由文本消息拼接而成。
 
-# 标注类型 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.png?v=101)](https://github.com/ellerbrock/typescript-badges/)
+# 标注类型
+
+[![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.png?v=101)](https://github.com/ellerbrock/typescript-badges/)
+
 中间件函数的上下文 `ctx` 难以自动推断类型，这是 mirai-js v2 的遗留问题，将在 v3 中完整解决。
 
 ## 初始上下文
