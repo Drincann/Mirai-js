@@ -26,6 +26,57 @@ bot.on('FriendMessage', new Middleware
 
 其他方法都是预定义的中间件，如 `textProcessor`，经过该中间件处理后，传入事件处理器的 `data` 将拥有一个 `text` 属性，该属性由文本消息拼接而成。
 
+# 标注类型
+中间件函数的上下文 `ctx` 难以自动推断类型，这是 mirai-js v2 的遗留问题，将在 v3 中完整解决。
+
+## 初始上下文
+为了获得良好的 `ctx` 类型推断，需要手动从 `EventEntityMap` 指定初始上下文类型：
+
+```ts
+import { EventEntityMap } from 'mirai-js/dist/node/BaseType.d.ts'
+
+new Middleware<EventEntityMap['FriendMessage']>()
+  .use(async (ctx, next) => {
+    /* 
+    {
+      bot: Bot; 
+      type: "FriendMessage"; 
+      messageChain: MessageType[]; 
+      sender: Friend; 
+    }
+    */
+    ctx;
+  })
+```
+
+## 中间件函数新增属性
+
+使用 `use` 方法唯一的泛型参数：
+
+```ts
+new Middleware<EventEntityMap['FriendMessage']>()
+  .use<{ accessTime: number }>(async (ctx, next) => {
+    ctx.accessTime; // number | undefined
+    ctx.accessTime = +new Date();
+    await next()
+  })
+  .use(async ctx => {
+    ctx.accessTime; // number
+  })
+```
+
+## 预定义中间件在 `ctx` 上新增的属性
+
+大部分预定义中间件都已经标注好了类型：
+
+```ts
+new Middleware<EventEntityMap['FriendMessage']>()
+  .textProcessor()
+  .done(async ctx => {
+    ctx.text; // string
+  })
+```
+
 # 预定义中间件
 
 ## autoReLogin
