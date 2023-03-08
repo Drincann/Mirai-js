@@ -68,7 +68,7 @@ new Middleware<EventEntityMap['FriendMessage']>()
   })
 ```
 
-## 预定义中间件在 `ctx` 上新增的属性
+## 预定义中间件新增属性
 
 大部分预定义中间件都已经标注好了类型：
 
