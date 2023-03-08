@@ -151,7 +151,7 @@ export class Middleware<CTX = { [key: string]: any }> {
 }
 
 declare namespace Middleware {
-    type NextMiddlewareCaller = () => NextMiddlewareCaller | Processor;
+    type NextMiddlewareCaller = () => Promise<unknown>;
 
     interface GroupMemberMap {
         [group: number]: number[];
